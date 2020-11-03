@@ -5,6 +5,8 @@ import UserList from './components/UsersList';
 import UserForm from './components/UserForm';
 import AuthContext from './auth'
 
+import Map from './Map'
+
 function App() {
     const [fetchWithCSRF, setFetchWithCSRF] = useState(() => fetch);
     const authContextValue = {
@@ -52,6 +54,7 @@ function App() {
                 <Route path="/users/:id/edit" component={UserForm} />
                 <Route path="/">
                     <h1>My Home Page</h1>
+										<Map/>
                 </Route>
             </Switch>
         </BrowserRouter>
