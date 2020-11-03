@@ -4,6 +4,8 @@
 
 ### Maps javascript API [DOCS](https://developers.google.com/maps/documentation/javascript/overview)
 
+- format data [like so](https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson)
+
 "Add an interactive map to your website. Customize it with your own content and imagery."
 
 - geocoding api comes along with maps javascript api [geocoding docs](https://developers.google.com/maps/documentation/javascript/geocoding)

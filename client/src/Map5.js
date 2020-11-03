@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { randomPoint } from "@turf/random";
 // import MapGL, { Source, Layer, easeTo, onEnter, Feature } from "@urbica/react-map-gl";
 import "../node_modules/mapbox-gl/dist/mapbox-gl.css";
@@ -6,7 +6,50 @@ import { accessToken, mapStyle } from "./config";
 // this is what your points need to look like:
 import MapboxGlMapHooks from "./Map4";
 // import { Feature } from "react-mapbox-gl";
-import ReactMapboxGl, { Layer, Feature, Source } from "react-mapbox-gl";
+import ReactMapboxGl, { Layer, Feature, Source, Popup } from "react-mapbox-gl";
+import mapboxgl from "mapbox-gl";
+import InfoPopup from "./InfoPopup";
+
+const data = {
+  type: "FeatureCollection",
+  crs: { type: "name", properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+  features: [
+    {
+      type: "Feature",
+      properties: {
+        id: "ak16994521",
+        mag: 2.3,
+        time: 1507425650893,
+        felt: null,
+				tsunami: 0,
+				onClick: (e)=>{console.log(e)}
+      },
+      geometry: { type: "Point", coordinates: [-96, 46.5] },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "ak16994519",
+        mag: 1.7,
+        time: 1507425289659,
+        felt: null,
+        tsunami: 0,
+      },
+      geometry: { type: "Point", coordinates: [-95.5, 46.5] },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "ak16994517",
+        mag: 1.6,
+        time: 1507424832518,
+        felt: null,
+        tsunami: 0,
+      },
+      geometry: { type: "Point", coordinates: [-95, 46.5] },
+    },
+  ],
+};
 
 export default function MapTry() {
   const geojsonData = {
@@ -53,9 +96,11 @@ export default function MapTry() {
   //   },
   // };
 
-  const [points, setPoints] = useState(randomPoint(100));
-
-  const [viewport, setViewport] = useState({
+	const [points, setPoints] = useState(randomPoint(100));
+	const [showPopup, setShowPopup] = useState(false)
+	const popupInfoRef = useRef()
+	const popupCoordinatesRef = useRef()
+	const [viewport, setViewport] = useState({
     center: [-94.6859, 46.5],
     zoom: [5],
     movingMethod: "easeTo",
@@ -106,7 +151,7 @@ export default function MapTry() {
       type: "geojson",
       // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
       // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-      data: "https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson",
+      data: data,
       cluster: true,
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
@@ -163,10 +208,10 @@ export default function MapTry() {
 
     // inspect a cluster on click
     map.on("click", "clusters", function (e) {
-      var features = map.queryRenderedFeatures(e.point, {
+      const features = map.queryRenderedFeatures(e.point, {
         layers: ["clusters"],
       });
-      var clusterId = features[0].properties.cluster_id;
+      const clusterId = features[0].properties.cluster_id;
       map
         .getSource("earthquakes")
         .getClusterExpansionZoom(clusterId, function (err, zoom) {
@@ -184,9 +229,10 @@ export default function MapTry() {
     // the location of the feature, with
     // description HTML from its properties.
     map.on("click", "unclustered-point", function (e) {
-      var coordinates = e.features[0].geometry.coordinates.slice();
-      var mag = e.features[0].properties.mag;
-      var tsunami;
+			const coordinates = e.features[0].geometry.coordinates.slice();
+      // change this to the info - the popup will be an info component
+      const mag = e.features[0].properties.mag;
+      let tsunami;
 
       if (e.features[0].properties.tsunami === 1) {
         tsunami = "yes";
@@ -200,7 +246,13 @@ export default function MapTry() {
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
       }
+      // const popup = InfoPopup(coordinates);
+			// console.log(popup);
+			popupCoordinatesRef.current = coordinates
+			popupInfoRef.current = mag
 
+			setShowPopup(true)
+      // map.addTo(popup)
       // new mapboxgl.Popup()
       //   .setLngLat(coordinates)
       //   .setHTML("magnitude: " + mag + "<br>Was there a tsunami?: " + tsunami)
@@ -220,17 +272,15 @@ export default function MapTry() {
     // name: "Mapbox Streets",
     // "sprite": "mapbox://sprites/mapbox/streets-v8",
     // "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
-    sources: {},
-		layers: [],
-		...viewport
+    // sources: {},
+    // layers: [],
+    // ...viewport
   };
 
   const Map = ReactMapboxGl({
-		accessToken,
-		conatiner: 'map',
-    style: mapStyle,
-
-    ...mapProperties,
+    accessToken,
+    // container: 'map',
+    // ...mapProperties,
   });
 
   return (
@@ -238,14 +288,16 @@ export default function MapTry() {
       <button onClick={addPoints}>+100 points</button>
       <Map
         className="mapbox"
-				style={mapStyle}
-				onStyleLoad={loadStuff}
+        style={mapStyle}
+        onStyleLoad={loadStuff}
         // mapStyle={mapStyle}
         // accessToken={accessToken}
-        // onViewportChange={setViewport}
+        onViewportChange={setViewport}
         {...viewport}
         // renderChildrenInPortal={true}
-      />
+      >
+				{showPopup ? <InfoPopup coordinates={popupCoordinatesRef.current} info={popupInfoRef.current} setShowPopup={setShowPopup} /> : null}
+			</Map>
     </>
   );
 }
