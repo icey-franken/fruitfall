@@ -5,7 +5,7 @@ import UserList from './components/UsersList';
 import UserForm from './components/UserForm';
 import AuthContext from './auth'
 
-import Map from './Map5'
+import Map from './components/Map/MapMain'
 
 function App() {
     const [fetchWithCSRF, setFetchWithCSRF] = useState(() => fetch);

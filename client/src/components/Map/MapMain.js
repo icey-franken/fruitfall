@@ -1,15 +1,16 @@
 import React, { useState, useRef } from "react";
+import ReactDOM from 'react-dom';
 import { randomPoint } from "@turf/random";
 // import MapGL, { Source, Layer, easeTo, onEnter, Feature } from "@urbica/react-map-gl";
-import "../node_modules/mapbox-gl/dist/mapbox-gl.css";
-import { accessToken, mapStyle } from "./config";
+import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
+import { accessToken, mapStyle } from "../.././config";
 // this is what your points need to look like:
-import MapboxGlMapHooks from "./Map4";
+// import MapboxGlMapHooks from "./Map4";
 // import { Feature } from "react-mapbox-gl";
 import ReactMapboxGl, { Layer, Feature, Source, Popup } from "react-mapbox-gl";
 import mapboxgl from "mapbox-gl";
-import InfoPopup from "./InfoPopup";
-
+// import InfoPopup from "./InfoPopup";
+import InfoPopup from './InfoPopup'
 const data = {
   type: "FeatureCollection",
   crs: { type: "name", properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" } },
@@ -21,8 +22,10 @@ const data = {
         mag: 2.3,
         time: 1507425650893,
         felt: null,
-				tsunami: 0,
-				onClick: (e)=>{console.log(e)}
+        tsunami: 0,
+        onClick: (e) => {
+          console.log(e);
+        },
       },
       geometry: { type: "Point", coordinates: [-96, 46.5] },
     },
@@ -52,12 +55,12 @@ const data = {
 };
 
 export default function MapTry() {
-	const [points, setPoints] = useState(randomPoint(100));
-	const [showPopup, setShowPopup] = useState(false)
-	// const showPopupRef = useRef(false)
-	const popupInfoRef = useRef()
-	const popupCoordinatesRef = useRef()
-	const [viewport, setViewport] = useState({
+  const [points, setPoints] = useState(randomPoint(100));
+  // const [showPopup, setShowPopup] = useState(false)
+  // const showPopupRef = useRef(false)
+  const popupInfoRef = useRef();
+  const popupCoordinatesRef = useRef([]);
+  const [viewport, setViewport] = useState({
     center: [-94.6859, 46.5],
     zoom: [5],
     movingMethod: "easeTo",
@@ -186,7 +189,7 @@ export default function MapTry() {
     // the location of the feature, with
     // description HTML from its properties.
     map.on("click", "unclustered-point", function (e) {
-			const coordinates = e.features[0].geometry.coordinates.slice();
+      const coordinates = e.features[0].geometry.coordinates.slice();
       // change this to the info - the popup will be an info component
       const mag = e.features[0].properties.mag;
       let tsunami;
@@ -204,13 +207,14 @@ export default function MapTry() {
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
       }
       // const popup = InfoPopup(coordinates);
-			// console.log(popup);
-			popupCoordinatesRef.current = coordinates
-			popupInfoRef.current = mag
-			// showPopupRef.current = true
-			// console.log(showPopupRef)
-			setShowPopup(true)
+      // console.log(popup);
+      popupCoordinatesRef.current = coordinates;
+      popupInfoRef.current = mag;
+      // showPopupRef.current = true
+      // console.log(showPopupRef)
+      // setShowPopup(true)
       // map.addTo(popup)
+      addPopup(map, coordinates, mag);
       // new mapboxgl.Popup()
       //   .setLngLat(coordinates)
       //   .setHTML("magnitude: " + mag + "<br>Was there a tsunami?: " + tsunami)
@@ -224,6 +228,16 @@ export default function MapTry() {
       map.getCanvas().style.cursor = "";
     });
   }
+  const addPopup = (map, coordinates, info) => {
+		const placeholder = document.createElement("div");
+		const popup = <InfoPopup info={info}/>
+    ReactDOM.render(popup, placeholder);
+
+    new mapboxgl.Popup()
+      .setDOMContent(placeholder)
+      .setLngLat(coordinates)
+      .addTo(map);
+  };
 
   const mapProperties = {
     // version: 8,
@@ -240,7 +254,7 @@ export default function MapTry() {
     // container: 'map',
     // ...mapProperties,
   });
-	// console.log(showPopupRef)
+  // console.log(showPopupRef)
   return (
     <>
       <button onClick={addPoints}>+100 points</button>
@@ -254,8 +268,8 @@ export default function MapTry() {
         {...viewport}
         // renderChildrenInPortal={true}
       >
-				<InfoPopup showPopup={showPopup} coordinates={popupCoordinatesRef.current} info={popupInfoRef.current} setShowPopup={setShowPopup}  />
-			</Map>
+        {/* <InfoPopup showPopup={showPopup} coordinates={popupCoordinatesRef.current} info={popupInfoRef.current} setShowPopup={setShowPopup}  /> */}
+      </Map>
     </>
   );
 }
