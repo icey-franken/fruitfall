@@ -19,8 +19,9 @@
 
 .add-location__form-cont{
 	width: 30%;
-	/* z-index:1; */
+	z-index:1;
 	background-color: white;
+	position: absolute;
 }
 
 .add-location__form-box{

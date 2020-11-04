@@ -19,9 +19,6 @@ export default function NavBar() {
 			<NavLink className='navbar-item' exact to="/map" activeclass="active">
         Map
       </NavLink>
-			<NavLink className='navbar-item' exact to="/add-location" activeclass="active">
-        Add Location
-      </NavLink>
     </div>
   );
 }

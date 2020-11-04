@@ -10,7 +10,7 @@ export default function MapContainer() {
 
   const removeLayers = (map) => {
     // e.preventDefault();
-		// e.stopPropagation();
+    // e.stopPropagation();
     let visible = true;
     layerIds.forEach((layerId) => {
       const visibility = map.getLayoutProperty(layerId, "visibility");
@@ -25,7 +25,7 @@ export default function MapContainer() {
         map.setLayoutProperty(layerId, "visibility", "visible");
       }
       // map.resize();
-		});
+    });
     console.log("visible?", visible);
     return visible;
     // toggle layer visibility by changing the layout object's visibility property
@@ -33,11 +33,11 @@ export default function MapContainer() {
   const [mapboxClass, setMapboxClass] = useState("mapbox-full");
   const [showAddLocation, setShowAddLocation] = useState(false);
   const handleAddLocationClick = (e) => {
-		console.log('hits map container')
+    console.log("hits map container");
     // we tie removal of layers and add location form together
-		const showForm = !removeLayers(mapbox.current);
-		console.log(e.target.name)
-		// setMapboxClass()
+    const showForm = !removeLayers(mapbox.current);
+    console.log(e.target.name);
+    // setMapboxClass()
 
     // change of state here does NOT trigger re-render of map - ok!
     setShowAddLocation(showForm);
@@ -55,8 +55,8 @@ export default function MapContainer() {
       >
         Add Location
       </button>
+      {showAddLocation ? <AddLocationForm /> : null}
       <div className="mapbox-cont">
-        {showAddLocation ? <AddLocationForm /> : null}
         {/* <div className="full-mapbox"> */}
         <MapMain mapbox={mapbox} />
         <div

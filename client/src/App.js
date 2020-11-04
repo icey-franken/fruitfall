@@ -6,8 +6,7 @@ import UserForm from "./components/UserForm";
 import AuthContext from "./auth";
 import NavBar from "./components/NavBar";
 import MapContainer from "./components/Map/MapContainer";
-import AddLocationForm from "./components/Map/AddLocationForm";
-import AddLocationView from './views/AddLocationView'
+
 function App() {
   const [fetchWithCSRF, setFetchWithCSRF] = useState(() => fetch);
   const authContextValue = {
@@ -55,9 +54,6 @@ function App() {
           </Route>
           <Route exact path="/map">
             <MapContainer />
-          </Route>
-          <Route exact path="/add-location">
-            <AddLocationView />
           </Route>
         </Switch>
       </BrowserRouter>
