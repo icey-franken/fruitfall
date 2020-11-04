@@ -55,7 +55,9 @@ export default function MapMain() {
       cluster: true,
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
-    });
+			// promoteId: 'id'//this moves id from properties into feature id - but it breaks clusters!
+			generateId: true//will this work for clusters and unclustered-points??? YES!
+		});
 
     map.addLayer({
       id: "clusters",
@@ -119,7 +121,13 @@ export default function MapMain() {
         "circle-color": primary_color,
         "circle-radius": 4,
         "circle-stroke-width": 1,
-        "circle-stroke-color": secondary_color,
+				"circle-stroke-color": secondary_color,
+				"circle-opacity": [
+          "case",
+          ["boolean", ["feature-state", "hover"], false],
+          1,
+          0.7,
+        ],
       },
     });
 
@@ -168,22 +176,22 @@ export default function MapMain() {
     // start cluster hover features------------------------------------
     // me freeballin
 
-    let clusterId = null;
-//
+		let featureId = null;//try grouping hover effect for clusters and unclustered points into one variable - we only want one hover effect at a time anyways - WORKS!
     map.on("mousemove", "clusters", function (e) {
-      map.getCanvas().style.cursor = "pointer";
+			map.getCanvas().style.cursor = "pointer";
       if (e.features.length > 0) {
-        if (clusterId) {
+        if (featureId) {
           map.removeFeatureState({
             source: "earthquakes",
-            id: clusterId,
+            id: featureId,
           });
         }
-        clusterId = e.features[0].id;
+				featureId = e.features[0].id;
+				console.log(featureId)
         map.setFeatureState(
           {
             source: "earthquakes",
-            id: clusterId,
+            id: featureId,
           },
           {
             hover: true,
@@ -194,19 +202,61 @@ export default function MapMain() {
 
     map.on("mouseleave", "clusters", function () {
       map.getCanvas().style.cursor = "";
-      if (clusterId) {
+      if (featureId) {
         map.setFeatureState(
           {
             source: "earthquakes",
-            id: clusterId,
+            id: featureId,
           },
           {
             hover: false,
           }
         );
       }
-      clusterId = null;
+      featureId = null;
+		});
+    // end cluster hover features------------------------------------
+
+    // start unclustered point hover features------------------------------------
+
+    map.on("mousemove", "unclustered-point", function (e) {
+			map.getCanvas().style.cursor = "pointer";
+      if (e.features.length > 0) {
+        if (featureId) {
+          map.removeFeatureState({
+            source: "earthquakes",
+            id: featureId,
+          });
+        }
+        featureId = e.features[0].id;
+        map.setFeatureState(
+          {
+            source: "earthquakes",
+            id: featureId,
+          },
+          {
+            hover: true,
+          }
+        );
+      }
     });
+
+    map.on("mouseleave", "unclustered-point", function () {
+      map.getCanvas().style.cursor = "";
+      if (featureId) {
+        map.setFeatureState(
+          {
+            source: "earthquakes",
+            id: featureId,
+          },
+          {
+            hover: false,
+          }
+        );
+      }
+      featureId = null;
+    });
+    // end unclustered point hover features------------------------------------
 
     // // OG enter/leave for clusters
     // map.on("mouseenter", "clusters", function () {
