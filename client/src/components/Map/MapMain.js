@@ -271,58 +271,62 @@ export default function MapMain({ mapbox }) {
     //   map.getCanvas().style.cursor = "";
     // });
     //end cluster hover features-----------------------
-    const mapDiv = document.getElementById("mapbox");
-		const mapCanvas = document.querySelector(".mapboxgl-canvas");
-		const mapCanvasCont = document.querySelector(".mapboxgl-canvas-container");
 
-		console.log(mapDiv)
-		console.log(mapCanvas)
-		const big = '1000px';
-		const small = '500px';
-		// mapDiv.style.width = big;
-		// mapCanvas.style.width = '100%';
-		// mapCanvasCont.style.width = '100%';
+    // RESIZE MAP ON CLICK ADD BUTTON-----------------------
+    // const mapDiv = document.getElementById("mapbox");
+    // const mapCanvas = document.querySelector(".mapboxgl-canvas");
+    // // const mapCanvasCont = document.querySelector(".mapboxgl-canvas-container");
 
-		// mapDiv.style.height = '90vh';
-		// mapCanvas.style.height = '90vh';
-		// map.resize();
+    // console.log(mapDiv)
+    // console.log(mapCanvas)
+    // const big = '95vw';
+    // const small = '60vw';
+    // mapDiv.style.width = big;
+    // map.resize()
+    // // mapCanvas.style.width = '100%';
+
+    // // mapDiv.style.height = '90vh';
+    // // mapCanvas.style.height = '90vh';
+    // // map.resize();
     const addLocationButton = document.getElementById("add-location-button");
     addLocationButton.addEventListener("click", (e) => {
-			console.log(e.target)
-			console.log(mapCanvas.style.width)
-			console.log(mapDiv.style.width)
-			console.log(addLocationButton.name)
-			console.log(typeof addLocationButton.name)
-			if (addLocationButton.name==='true') {
-				// mapDiv.classList.add('.add-location__mapbox')
-				// mapCanvas.classList.add('.add-location__mapbox')
-				// mapDiv.classList.remove('.full-mapbox')
-				// mapCanvas.classList.remove('.full-mapbox')
-				mapDiv.style.width = big;
-				mapCanvas.style.width = '150%';
-				mapCanvasCont.style.width = '150%';
-				// mapCanvasCont.style.width = big;
-
-				map.resize();
-				console.log('hits if')
-			} else {
-				// mapDiv.classList.remove('.add-location__mapbox')
-				// mapCanvas.classList.remove('.add-location__mapbox')
-				// mapDiv.classList.add('.full-mapbox')
-				// mapCanvas.classList.add('.full-mapbox')
-				mapDiv.style.width = small;
-				mapCanvas.style.width = '100%';
-				mapCanvasCont.style.width = '100%';
-
-				map.resize();
-				// mapCanvasCont.style.width = small;
-				console.log('hits else')
-			}
-
-      // map.resize();
-      // map.setCenter(viewport.center)
-      map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
+			console.log('hits map main')
+			map.flyTo({ center: [-94.6859, 46.5], zoom: 5
+			});
     });
+    // 	console.log(e.target)
+    // 	console.log(mapCanvas.style.width)
+    // 	console.log(mapDiv.style.width)
+    // 	console.log(addLocationButton.name)
+    // 	console.log(typeof addLocationButton.name)
+    // 	if (addLocationButton.name==='true') {
+    // 		// mapDiv.classList.add('.add-location__mapbox')
+    // 		// mapCanvas.classList.add('.add-location__mapbox')
+    // 		// mapDiv.classList.remove('.full-mapbox')
+    // 		// mapCanvas.classList.remove('.full-mapbox')
+    // 		mapDiv.style.width = small;
+    // 		mapCanvas.style.width = '100%';
+    // 		// mapCanvasCont.style.width = big;
+
+    // 		map.resize();
+    // 		console.log('hits if')
+    // 	} else {
+    // 		// mapDiv.classList.remove('.add-location__mapbox')
+    // 		// mapCanvas.classList.remove('.add-location__mapbox')
+    // 		// mapDiv.classList.add('.full-mapbox')
+    // 		// mapCanvas.classList.add('.full-mapbox')
+    // 		mapDiv.style.width = big;
+    // 		// mapCanvas.style.width = '100%';
+
+    // 		map.resize();
+    // 		// mapCanvasCont.style.width = small;
+    // 		console.log('hits else')
+    // 	}
+
+    //   // map.setCenter(viewport.center)
+    //   map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
+    //   map.resize();
+    // });
   };
 
   const addPopup = (map, coordinates, info) => {
