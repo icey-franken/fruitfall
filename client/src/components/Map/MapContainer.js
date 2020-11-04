@@ -43,14 +43,15 @@ export default function MapContainer() {
 
   return (
     <>
-      <div className={`${showAddLocation ? "add-location__view" : ""}`}>
+      {/* <div className={`${showAddLocation ? "add-location__view" : ""}`}> */}
+			<div className='mapbox-cont'>
 				<button id='add-location-button' name={showAddLocation.toString()} onClick={handleAddLocationClick}>Add Location</button>
         {showAddLocation ? <AddLocationForm /> : null}
         {/* <div className="full-mapbox"> */}
-				<MapMain mapbox={mapbox} showAddLocation={showAddLocation}/>
+				<MapMain mapbox={mapbox}/>
 					<div
 						id="mapbox"
-						className={mapboxClass}
+						// className={mapboxClass}
             // className={`mapbox ${
             //   showAddLocation ? "add-location__mapbox" : "full-mapbox"
             // }`}

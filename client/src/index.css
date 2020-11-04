@@ -2,7 +2,3 @@
 @import './styles/AddLocationView.css';
 
 /* TODO Add site wide styles */
-.full-mapbox{
-	width:95vw;
-	height:80vh;
-}
