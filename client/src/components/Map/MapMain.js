@@ -6,6 +6,37 @@ import ReactMapboxGl, { Layer, Feature, Source, Popup } from "react-mapbox-gl";
 import mapboxgl from "mapbox-gl";
 import InfoPopup from "./InfoPopup";
 
+const primary_color = "#11b4da";//update
+const secondary_color = "#fff";//update
+// must have odd number of entries. Color, number, color, etc. Same for radius scale
+const circle_color_scale = [ "#B49EDC",
+50,
+"#C5EBFE",
+250,
+"#A5F8CE",
+750,
+"#FFFD98",
+3000,
+"#FEC9A7",
+15000,
+"#F297C0"]
+// change radius to a step function - LATER
+const circle_radius_scale = [
+	10,
+	50,
+	15,
+	250,
+	20,
+	750,
+	25,
+	3000,
+	30,
+	15000,
+	35,
+	50000,
+	40,
+	]
+
 export default function MapMain() {
   const [viewport, setViewport] = useState({
     center: [-94.6859, 46.5],
@@ -14,7 +45,7 @@ export default function MapMain() {
     // maxBounds: [[-98,43.2], [-89.5, 50]]  //I don't care about maxBounds - look whereever you please, data is only in mn
   });
 
-  function loadStuff(map) {
+  function loadMap(map) {
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will
     // add the point_count property to your source data.
@@ -40,19 +71,7 @@ export default function MapMain() {
         "circle-color": [
           "step",
           ["get", "point_count"],
-          "#9400D3",
-          10,
-          "#4B0082",
-          50,
-          "#0000FF",
-          100,
-          "#00FF00",
-          500,
-          "#FFFF00",
-          1000,
-          "#FF7F00",
-          5000,
-          "#FF0000",
+          ...circle_color_scale
         ],
         // original circle color
         // "circle-color": [
@@ -67,25 +86,7 @@ export default function MapMain() {
         "circle-radius": [
           "step",
           ["get", "point_count"],
-          5,
-          10,
-          10,
-          50,
-          15,
-          100,
-          20,
-          500,
-					25,
-					1000,
-					30,
-					5000,
-					35,
-					10000,
-					40,
-					25000,
-					45,
-					50000,
-					50,
+       ...circle_radius_scale
         ],
         "circle-opacity": [
           "case",
@@ -115,10 +116,10 @@ export default function MapMain() {
       source: "earthquakes",
       filter: ["!", ["has", "point_count"]],
       paint: {
-        "circle-color": "#11b4da",
+        "circle-color": primary_color,
         "circle-radius": 4,
         "circle-stroke-width": 1,
-        "circle-stroke-color": "#fff",
+        "circle-stroke-color": secondary_color,
       },
     });
 
@@ -168,7 +169,7 @@ export default function MapMain() {
     // me freeballin
 
     let clusterId = null;
-
+//
     map.on("mousemove", "clusters", function (e) {
       map.getCanvas().style.cursor = "pointer";
       if (e.features.length > 0) {
@@ -234,7 +235,7 @@ export default function MapMain() {
     <Map
       className="mapbox"
       style={mapStyle}
-      onStyleLoad={loadStuff}
+      onStyleLoad={loadMap}
       onViewportChange={setViewport}
       {...viewport}
       // renderChildrenInPortal={true}
