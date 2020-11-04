@@ -1,0 +1,38 @@
+.add-location__view{
+	width: 100%;
+	height: 90vh;
+	display: flex;
+}
+
+.add-location__mapbox{
+	width:70%;
+	height:90%;
+}
+
+.add-location__form-cont{
+	width: 30%;
+	z-index:1;
+	background-color: white;
+}
+
+.add-location__form-box{
+	display: flex;
+	flex-direction: column;
+	margin: 10px auto;
+}
+
+/* remove spinner from number input */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.mapboxgl-canvas-container {
+	height: 100px;
+	width: 100px;
+}

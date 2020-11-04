@@ -1,0 +1,9 @@
+.navbar-cont{
+	display: flex;
+	justify-content: space-around;
+	height: 20px;
+	z-index:10;
+}
+.active{
+	color: pink;
+}
