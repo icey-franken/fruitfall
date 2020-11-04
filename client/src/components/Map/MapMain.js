@@ -119,7 +119,12 @@ export default function MapMain() {
       filter: ["!", ["has", "point_count"]],
       paint: {
         "circle-color": primary_color,
-        "circle-radius": 4,
+				"circle-radius": [
+          "case",
+          ["boolean", ["feature-state", "hover"], false],
+          6,
+          4,
+        ],
         "circle-stroke-width": 1,
 				"circle-stroke-color": secondary_color,
 				"circle-opacity": [
