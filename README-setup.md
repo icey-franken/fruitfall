@@ -61,15 +61,15 @@ This is the backend for the Flask React project.
 7. Push your docker container to heroku from the root directory of your project.
    This will build the dockerfile and push the image to your heroku container registry
    ```bash
-   heroku container:push web -a {NAME_OF_HEROKU_APP}
+   heroku container:push web -a fruitfall
    ```
 8. Release your docker container to heroku
    ```bash
-   heroku container:release web -a {NAME_OF_HEROKU_APP}
+   heroku container:release web -a fruitfall
    ```
 9. set up your database:
    ```bash
-   heroku run -a {NAME_OF_HEROKU_APP} python -m database
+   heroku run -a fruitfall python -m database
    ```
 10. Under Settings find "Config Vars" and add any additional/secret .env variables.
 11. profit

@@ -8,7 +8,7 @@ import MapboxGlMapHooks from "./Map4";
 // import { Feature } from "react-mapbox-gl";
 import ReactMapboxGl, { Layer, Feature, Source, Popup } from "react-mapbox-gl";
 import mapboxgl from "mapbox-gl";
-import InfoPopup from "./InfoPopup";
+import InfoPopup from "./components/Map/InfoPopup";
 
 const data = {
   type: "FeatureCollection",

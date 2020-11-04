@@ -5,21 +5,20 @@ import { mapboxgl } from "mapbox-gl";
 import { accessToken, mapStyle } from "./config";
 
 mapboxgl.accessToken = accessToken;
-export default class Map extends React.Component {
 
-	var map = new mapboxgl.Map({
-		container: "map",
+var map = new mapboxgl.Map({
+  container: "map",
   style: mapStyle,
   center: [-103.59179687498357, 40.66995747013945],
   zoom: 3,
 });
 
 map.on("load", function () {
-	// Add a new source from our GeoJSON data and
+  // Add a new source from our GeoJSON data and
   // set the 'cluster' option to true. GL-JS will
   // add the point_count property to your source data.
   map.addSource("earthquakes", {
-		type: "geojson",
+    type: "geojson",
     // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
     // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
     data: "https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson",
@@ -34,7 +33,7 @@ map.on("load", function () {
     source: "earthquakes",
     filter: ["has", "point_count"],
     paint: {
-			// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+      // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
       // with three steps to implement three types of circles:
       //   * Blue, 20px circles when point count is less than 100
       //   * Yellow, 30px circles when point count is between 100 and 750
@@ -53,12 +52,12 @@ map.on("load", function () {
   });
 
   map.addLayer({
-		id: "cluster-count",
+    id: "cluster-count",
     type: "symbol",
     source: "earthquakes",
     filter: ["has", "point_count"],
     layout: {
-			"text-field": "{point_count_abbreviated}",
+      "text-field": "{point_count_abbreviated}",
       "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
       "text-size": 12,
     },
@@ -79,7 +78,7 @@ map.on("load", function () {
 
   // inspect a cluster on click
   map.on("click", "clusters", function (e) {
-		var features = map.queryRenderedFeatures(e.point, {
+    var features = map.queryRenderedFeatures(e.point, {
       layers: ["clusters"],
     });
     var clusterId = features[0].properties.cluster_id;
@@ -105,9 +104,9 @@ map.on("load", function () {
     var tsunami;
 
     if (e.features[0].properties.tsunami === 1) {
-			tsunami = "yes";
+      tsunami = "yes";
     } else {
-			tsunami = "no";
+      tsunami = "no";
     }
 
     // Ensure that if the map is zoomed out such that
@@ -130,5 +129,3 @@ map.on("load", function () {
     map.getCanvas().style.cursor = "";
   });
 });
-
-}
