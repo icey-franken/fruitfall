@@ -218,7 +218,7 @@ export default function AddLocationForm() {
             onChange={handleChange}
           />
 
-          <button>Add Location</button>
+          <button className='btn'>Add Location</button>
         </div>
       </form>
     </div>

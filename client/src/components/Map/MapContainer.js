@@ -3,9 +3,8 @@ import BuildMap from "./BuildMap";
 import AddLocationForm from "./AddLocationForm";
 
 export default function MapContainer() {
-  // const [mapbox, setMapbox] = useState(null);
   const [mapbox, setMapbox] = useState(null);
-	const [mapboxLoaded, setMapboxLoaded] = useState(false)
+  const [mapboxLoaded, setMapboxLoaded] = useState(false);
   const layerIds = ["clusters", "cluster-count", "unclustered-point"];
 
   const removeLayers = (map) => {
@@ -14,7 +13,6 @@ export default function MapContainer() {
     let visible = true;
     layerIds.forEach((layerId) => {
       const visibility = map.getLayoutProperty(layerId, "visibility");
-      console.log(visibility);
       // or undefined because that is initial value. Easier than changing visibility
       if (visibility === "visible" || visibility === undefined) {
         map.setLayoutProperty(layerId, "visibility", "none");
@@ -26,52 +24,34 @@ export default function MapContainer() {
       }
       // map.resize();
     });
-    console.log("visible?", visible);
     return visible;
-    // toggle layer visibility by changing the layout object's visibility property
   };
-  const [mapboxClass, setMapboxClass] = useState("mapbox-full");
+
   const [showAddLocation, setShowAddLocation] = useState(false);
   const handleAddLocationClick = (e) => {
-    console.log("hits map container");
     // we tie removal of layers and add location form together
+    // this way they're always in sync
     const showForm = !removeLayers(mapbox);
-    console.log(e.target.name);
-    // setMapboxClass()
-
     // change of state here does NOT trigger re-render of map - ok!
     setShowAddLocation(showForm);
   };
 
-  // add something so that button doesn't render until styles are loaded
   return (
     <>
-      {/* <div className={`${showAddLocation ? "add-location__view" : ""}`}> */}
-        <button
-          id="add-location-button"
-          name={showAddLocation.toString()}
-					onClick={handleAddLocationClick}
-					style={{display: `${mapboxLoaded ? '': 'none'}`}}
-        >
-          Add Location
-        </button>
+      <button
+        id="add-location-button"
+        className="btn add-location__btn"
+        name={showAddLocation.toString()}
+        onClick={handleAddLocationClick}
+        // hide button until layers loaded
+        style={{ display: `${mapboxLoaded ? "" : "none"}` }}
+      >
+        {showAddLocation ? "Close" : "Add Location"}
+      </button>
       {showAddLocation ? <AddLocationForm /> : null}
       <div className="mapbox-cont">
-        {/* <div className="full-mapbox"> */}
         <BuildMap setMapbox={setMapbox} setMapboxLoaded={setMapboxLoaded} />
-        <div
-          id="mapbox"
-          // className={mapboxClass}
-          // className={`mapbox ${
-          //   showAddLocation ? "add-location__mapbox" : "full-mapbox"
-          // }`}
-          // style={mapStyle}
-          // onStyleLoad={addingLocation ? null : loadMap}
-          // onViewportChange={setViewport}
-          // {...viewport}
-          // renderChildrenInPortal={true}
-        ></div>
-        {/* </div> */}
+        <div id="mapbox" />
       </div>
     </>
   );

@@ -6,7 +6,7 @@ export default function NavBar() {
   return (
     <div className="navbar-cont">
 			<NavLink className='navbar-item' exact to="/" activeclass="active">
-        Home
+        Map
       </NavLink>
 
       <NavLink className='navbar-item' exact to="/login" activeclass="active">
@@ -15,9 +15,6 @@ export default function NavBar() {
 
       <NavLink className='navbar-item' exact to="/users" activeclass="active">
         Users
-      </NavLink>
-			<NavLink className='navbar-item' exact to="/map" activeclass="active">
-        Map
       </NavLink>
     </div>
   );

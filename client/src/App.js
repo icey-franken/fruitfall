@@ -50,9 +50,6 @@ function App() {
           </Route>
           <Route exact path="/users/:id/edit" component={UserForm} />
           <Route exact path="/">
-            <h1>My Home Page</h1>
-          </Route>
-          <Route exact path="/map">
             <MapContainer />
           </Route>
         </Switch>

@@ -1,9 +1,24 @@
-.navbar-cont{
-	display: flex;
-	justify-content: space-around;
-	height: 20px;
-	z-index:10;
+.navbar-cont {
+  display: flex;
+  justify-content: space-around;
+  height: 40px;
+  z-index: 10;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: black;
+  color: white;
 }
-.active{
-	color: pink;
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  color: inherit;
+}
+
+a.active {
+  color: pink;
+  font-weight: bold;
 }

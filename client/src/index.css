@@ -4,3 +4,39 @@
 
 
 /* TODO Add site wide styles */
+
+
+body{
+	font-family: helvetica,arial,courier;
+	font-size: 16px;
+	margin: 0;
+}
+
+.btn{
+	padding: 10px;
+  border: none;
+  font: inherit;
+  color: inherit;
+  background-color: turquoise;
+  /* show a hand cursor on hover; some argue that we
+  should keep the default arrow cursor for buttons */
+	cursor: pointer;
+	margin: 2px 0;
+	border: solid 2px purple;
+	color: purple;
+	border-radius: 4px;
+	outline: none;
+}
+.btn::-moz-focus-inner {
+  border: none;
+}
+.btn:hover{
+	/* transform: translateY(1px); */
+	filter: saturate(150%);
+  border-color: currentColor;
+  background-color: white;
+}
+
+.btn:focus {
+  /* border-width:  */
+}
