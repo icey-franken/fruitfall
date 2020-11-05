@@ -4,10 +4,8 @@ import ReactDOM from "react-dom";
 import { accessToken, mapStyle } from "../../config";
 import mapboxgl from "mapbox-gl";
 import InfoPopup from "./InfoPopup";
-
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-
 const primary_color = "#11b4da"; //update
 const secondary_color = "#fff"; //update
 // must have odd number of entries. Color, number, color, etc. Same for radius scale
@@ -41,12 +39,13 @@ const circle_radius_scale = [
   40,
 ];
 
+
 export default function BuildMap({
   setMapbox,
   setMapboxLoaded,
   setSearchLatLon,
-	showAddLocation,
-	markerInst,
+  showAddLocation,
+  markerInst,
 }) {
   // const [viewport, setViewport] = useState({
   //   center: [-94.6859, 46.5],
@@ -56,28 +55,31 @@ export default function BuildMap({
   // });
 
   const loadMap = (map) => {
-    // add geocoder
 
     const geocoder = new MapboxGeocoder({
       accessToken: accessToken,
-			mapboxgl: mapboxgl,
-			marker: {draggable: true, color: "red" }
-      // marker: { color: "orange", draggable: true },
+      mapboxgl: mapboxgl,
+      marker: false,
     });
     map.addControl(geocoder);
     geocoder.on("result", ({ result }) => {
-			// clear previous marker if it exists
-			if(markerInst.current){
-				markerInst.current.remove();
+      const el = document.createElement("div");
+      el.className = "marker";
+      const marker = new mapboxgl.Marker(el, { draggable: true });
+      marker.setLngLat(result.center).addTo(map);
+      // clear previous marker if it exists
+      if (markerInst.current) {
+        markerInst.current.remove();
 			}
-			//this will fill in whatever result user clicks on
-			setSearchLatLon([...result.center]);
-			// make their search result draggable
-      geocoder.mapMarker.on("dragend", (e) => {
-				const coordinates = e.target.getLngLat();
-				setSearchLatLon([coordinates.lng, coordinates.lat]);
+			markerInst.current = marker;
+      //this will fill in whatever result user clicks on
+      setSearchLatLon([...result.center]);
+      // make their search result draggable and set coords in form
+      marker.on("dragend", (e) => {
+        const coordinates = e.target.getLngLat();
+        setSearchLatLon([coordinates.lng, coordinates.lat]);
       });
-		});
+    });
 
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will

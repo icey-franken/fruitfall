@@ -10,3 +10,15 @@
 	height: 95vh;
 	width: 95vw;
 }
+
+.marker {
+	background-image: url('/garden-15.svg');
+	background-size: cover;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+	/* cursor: pointer; */
+	background-color: white;
+	border: 1px solid black;
+
+}
