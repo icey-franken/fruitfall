@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AddLocationForm2 from './AddLocationForm2'
 
 export default function AddLocationForm({ setShowForm }) {
   const types = [
@@ -44,7 +45,6 @@ export default function AddLocationForm({ setShowForm }) {
     visited: false,
   };
   const [formData, setFormData] = useState(emptyForm);
-
   // const [another, setAnother] = useState(false);
 
   const handleSubmit = (e) => {
@@ -122,8 +122,6 @@ export default function AddLocationForm({ setShowForm }) {
     // setAnother(true);
     // }
   };
-  console.log(formData.visited);
-  // console.log(formData.visi
 
   return (
     <div className="add-loc__cont">
@@ -253,8 +251,9 @@ export default function AddLocationForm({ setShowForm }) {
             Have you visted this location?
           </label>
         </div>
-        {formData.visted === true ? null:<div className="add-loc__label">show secondary form</div>}
-				{console.log(formData.visited===true)}
+        {formData.visited === true ? (
+          <AddLocationForm2 handleChange={handleChange} formData={formData} setFormData={setFormData}/>
+        ) : null}
         {/* <div className="add-loc__el">
           <input
             type="checkbox"

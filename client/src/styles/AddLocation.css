@@ -1,61 +1,86 @@
-
-.add-loc__cont{
-	width: 300px;
-	z-index:1;
-	background-color: white;
-	position: absolute;
-	left: 10px;
-	border: 3px solid grey;
-	box-sizing: border-box;
-	padding: 20px;
-	border-radius: 6px;
-	box-shadow: 2px 2px 5px 1px ;
-	margin: 20px auto;
-
+.add-loc__cont {
+  width: 300px;
+  z-index: 3;
+  background-color: white;
+  position: absolute;
+  left: 10px;
+  border: 3px solid grey;
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 2px 2px 5px 1px;
+  margin: 20px auto;
 }
 
 .add-loc__el {
-	padding-bottom: 24px;
+  padding-bottom: 24px;
 }
 
-.add-loc__el-col{
-	width: 100%;
-	display: flex;
-	flex-direction: column;
+.add-loc__el-col {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.add-loc__el-row{
-	/* padding: 20px 0; */
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	/* width: 100%; */
-	justify-content: space-between;
+.add-loc__el-row {
+  /* padding: 20px 0; */
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  /* width: 100%; */
+  justify-content: space-between;
 }
-.add-loc__label{
-	font-weight: bold;
-	margin-bottom: 8px;
+.add-loc__label {
+  font-weight: bold;
+  margin-bottom: 8px;
 }
-.add-loc__pos{
-	width: 50%;
-	/* justify-content: space-between; */
-	/* padding: 1px; */
-	/* display: inline-flex;
+.add-loc__pos {
+  width: 50%;
+  /* justify-content: space-between; */
+  /* padding: 1px; */
+  /* display: inline-flex;
   flex-wrap: wrap;
   margin: -12px 0 0 -12px;
   width: calc(100% + 12px) */
 }
 
-.add-loc__pos-spacer{
-	width: 8px;
+.add-loc__pos-spacer {
+  width: 8px;
 }
 
-.add-location__btn{
-	position: relative;
-	top: 10px;
-	left: 10px;
-	z-index:10;
+.add-location__btn {
+  position: relative;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
 }
+/* -------------------------------------------- */
+/* start location slider */
+.add-loc__slider-cont {
+  width: 112%;
+  position: relative;
+  left: -6%;
+  display: grid;
+  text-align: center;
+}
+.add-loc__slider-cont-other {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.add-loc__slider-cont-fruit {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.add-loc__slider-el {
+  font-size: 0.65em;
+  width: 1/7 * 100%;
+}
+
+.add-loc__slider-el-fruit {
+  font-size: 0.65em;
+  width: 1/7 * 100%;
+}
+/* end location slider */
 
 /* remove spinner from number input */
 input::-webkit-outer-spin-button,
@@ -63,6 +88,6 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
