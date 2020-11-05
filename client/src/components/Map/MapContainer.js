@@ -1,40 +1,81 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import BuildMap from "./BuildMap";
 import AddLocationForm from "./AddLocationForm";
-
+import mapboxgl from "mapbox-gl";
 export default function MapContainer() {
   const [mapbox, setMapbox] = useState(null);
   const [mapboxLoaded, setMapboxLoaded] = useState(false);
   const layerIds = ["clusters", "cluster-count", "unclustered-point"];
 
-  const removeLayers = (map) => {
+  const [searchLatLon, setSearchLatLon] = useState([]);
+
+  function popupOnClick(e) {
+    console.log("e", e);
+    // console.log('map', map)
+    console.log(e.lngLat);
+    // var coordinates = e.lngLat;
+    // 	new mapboxgl.Popup()
+    // 		.setLngLat(coordinates)
+    // 		.setHTML('you clicked here: <br/>' + coordinates)
+    // 		.addTo(map);
+  }
+
+  const toggleLayers = (map, showLayers) => {
     // e.preventDefault();
     // e.stopPropagation();
-    let visible = true;
-    layerIds.forEach((layerId) => {
-      const visibility = map.getLayoutProperty(layerId, "visibility");
-      // or undefined because that is initial value. Easier than changing visibility
-      if (visibility === "visible" || visibility === undefined) {
-        map.setLayoutProperty(layerId, "visibility", "none");
-        //  this.className = '';
-        visible = false;
+    map.on("click", (e) => {
+      console.log("hits click", showLayers);
+      if (!showLayers) {
+        console.log("e", e);
+        // console.log('map', map)
+        console.log(e.lngLat);
+        console.log("hits if");
       } else {
-        //  this.className = 'active';
-        map.setLayoutProperty(layerId, "visibility", "visible");
+        console.log("hits else");
       }
-      // map.resize();
+      // var coordinates = e.lngLat;
+      // 	new mapboxgl.Popup()
+      // 		.setLngLat(coordinates)
+      // 		.setHTML('you clicked here: <br/>' + coordinates)
+      // 		.addTo(map);
     });
-    return visible;
-  };
 
+    layerIds.forEach((layerId) => {
+      // const visibility = map.getLayoutProperty(layerId, "visibility");
+      if (showLayers === true) {
+        map.setLayoutProperty(layerId, "visibility", "visible");
+      } else {
+        map.setLayoutProperty(layerId, "visibility", "none");
+      }
+    });
+	};
   const [showAddLocation, setShowAddLocation] = useState(false);
-  const handleAddLocationClick = () => {
+
+	useEffect(()=>{
+		if(mapbox){
+			toggleLayers(mapbox, showAddLocation)
+		}
+		// setShowAddLocation(!showAddLocation)
+	}, [showAddLocation])
+
+  const handleAddLocationClick = (e) => {
+    // e.preventDefault();
+    // e.stopPropagation();
+    if (showAddLocation === true) {
+      // toggleLayers(mapbox, true);
+      setShowAddLocation(false);
+    } else {
+      // toggleLayers(mapbox, false);
+      setShowAddLocation(true);
+    }
     // we tie removal of layers and add location form together
     // this way they're always in sync
-    const showForm = !removeLayers(mapbox);
-    // change of state here does NOT trigger re-render of map - ok!
-    setShowAddLocation(showForm);
+
+    // const showForm = toggleLayers(mapbox);
+    // // change of state here does NOT trigger re-render of map - ok!
+    // setShowAddLocation(showForm);
   };
+  console.log(searchLatLon);
 
   return (
     <>
@@ -51,11 +92,18 @@ export default function MapContainer() {
       {showAddLocation ? (
         <AddLocationForm
           style={{ display: `${showAddLocation ? "" : "none"}` }}
-          setShowForm={setShowAddLocation} handleFormSubmitClick={handleAddLocationClick}
+          setShowForm={setShowAddLocation}
+          handleFormSubmitClick={handleAddLocationClick}
+          searchLatLon={searchLatLon}
         />
       ) : null}
       <div className="mapbox-cont">
-        <BuildMap setMapbox={setMapbox} setMapboxLoaded={setMapboxLoaded} />
+        <BuildMap
+          setMapbox={setMapbox}
+          setMapboxLoaded={setMapboxLoaded}
+          setSearchLatLon={setSearchLatLon}
+          showAddLocation={showAddLocation}
+        />
         <div id="mapbox" />
       </div>
     </>

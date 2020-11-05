@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddLocationForm2 from "./AddLocationForm2";
 
-export default function AddLocationForm({ handleFormSubmitClick }) {
+export default function AddLocationForm({
+  handleFormSubmitClick,
+  searchLatLon,
+}) {
   const types = [
     [1, "apple"],
     [2, "orange"],
@@ -32,8 +35,8 @@ export default function AddLocationForm({ handleFormSubmitClick }) {
   ];
   const emptyForm = {
     type_ids: "",
-    lat: "",
-    lng: "",
+    lat: '',
+    lng: '',
     address: "",
     description: "",
     season_start: "",
@@ -49,7 +52,12 @@ export default function AddLocationForm({ handleFormSubmitClick }) {
     yield: 0,
   };
   const [formData, setFormData] = useState(emptyForm);
-  // const [another, setAnother] = useState(false);
+	// const [another, setAnother] = useState(false);
+
+	useEffect(()=>{
+		setFormData({...formData, lat: searchLatLon[0], lng: searchLatLon[1]})
+	}, [searchLatLon])
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -65,7 +73,12 @@ export default function AddLocationForm({ handleFormSubmitClick }) {
       // add error
     }
     // must have lat/lng OR an address, which we need to convert to a lat/lng before sending to db.
-    if (formData.lat === "" || formData.lng === "") {
+    if (
+      formData.lat === "" ||
+      formData.lat === undefined ||
+      formData.lng === "" ||
+      formData.lng === undefined
+    ) {
       validated = false;
       console.log("lat/lng error");
       // add error
@@ -130,8 +143,17 @@ export default function AddLocationForm({ handleFormSubmitClick }) {
     // } else {
     // setAnother(true);
     // }
+	};
+
+
+  // console.log(formData);
+
+  // const geocoder = document.getElementsByClassName('mapboxgl-ctrl-geocoder');
+  const [address, setAddress] = useState("");
+
+  const handleAddress = (e) => {
+    const input = e.target.value;
   };
-  console.log(formData);
 
   return (
     <div className="add-loc__cont">
@@ -167,7 +189,8 @@ export default function AddLocationForm({ handleFormSubmitClick }) {
               id="lat"
               type="number"
               onChange={handleChange}
-              placeholder="Latitude"
+							placeholder="Latitude"
+							value={formData.lat}
             />
             <div className="add-loc__pos-spacer" />
             <input
@@ -176,16 +199,18 @@ export default function AddLocationForm({ handleFormSubmitClick }) {
               id="lng"
               type="number"
               onChange={handleChange}
-              placeholder="Longitude"
+							placeholder="Longitude"
+							value={formData.lng}
+
             />
           </div>
         </div>
-        <div className="add-loc__el add-loc__el-col">
+        {/* <div className="add-loc__el add-loc__el-col">
           <label className="add-loc__label" htmlFor="address">
             Address
           </label>
-          <textarea name="address" id="address" onChange={handleChange} />
-        </div>
+          <textarea name="address" id="address" onChange={handleAddress} />
+        </div> */}
         <div className="add-loc__el add-loc__el-col">
           <label className="add-loc__label" htmlFor="description">
             Description

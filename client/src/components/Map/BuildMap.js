@@ -5,6 +5,9 @@ import { accessToken, mapStyle } from "../../config";
 import mapboxgl from "mapbox-gl";
 import InfoPopup from "./InfoPopup";
 
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+
 const primary_color = "#11b4da"; //update
 const secondary_color = "#fff"; //update
 // must have odd number of entries. Color, number, color, etc. Same for radius scale
@@ -38,7 +41,12 @@ const circle_radius_scale = [
   40,
 ];
 
-export default function BuildMap({ setMapbox, setMapboxLoaded }) {
+export default function BuildMap({
+  setMapbox,
+  setMapboxLoaded,
+	setSearchLatLon,
+	showAddLocation
+}) {
   // const [viewport, setViewport] = useState({
   //   center: [-94.6859, 46.5],
   //   zoom: [5],
@@ -47,6 +55,26 @@ export default function BuildMap({ setMapbox, setMapboxLoaded }) {
   // });
 
   const loadMap = (map) => {
+    // add geocoder
+
+    const geocoder = new MapboxGeocoder({
+      accessToken: accessToken,
+      mapboxgl: mapboxgl,
+    });
+    map.addControl(geocoder);
+    geocoder.on("result", ({result}) => {
+			//this will fill in whatever result user clicks on
+			// console.log(result.result.center)
+      setSearchLatLon([...result.center]);
+		});
+
+
+
+
+    // 		// console.log(results);
+    // 		console.log(results.features[0].center)
+    //  })
+
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will
     // add the point_count property to your source data.
@@ -174,7 +202,7 @@ export default function BuildMap({ setMapbox, setMapboxLoaded }) {
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
       }
       addPopup(map, coordinates, mag);
-		});
+    });
 
     // start cluster hover features----------------
     let featureId = null; //try grouping hover effect for clusters and unclustered points into one variable - we only want one hover effect at a time anyways - WORKS!
@@ -259,12 +287,27 @@ export default function BuildMap({ setMapbox, setMapboxLoaded }) {
     // end unclustered point hover features----------------
 
     // RESIZE MAP ON CLICK ADD BUTTON-----------------------
-		// 		I gave up on this - not worth the time
+    // 		I gave up on this - not worth the time
     const addLocationButton = document.getElementById("add-location-button");
     addLocationButton.addEventListener("click", (e) => {
       console.log("hits map main");
-      map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
-    });
+			map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
+		});
+		// show map coords on click if viewing form
+		// map.on('click', function popupOnClick(e) {
+		// 	console.log('hits click')
+		// 	console.log(showAddLocation)
+		// 	if(showAddLocation) {
+		// 		console.log('e', e)
+		// 	// console.log('map', map)
+		// 	console.log(e.lngLat)
+		// 	}
+		// 	// var coordinates = e.lngLat;
+		// 	// 	new mapboxgl.Popup()
+		// 	// 		.setLngLat(coordinates)
+		// 	// 		.setHTML('you clicked here: <br/>' + coordinates)
+		// 	// 		.addTo(map);
+		// });
     setMapboxLoaded(true);
   };
 
