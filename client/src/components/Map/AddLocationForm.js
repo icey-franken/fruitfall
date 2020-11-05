@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function AddLocationForm({setShowForm}) {
+export default function AddLocationForm({ setShowForm }) {
   const types = [
     [1, "apple"],
     [2, "orange"],
@@ -41,6 +41,7 @@ export default function AddLocationForm({setShowForm}) {
     author: "",
     access: "",
     unverified: true,
+    visited: false,
   };
   const [formData, setFormData] = useState(emptyForm);
 
@@ -91,14 +92,14 @@ export default function AddLocationForm({setShowForm}) {
       // make post to back end with formDataCopy
       console.log("validated?:", validated);
 
-			// send form to db:
+      // send form to db:
 
-			// hide form
-			setShowForm(false)
-			//clear form - I might not need to do this.
-			// I have it right now so that the form is always loaded, but it's only shown if they click the button. My intent was to save form values.
-			// If I want form values to stay I'd have to save them elsewhere - when the prop to AddLocationForm changes (the showForm affecting display) the component is rerendered with empty form. I could set them in a parent component but that's a lot of work for a mostly useless feature.
-			setFormData(emptyForm);
+      // hide form
+      setShowForm(false);
+      //clear form - I might not need to do this.
+      // I have it right now so that the form is always loaded, but it's only shown if they click the button. My intent was to save form values.
+      // If I want form values to stay I'd have to save them elsewhere - when the prop to AddLocationForm changes (the showForm affecting display) the component is rerendered with empty form. I could set them in a parent component but that's a lot of work for a mostly useless feature.
+      setFormData(emptyForm);
     } else {
       console.log("not validated - show errors");
     }
@@ -110,17 +111,19 @@ export default function AddLocationForm({setShowForm}) {
     console.log(typeof value);
     if (id === "unverified") {
       value = !e.target.checked;
-    } else if (id === "no_season") {
+    } else if (id === "no_season" || id === "visited") {
       value = e.target.checked;
     }
 
     // if (id !== "another") {
-		setFormData({ ...formData, [id]: value });
-		console.log(formData);
+    setFormData({ ...formData, [id]: value });
+    console.log(formData);
     // } else {
-      // setAnother(true);
+    // setAnother(true);
     // }
   };
+  console.log(formData.visited);
+  // console.log(formData.visi
 
   return (
     <div className="add-loc__cont">
@@ -239,6 +242,19 @@ export default function AddLocationForm({setShowForm}) {
             Verified?
           </label>
         </div>
+        <div className="add-loc__el">
+          <input
+            type="checkbox"
+            id="visited"
+            name="visited"
+            onChange={handleChange}
+          />
+          <label className="add-loc__label" htmlFor="visited">
+            Have you visted this location?
+          </label>
+        </div>
+        {formData.visted === true ? null:<div className="add-loc__label">show secondary form</div>}
+				{console.log(formData.visited===true)}
         {/* <div className="add-loc__el">
           <input
             type="checkbox"

@@ -4,6 +4,7 @@
 	z-index:1;
 	background-color: white;
 	position: absolute;
+	left: 10px;
 	border: 3px solid grey;
 	box-sizing: border-box;
 	padding: 20px;
@@ -52,6 +53,7 @@
 .add-location__btn{
 	position: relative;
 	top: 10px;
+	left: 10px;
 	z-index:10;
 }
 
