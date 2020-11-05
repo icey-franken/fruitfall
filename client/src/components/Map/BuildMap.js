@@ -44,8 +44,9 @@ const circle_radius_scale = [
 export default function BuildMap({
   setMapbox,
   setMapboxLoaded,
-	setSearchLatLon,
-	showAddLocation
+  setSearchLatLon,
+	showAddLocation,
+	markerInst,
 }) {
   // const [viewport, setViewport] = useState({
   //   center: [-94.6859, 46.5],
@@ -59,21 +60,24 @@ export default function BuildMap({
 
     const geocoder = new MapboxGeocoder({
       accessToken: accessToken,
-      mapboxgl: mapboxgl,
+			mapboxgl: mapboxgl,
+			marker: {draggable: true, color: "red" }
+      // marker: { color: "orange", draggable: true },
     });
     map.addControl(geocoder);
-    geocoder.on("result", ({result}) => {
+    geocoder.on("result", ({ result }) => {
+			// clear previous marker if it exists
+			if(markerInst.current){
+				markerInst.current.remove();
+			}
 			//this will fill in whatever result user clicks on
-			// console.log(result.result.center)
-      setSearchLatLon([...result.center]);
+			setSearchLatLon([...result.center]);
+			// make their search result draggable
+      geocoder.mapMarker.on("dragend", (e) => {
+				const coordinates = e.target.getLngLat();
+				setSearchLatLon([coordinates.lng, coordinates.lat]);
+      });
 		});
-
-
-
-
-    // 		// console.log(results);
-    // 		console.log(results.features[0].center)
-    //  })
 
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will
@@ -288,27 +292,27 @@ export default function BuildMap({
 
     // RESIZE MAP ON CLICK ADD BUTTON-----------------------
     // 		I gave up on this - not worth the time
-//  next five lines moved to map container
-		// const addLocationButton = document.getElementById("add-location-button");
+    //  next five lines moved to map container
+    // const addLocationButton = document.getElementById("add-location-button");
     // addLocationButton.addEventListener("click", (e) => {
     //   // console.log("hits map main");
-		// 	map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
-		// });
-		// show map coords on click if viewing form
-		// map.on('click', function popupOnClick(e) {
-		// 	console.log('hits click')
-		// 	console.log(showAddLocation)
-		// 	if(showAddLocation) {
-		// 		console.log('e', e)
-		// 	// console.log('map', map)
-		// 	console.log(e.lngLat)
-		// 	}
-		// 	// var coordinates = e.lngLat;
-		// 	// 	new mapboxgl.Popup()
-		// 	// 		.setLngLat(coordinates)
-		// 	// 		.setHTML('you clicked here: <br/>' + coordinates)
-		// 	// 		.addTo(map);
-		// });
+    // 	map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
+    // });
+    // show map coords on click if viewing form
+    // map.on('click', function popupOnClick(e) {
+    // 	console.log('hits click')
+    // 	console.log(showAddLocation)
+    // 	if(showAddLocation) {
+    // 		console.log('e', e)
+    // 	// console.log('map', map)
+    // 	console.log(e.lngLat)
+    // 	}
+    // 	// var coordinates = e.lngLat;
+    // 	// 	new mapboxgl.Popup()
+    // 	// 		.setLngLat(coordinates)
+    // 	// 		.setHTML('you clicked here: <br/>' + coordinates)
+    // 	// 		.addTo(map);
+    // });
     setMapboxLoaded(true);
   };
 

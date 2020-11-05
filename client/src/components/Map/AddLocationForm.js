@@ -24,7 +24,6 @@ export default function AddLocationForm({
     [10, "November"],
     [11, "December"],
   ];
-
   const accesses = [
     [0, "Source is on my property"],
     [1, "I have permission from the owner to add the source"],
@@ -50,9 +49,9 @@ export default function AddLocationForm({
     "fruiting-status": 0,
     quality: 0,
     yield: 0,
-  };
+	};
+
   const [formData, setFormData] = useState(emptyForm);
-	// const [another, setAnother] = useState(false);
 
 	useEffect(()=>{
 		setFormData({...formData, lat: searchLatLon[0], lng: searchLatLon[1]})
@@ -137,18 +136,11 @@ export default function AddLocationForm({
       value = e.target.checked;
     }
 
-    // if (id !== "another") {
     setFormData({ ...formData, [id]: value });
     console.log(formData);
-    // } else {
-    // setAnother(true);
-    // }
 	};
 
 
-  // console.log(formData);
-
-  // const geocoder = document.getElementsByClassName('mapboxgl-ctrl-geocoder');
   const [address, setAddress] = useState("");
 
   const handleAddress = (e) => {
