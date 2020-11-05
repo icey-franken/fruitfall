@@ -28,7 +28,7 @@ export default function MapContainer() {
   };
 
   const [showAddLocation, setShowAddLocation] = useState(false);
-  const handleAddLocationClick = (e) => {
+  const handleAddLocationClick = () => {
     // we tie removal of layers and add location form together
     // this way they're always in sync
     const showForm = !removeLayers(mapbox);
@@ -51,7 +51,7 @@ export default function MapContainer() {
       {showAddLocation ? (
         <AddLocationForm
           style={{ display: `${showAddLocation ? "" : "none"}` }}
-          setShowForm={setShowAddLocation}
+          setShowForm={setShowAddLocation} handleFormSubmitClick={handleAddLocationClick}
         />
       ) : null}
       <div className="mapbox-cont">

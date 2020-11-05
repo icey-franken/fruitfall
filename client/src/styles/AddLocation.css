@@ -82,6 +82,12 @@
 }
 /* end location slider */
 
+.invalid {
+	color: gray;
+	font-style: italic;
+
+}
+
 /* remove spinner from number input */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

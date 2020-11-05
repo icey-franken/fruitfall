@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import AddLocationForm2 from './AddLocationForm2'
+import AddLocationForm2 from "./AddLocationForm2";
 
-export default function AddLocationForm({ setShowForm }) {
+export default function AddLocationForm({ handleFormSubmitClick }) {
   const types = [
     [1, "apple"],
     [2, "orange"],
@@ -43,6 +43,10 @@ export default function AddLocationForm({ setShowForm }) {
     access: "",
     unverified: true,
     visited: false,
+    "date-visited": null,
+    "fruiting-status": 0,
+    quality: 0,
+    yield: 0,
   };
   const [formData, setFormData] = useState(emptyForm);
   // const [another, setAnother] = useState(false);
@@ -56,11 +60,14 @@ export default function AddLocationForm({ setShowForm }) {
     // must have type_ids
     if (formData.type_ids === "") {
       validated = false;
+      console.log("type error");
+
       // add error
     }
     // must have lat/lng OR an address, which we need to convert to a lat/lng before sending to db.
     if (formData.lat === "" || formData.lng === "") {
       validated = false;
+      console.log("lat/lng error");
       // add error
       // add something to convert address input to lat/lng
     }
@@ -69,6 +76,7 @@ export default function AddLocationForm({ setShowForm }) {
     if (formData.description === "") {
       // add an error to the form and prevent submit
       validated = false;
+      console.log("description error");
     }
 
     //VALIDATE SEASON
@@ -95,7 +103,8 @@ export default function AddLocationForm({ setShowForm }) {
       // send form to db:
 
       // hide form
-      setShowForm(false);
+      // setShowForm(false);
+      handleFormSubmitClick();
       //clear form - I might not need to do this.
       // I have it right now so that the form is always loaded, but it's only shown if they click the button. My intent was to save form values.
       // If I want form values to stay I'd have to save them elsewhere - when the prop to AddLocationForm changes (the showForm affecting display) the component is rerendered with empty form. I could set them in a parent component but that's a lot of work for a mostly useless feature.
@@ -122,6 +131,7 @@ export default function AddLocationForm({ setShowForm }) {
     // setAnother(true);
     // }
   };
+  console.log(formData);
 
   return (
     <div className="add-loc__cont">
@@ -130,7 +140,15 @@ export default function AddLocationForm({ setShowForm }) {
           <label className="add-loc__label" htmlFor="type">
             Types (include other text here about custom types)
           </label>
-          <select name="type" id="type_ids" onChange={handleChange}>
+          <select
+            defaultValue=""
+            name="type"
+            id="type_ids"
+            onChange={handleChange}
+          >
+            <option className="invalid" value="" disabled hidden>
+              Select a type
+            </option>
             {types.map(([typeId, typeName], idx) => (
               <option key={idx} value={typeId}>
                 {typeName}
@@ -152,7 +170,6 @@ export default function AddLocationForm({ setShowForm }) {
               placeholder="Latitude"
             />
             <div className="add-loc__pos-spacer" />
-
             <input
               className="add-loc__pos"
               name="position"
@@ -168,6 +185,16 @@ export default function AddLocationForm({ setShowForm }) {
             Address
           </label>
           <textarea name="address" id="address" onChange={handleChange} />
+        </div>
+        <div className="add-loc__el add-loc__el-col">
+          <label className="add-loc__label" htmlFor="description">
+            Description
+          </label>
+          <textarea
+            name="description"
+            id="description"
+            onChange={handleChange}
+          />
         </div>
         <div className="add-loc__el add-loc__el-col">
           <div className="add-loc__el-row">
@@ -189,12 +216,17 @@ export default function AddLocationForm({ setShowForm }) {
 
           <div className="add-loc__el-row">
             <select
+              defaultValue=""
               className="add-loc__pos"
               name="season"
               id="season_start"
               onChange={handleChange}
               disabled={formData.no_season}
             >
+              <option className="invalid" value="" disabled hidden>
+                Start
+              </option>
+
               {months.map(([monthId, monthName], idx) => (
                 <option key={idx} value={monthId}>
                   {monthName}
@@ -203,12 +235,17 @@ export default function AddLocationForm({ setShowForm }) {
             </select>
             <div className="add-loc__pos-spacer" />
             <select
+              defaultValue=""
               className="add-loc__pos"
               name="season"
               id="season_end"
               onChange={handleChange}
               disabled={formData.no_season}
             >
+              <option className="invalid" value="" disabled hidden>
+                End
+              </option>
+
               {months.map(([monthId, monthName], idx) => (
                 <option key={idx} value={monthId}>
                   {monthName}
@@ -221,7 +258,17 @@ export default function AddLocationForm({ setShowForm }) {
           <label className="add-loc__label" htmlFor="access">
             Access
           </label>
-          <select name="access" id="access" onChange={handleChange}>
+          <select
+            defaultValue=""
+            required
+            name="access"
+            id="access"
+            onChange={handleChange}
+          >
+            <option className="invalid" value="" disabled hidden>
+              Access status of source
+            </option>
+
             {accesses.map(([accessId, accessName], idx) => (
               <option key={idx} value={accessId}>
                 {accessName}
@@ -252,19 +299,12 @@ export default function AddLocationForm({ setShowForm }) {
           </label>
         </div>
         {formData.visited === true ? (
-          <AddLocationForm2 handleChange={handleChange} formData={formData} setFormData={setFormData}/>
-        ) : null}
-        {/* <div className="add-loc__el">
-          <input
-            type="checkbox"
-            name="another"
-            id="another"
-            onChange={handleChange}
+          <AddLocationForm2
+            handleChange={handleChange}
+            formData={formData}
+            setFormData={setFormData}
           />
-          <label className="add-loc__label" htmlFor="another">
-            Add Another Location
-          </label>
-        </div> */}
+        ) : null}
         <button className="btn">Add Location</button>
       </form>
     </div>
