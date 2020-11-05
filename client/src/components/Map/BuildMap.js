@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 // import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
-import { accessToken, mapStyle } from "../.././config";
-import ReactMapboxGl, { Layer, Feature, Source, Popup } from "react-mapbox-gl";
+import { accessToken, mapStyle } from "../../config";
 import mapboxgl from "mapbox-gl";
 import InfoPopup from "./InfoPopup";
-import AddLocationForm from "./AddLocationForm";
 
 const primary_color = "#11b4da"; //update
 const secondary_color = "#fff"; //update
@@ -40,13 +38,13 @@ const circle_radius_scale = [
   40,
 ];
 
-export default function MapMain({ mapbox }) {
-  const [viewport, setViewport] = useState({
-    center: [-94.6859, 46.5],
-    zoom: [5],
-    movingMethod: "easeTo",
-    // maxBounds: [[-98,43.2], [-89.5, 50]]  //I don't care about maxBounds - look whereever you please, data is only in mn
-  });
+export default function BuildMap({ setMapbox, setMapboxLoaded }) {
+  // const [viewport, setViewport] = useState({
+  //   center: [-94.6859, 46.5],
+  //   zoom: [5],
+  //   movingMethod: "easeTo",
+  //   // maxBounds: [[-98,43.2], [-89.5, 50]]  //I don't care about maxBounds - look whereever you please, data is only in mn
+  // });
 
   const loadMap = (map) => {
     // Add a new source from our GeoJSON data and
@@ -176,10 +174,9 @@ export default function MapMain({ mapbox }) {
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
       }
       addPopup(map, coordinates, mag);
-    });
-    // start cluster hover features------------------------------------
-    // me freeballin
+		});
 
+    // start cluster hover features----------------
     let featureId = null; //try grouping hover effect for clusters and unclustered points into one variable - we only want one hover effect at a time anyways - WORKS!
     map.on("mousemove", "clusters", function (e) {
       map.getCanvas().style.cursor = "pointer";
@@ -219,10 +216,9 @@ export default function MapMain({ mapbox }) {
       }
       featureId = null;
     });
-    // end cluster hover features------------------------------------
+    // end cluster hover features--------------
 
-    // start unclustered point hover features------------------------------------
-
+    // start unclustered point hover features---------------
     map.on("mousemove", "unclustered-point", function (e) {
       map.getCanvas().style.cursor = "pointer";
       if (e.features.length > 0) {
@@ -260,73 +256,16 @@ export default function MapMain({ mapbox }) {
       }
       featureId = null;
     });
-    // end unclustered point hover features------------------------------------
-
-    // // OG enter/leave for clusters
-    // map.on("mouseenter", "clusters", function () {
-    //   map.getCanvas().style.cursor = "pointer";
-    // });
-
-    // map.on("mouseleave", "clusters", function () {
-    //   map.getCanvas().style.cursor = "";
-    // });
-    //end cluster hover features-----------------------
+    // end unclustered point hover features----------------
 
     // RESIZE MAP ON CLICK ADD BUTTON-----------------------
-    // const mapDiv = document.getElementById("mapbox");
-    // const mapCanvas = document.querySelector(".mapboxgl-canvas");
-    // // const mapCanvasCont = document.querySelector(".mapboxgl-canvas-container");
-
-    // console.log(mapDiv)
-    // console.log(mapCanvas)
-    // const big = '95vw';
-    // const small = '60vw';
-    // mapDiv.style.width = big;
-    // map.resize()
-    // // mapCanvas.style.width = '100%';
-
-    // // mapDiv.style.height = '90vh';
-    // // mapCanvas.style.height = '90vh';
-    // // map.resize();
+		// 		I gave up on this - not worth the time
     const addLocationButton = document.getElementById("add-location-button");
     addLocationButton.addEventListener("click", (e) => {
-			console.log('hits map main')
-			map.flyTo({ center: [-94.6859, 46.5], zoom: 5
-			});
+      console.log("hits map main");
+      map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
     });
-    // 	console.log(e.target)
-    // 	console.log(mapCanvas.style.width)
-    // 	console.log(mapDiv.style.width)
-    // 	console.log(addLocationButton.name)
-    // 	console.log(typeof addLocationButton.name)
-    // 	if (addLocationButton.name==='true') {
-    // 		// mapDiv.classList.add('.add-location__mapbox')
-    // 		// mapCanvas.classList.add('.add-location__mapbox')
-    // 		// mapDiv.classList.remove('.full-mapbox')
-    // 		// mapCanvas.classList.remove('.full-mapbox')
-    // 		mapDiv.style.width = small;
-    // 		mapCanvas.style.width = '100%';
-    // 		// mapCanvasCont.style.width = big;
-
-    // 		map.resize();
-    // 		console.log('hits if')
-    // 	} else {
-    // 		// mapDiv.classList.remove('.add-location__mapbox')
-    // 		// mapCanvas.classList.remove('.add-location__mapbox')
-    // 		// mapDiv.classList.add('.full-mapbox')
-    // 		// mapCanvas.classList.add('.full-mapbox')
-    // 		mapDiv.style.width = big;
-    // 		// mapCanvas.style.width = '100%';
-
-    // 		map.resize();
-    // 		// mapCanvasCont.style.width = small;
-    // 		console.log('hits else')
-    // 	}
-
-    //   // map.setCenter(viewport.center)
-    //   map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
-    //   map.resize();
-    // });
+    setMapboxLoaded(true);
   };
 
   const addPopup = (map, coordinates, info) => {
@@ -339,7 +278,6 @@ export default function MapMain({ mapbox }) {
       .addTo(map);
   };
 
-  // const Map = ReactMapboxGl({ accessToken });
   useEffect(() => {
     mapboxgl.accessToken = accessToken;
     const map = new mapboxgl.Map({
@@ -348,29 +286,9 @@ export default function MapMain({ mapbox }) {
       center: [-94.6859, 46.5],
       zoom: 5,
       movingMethod: "easeTo",
-      // zoom: 15,
-      // center: [-71.97722138410576, -13.517379300798098]
     });
     map.on("load", () => loadMap(map));
-    mapbox.current = map;
+    setMapbox(map);
   }, []);
-
-  // if (mapbox.current === null) {
-  //   return null;
-  // }
-
-  return (
-    <>
-      {/* <div
-        id="mapbox"
-        className="mapbox"
-        style={mapStyle}
-        onStyleLoad={addingLocation ? null : loadMap}
-        // onViewportChange={setViewport}
-        {...viewport}
-        // renderChildrenInPortal={true}
-      /> */}
-      {/* <AddLocationForm /> */}
-    </>
-  );
+  return null;
 }

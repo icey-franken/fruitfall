@@ -1,4 +1,6 @@
 @import './styles/NavBar.css';
-@import './styles/AddLocationView.css';
+@import './styles/AddLocation.css';
+@import './styles/Map.css';
+
 
 /* TODO Add site wide styles */

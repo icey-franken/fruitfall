@@ -1,11 +1,11 @@
 import React, { useState, useRef } from "react";
-import MapMain from "./MapMain";
+import BuildMap from "./BuildMap";
 import AddLocationForm from "./AddLocationForm";
 
 export default function MapContainer() {
   // const [mapbox, setMapbox] = useState(null);
-  const mapbox = useRef(null);
-
+  const [mapbox, setMapbox] = useState(null);
+	const [mapboxLoaded, setMapboxLoaded] = useState(false)
   const layerIds = ["clusters", "cluster-count", "unclustered-point"];
 
   const removeLayers = (map) => {
@@ -35,7 +35,7 @@ export default function MapContainer() {
   const handleAddLocationClick = (e) => {
     console.log("hits map container");
     // we tie removal of layers and add location form together
-    const showForm = !removeLayers(mapbox.current);
+    const showForm = !removeLayers(mapbox);
     console.log(e.target.name);
     // setMapboxClass()
 
@@ -44,21 +44,21 @@ export default function MapContainer() {
   };
 
   // add something so that button doesn't render until styles are loaded
-
   return (
     <>
       {/* <div className={`${showAddLocation ? "add-location__view" : ""}`}> */}
-      <button
-        id="add-location-button"
-        name={showAddLocation.toString()}
-        onClick={handleAddLocationClick}
-      >
-        Add Location
-      </button>
+        <button
+          id="add-location-button"
+          name={showAddLocation.toString()}
+					onClick={handleAddLocationClick}
+					style={{display: `${mapboxLoaded ? '': 'none'}`}}
+        >
+          Add Location
+        </button>
       {showAddLocation ? <AddLocationForm /> : null}
       <div className="mapbox-cont">
         {/* <div className="full-mapbox"> */}
-        <MapMain mapbox={mapbox} />
+        <BuildMap setMapbox={setMapbox} setMapboxLoaded={setMapboxLoaded} />
         <div
           id="mapbox"
           // className={mapboxClass}
