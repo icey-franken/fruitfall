@@ -8,74 +8,73 @@ export default function MapContainer() {
   const layerIds = ["clusters", "cluster-count", "unclustered-point"];
 
   const [searchLatLon, setSearchLatLon] = useState([]);
-
-  function popupOnClick(e) {
-    console.log("e", e);
-    // console.log('map', map)
-    console.log(e.lngLat);
-    // var coordinates = e.lngLat;
-    // 	new mapboxgl.Popup()
-    // 		.setLngLat(coordinates)
-    // 		.setHTML('you clicked here: <br/>' + coordinates)
-    // 		.addTo(map);
-  }
-
-  const toggleLayers = (map, showLayers) => {
-    // e.preventDefault();
-    // e.stopPropagation();
-    map.on("click", (e) => {
-      console.log("hits click", showLayers);
-      if (!showLayers) {
-        console.log("e", e);
-        // console.log('map', map)
-        console.log(e.lngLat);
-        console.log("hits if");
-      } else {
-        console.log("hits else");
-      }
-      // var coordinates = e.lngLat;
-      // 	new mapboxgl.Popup()
-      // 		.setLngLat(coordinates)
-      // 		.setHTML('you clicked here: <br/>' + coordinates)
-      // 		.addTo(map);
-    });
-
-    layerIds.forEach((layerId) => {
-      // const visibility = map.getLayoutProperty(layerId, "visibility");
-      if (showLayers === true) {
-        map.setLayoutProperty(layerId, "visibility", "visible");
-      } else {
-        map.setLayoutProperty(layerId, "visibility", "none");
-      }
-    });
-	};
   const [showAddLocation, setShowAddLocation] = useState(false);
 
-	useEffect(()=>{
-		if(mapbox){
-			toggleLayers(mapbox, showAddLocation)
-		}
-		// setShowAddLocation(!showAddLocation)
-	}, [showAddLocation])
+  // function popupOnClick(e) {
+  //   console.log("e", e);
+  //   // console.log('map', map)
+  //   console.log(e.lngLat);
+  //   // const coordinates = e.lngLat;
+  //   // 	new mapboxgl.Popup()
+  //   // 		.setLngLat(coordinates)
+  //   // 		.setHTML('you clicked here: <br/>' + coordinates)
+  // 	// 		.addTo(map);
+  // }
+  const [popupInst, setPopupInst] = useState();
+  const mapClick = (e) => {
+    console.log("hits mapclick function. e:", e);
+    const coordinates = e.lngLat;
+    // // if (!popupInst) {
+    console.log("mapclick function - mapbox:", mapbox);
+		const popup = new mapboxgl.Popup();
+		popup
+      .setLngLat(coordinates)
+      .setHTML("you clicked here: <br/>" + coordinates)
+      .addTo(e.target);
+    setPopupInst(popup);
+    // }
+  };
+  const mapClickFn = useRef(mapClick);
+
+  // attmept at singleton pattern
+  // const mapClickInstance = {
+  // 	mapClick: GARBAGE
+  // }
+  console.log(mapClickFn);
+  useEffect(() => {
+    console.log("hits use effect");
+    console.log(mapbox);
+    if (mapbox) {
+      mapbox.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
+      if (showAddLocation) {
+        console.log("hits use effect if. mapbox:", mapbox);
+        mapbox.on("click", mapClickFn.current);
+        toggleLayers("none");
+      } else {
+        mapbox.off("click", mapClickFn.current);
+        popupInst.remove();
+        toggleLayers("visible");
+      }
+    }
+  }, [showAddLocation]);
+
+  const toggleLayers = (visible) => {
+    layerIds.forEach((layerId) => {
+      mapbox.setLayoutProperty(layerId, "visibility", visible);
+    });
+  };
 
   const handleAddLocationClick = (e) => {
     // e.preventDefault();
     // e.stopPropagation();
-    if (showAddLocation === true) {
-      // toggleLayers(mapbox, true);
-      setShowAddLocation(false);
-    } else {
-      // toggleLayers(mapbox, false);
-      setShowAddLocation(true);
-    }
-    // we tie removal of layers and add location form together
-    // this way they're always in sync
-
-    // const showForm = toggleLayers(mapbox);
-    // // change of state here does NOT trigger re-render of map - ok!
-    // setShowAddLocation(showForm);
+    console.log(
+      "hits handle add location click - showAddLocation:",
+      showAddLocation
+    );
+    setShowAddLocation(!showAddLocation);
   };
-  console.log(searchLatLon);
+
+  // console.log(searchLatLon);
 
   return (
     <>

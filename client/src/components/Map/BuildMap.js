@@ -216,7 +216,7 @@ export default function BuildMap({
           });
         }
         featureId = e.features[0].id;
-        console.log(featureId);
+        // console.log(featureId);
         map.setFeatureState(
           {
             source: "fruitfall",
@@ -288,11 +288,12 @@ export default function BuildMap({
 
     // RESIZE MAP ON CLICK ADD BUTTON-----------------------
     // 		I gave up on this - not worth the time
-    const addLocationButton = document.getElementById("add-location-button");
-    addLocationButton.addEventListener("click", (e) => {
-      console.log("hits map main");
-			map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
-		});
+//  next five lines moved to map container
+		// const addLocationButton = document.getElementById("add-location-button");
+    // addLocationButton.addEventListener("click", (e) => {
+    //   // console.log("hits map main");
+		// 	map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
+		// });
 		// show map coords on click if viewing form
 		// map.on('click', function popupOnClick(e) {
 		// 	console.log('hits click')
