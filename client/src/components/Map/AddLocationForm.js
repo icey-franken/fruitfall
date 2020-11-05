@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function AddLocationForm() {
+export default function AddLocationForm({setShowForm}) {
   const types = [
     [1, "apple"],
     [2, "orange"],
@@ -44,7 +44,7 @@ export default function AddLocationForm() {
   };
   const [formData, setFormData] = useState(emptyForm);
 
-  const [another, setAnother] = useState(false);
+  // const [another, setAnother] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -91,11 +91,14 @@ export default function AddLocationForm() {
       // make post to back end with formDataCopy
       console.log("validated?:", validated);
 
-      if (another === true) {
-        console.log("another true");
-        // redirect to an empty form after sending to db
-        setFormData(emptyForm);
-      }
+			// send form to db:
+
+			// hide form
+			setShowForm(false)
+			//clear form - I might not need to do this.
+			// I have it right now so that the form is always loaded, but it's only shown if they click the button. My intent was to save form values.
+			// If I want form values to stay I'd have to save them elsewhere - when the prop to AddLocationForm changes (the showForm affecting display) the component is rerendered with empty form. I could set them in a parent component but that's a lot of work for a mostly useless feature.
+			setFormData(emptyForm);
     } else {
       console.log("not validated - show errors");
     }
@@ -111,19 +114,19 @@ export default function AddLocationForm() {
       value = e.target.checked;
     }
 
-    if (id !== "another") {
-      setFormData({ ...formData, [id]: value });
-      console.log(formData);
-    } else {
-      setAnother(true);
-    }
+    // if (id !== "another") {
+		setFormData({ ...formData, [id]: value });
+		console.log(formData);
+    // } else {
+      // setAnother(true);
+    // }
   };
 
   return (
-    <div className="add-location__form-cont">
+    <div className="add-loc__cont">
       <form onSubmit={handleSubmit}>
-        <div className="add-location__form-box">
-          <label htmlFor="type">
+        <div className="add-loc__el add-loc__el-col">
+          <label className="add-loc__label" htmlFor="type">
             Types (include other text here about custom types)
           </label>
           <select name="type" id="type_ids" onChange={handleChange}>
@@ -134,29 +137,58 @@ export default function AddLocationForm() {
             ))}
           </select>
         </div>
-        <div className="add-location__form-box">
-          <label htmlFor="position">Position (lat lng)</label>
-          <input
-            name="position"
-            id="lat"
-            type="number"
-            onChange={handleChange}
-          />
-          <input
-            name="position"
-            id="lng"
-            type="number"
-            onChange={handleChange}
-          />
+        <div className="add-loc__el add-loc__el-col">
+          <label className="add-loc__label" htmlFor="position">
+            Position (lat lng)
+          </label>
+          <div className="add-loc__el-row">
+            <input
+              className="add-loc__pos"
+              name="position"
+              id="lat"
+              type="number"
+              onChange={handleChange}
+              placeholder="Latitude"
+            />
+            <div className="add-loc__pos-spacer" />
+
+            <input
+              className="add-loc__pos"
+              name="position"
+              id="lng"
+              type="number"
+              onChange={handleChange}
+              placeholder="Longitude"
+            />
+          </div>
         </div>
-        <div className="add-location__form-box">
-          <label htmlFor="address">Address</label>
+        <div className="add-loc__el add-loc__el-col">
+          <label className="add-loc__label" htmlFor="address">
+            Address
+          </label>
           <textarea name="address" id="address" onChange={handleChange} />
         </div>
-        <div className="add-location__form-box">
-          <label htmlFor="season">Season</label>
-          <div className="add-location__form-box">
+        <div className="add-loc__el add-loc__el-col">
+          <div className="add-loc__el-row">
+            <label className="add-loc__label" htmlFor="season">
+              Season
+            </label>
+            <div>
+              <input
+                type="checkbox"
+                name="no-season"
+                id="no_season"
+                onChange={handleChange}
+              />
+              <label className="add-loc__label" htmlFor="no-season">
+                No Season
+              </label>
+            </div>
+          </div>
+
+          <div className="add-loc__el-row">
             <select
+              className="add-loc__pos"
               name="season"
               id="season_start"
               onChange={handleChange}
@@ -168,7 +200,9 @@ export default function AddLocationForm() {
                 </option>
               ))}
             </select>
+            <div className="add-loc__pos-spacer" />
             <select
+              className="add-loc__pos"
               name="season"
               id="season_end"
               onChange={handleChange}
@@ -180,18 +214,12 @@ export default function AddLocationForm() {
                 </option>
               ))}
             </select>
-
-            <label htmlFor="no-season">No Season</label>
-            <input
-              type="checkbox"
-              name="no-season"
-              id="no_season"
-              onChange={handleChange}
-            />
           </div>
         </div>
-        <div className="add-location__form-box ">
-          <label htmlFor="access">Access</label>
+        <div className="add-loc__el add-loc__el-col">
+          <label className="add-loc__label" htmlFor="access">
+            Access
+          </label>
           <select name="access" id="access" onChange={handleChange}>
             {accesses.map(([accessId, accessName], idx) => (
               <option key={idx} value={accessId}>
@@ -200,26 +228,29 @@ export default function AddLocationForm() {
             ))}
           </select>
         </div>
-        <div className="add-location__form-box ">
-          <label htmlFor="unverified">Verified?</label>
+        <div className="add-loc__el">
           <input
             type="checkbox"
             id="unverified"
             name="unverified"
             onChange={handleChange}
           />
+          <label className="add-loc__label" htmlFor="unverified">
+            Verified?
+          </label>
         </div>
-        <div className="add-location__form-box">
-          <label htmlFor="another">Add Another Location</label>
+        {/* <div className="add-loc__el">
           <input
             type="checkbox"
             name="another"
             id="another"
             onChange={handleChange}
           />
-
-          <button className='btn'>Add Location</button>
-        </div>
+          <label className="add-loc__label" htmlFor="another">
+            Add Another Location
+          </label>
+        </div> */}
+        <button className="btn">Add Location</button>
       </form>
     </div>
   );

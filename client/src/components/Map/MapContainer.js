@@ -48,7 +48,12 @@ export default function MapContainer() {
       >
         {showAddLocation ? "Close" : "Add Location"}
       </button>
-      {showAddLocation ? <AddLocationForm /> : null}
+      {showAddLocation ? (
+        <AddLocationForm
+          style={{ display: `${showAddLocation ? "" : "none"}` }}
+          setShowForm={setShowAddLocation}
+        />
+      ) : null}
       <div className="mapbox-cont">
         <BuildMap setMapbox={setMapbox} setMapboxLoaded={setMapboxLoaded} />
         <div id="mapbox" />

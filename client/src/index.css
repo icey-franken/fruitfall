@@ -11,7 +11,9 @@ body{
 	font-size: 16px;
 	margin: 0;
 }
-
+input, select{
+	font-size: 16px;
+}
 .btn{
 	padding: 10px;
   border: none;
