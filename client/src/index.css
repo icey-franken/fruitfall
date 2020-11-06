@@ -10,6 +10,8 @@ body{
 	font-family: helvetica,arial,courier;
 	font-size: 16px;
 	margin: 0;
+	width: 100vw;
+	height: 100vh;
 }
 input, select{
 	font-size: 16px;
@@ -26,8 +28,9 @@ input, select{
 	margin: 2px 0;
 	border: solid 2px purple;
 	color: purple;
-	border-radius: 4px;
+	border-radius: 80px;
 	outline: none;
+	min-width: 80px;
 }
 .btn::-moz-focus-inner {
   border: none;

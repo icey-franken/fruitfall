@@ -4,10 +4,9 @@ import AddLocationForm2 from "./AddLocationForm2";
 export default function AddLocationForm({
   handleFormSubmitClick,
 	searchLatLon,
-	slide
+	show
 }) {
 
-	console.log(slide);
 
   const types = [
     [1, "apple"],
@@ -150,7 +149,7 @@ export default function AddLocationForm({
   };
 
   return (
-    <div className={`add-loc__cont ${slide ? 'slide-in' : 'slide-out'}`}>
+    <div className={`add-loc__cont fade-in ${show ? 'show' : ''}`}>
       {/* <form onSubmit={handleSubmit}> */}
       <div className="add-loc__el add-loc__el-col">
         <label className="add-loc__label" htmlFor="type">

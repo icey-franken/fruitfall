@@ -42,16 +42,17 @@ function App() {
       <BrowserRouter>
         <NavBar />
         <Switch>
-          <Route exact path="/users">
-            <UserList />
+          <Route exact path="/activity">
+            <div>activity page</div>
           </Route>
-          <Route exact path="/login">
-            <UserList />
+          <Route exact path="/data">
+            <div>...data page</div>
+          </Route>
+					<Route exact path="/about">
+            <div>about this is</div>
           </Route>
           <Route exact path="/users/:id/edit" component={UserForm} />
-          <Route exact path="/">
-            <MapContainer />
-          </Route>
+          <Route exact path="/" component={MapContainer}/>
         </Switch>
       </BrowserRouter>
     </AuthContext.Provider>

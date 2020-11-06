@@ -2,40 +2,31 @@
   width: 50%;
   max-width: 500px;
   /* min-height: 95vh; */
-  z-index: 3;
+	z-index: 3;
+	box-sizing: border-box;
   background-color: white;
   position: absolute;
   left: 100px;
-  border: 3px solid grey;
+  border: 2px solid grey;
   box-sizing: border-box;
   padding: 24px;
   border-radius: 6px;
   box-shadow: 2px 2px 5px 1px;
-  margin: 20px auto;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
 }
 
-.slide-in {
-	left: -500px;
-	-webkit-animation: slide 0.5s forwards;
-	animation: slide 0.5s forwards;
+.fade-in {
+	left: -505px;
+  opacity: 0;
+  transition: all .75s ease;
 }
 
-.slide-out{
-	left: -500px;
-	-webkit-animation: slide 0.5s backwards;
-	animation: slide 0.5s backwards;
+.fade-in.show {
+	opacity: 1;
+	left: -5px;
 }
-
-@-webkit-keyframes slide {
-	100% { left: -5px; }
-}
-
-@keyframes slide {
-	100% { left: -5px; }
-}
-
 
 .add-loc__el {
   padding-bottom: 24px;
@@ -102,10 +93,11 @@
 
 /* button for opening the form */
 .add-location__btn {
-  position: relative;
-  top: 10px;
-  left: 10px;
-  z-index: 10;
+  position: absolute;
+  top: 0px;
+	left: 10px;
+	/* height: 36px; */
+  z-index: 5;
 }
 /* -------------------------------------------- */
 /* start location slider */
