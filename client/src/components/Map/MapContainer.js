@@ -5,11 +5,11 @@ import mapboxgl from "mapbox-gl";
 export default function MapContainer() {
   const [mapbox, setMapbox] = useState(null);
   const [mapboxLoaded, setMapboxLoaded] = useState(false);
-  const layerIds = ["clusters", "cluster-count", "unclustered-point"];
-
   const [searchLatLon, setSearchLatLon] = useState([]);
   const [showAddLocation, setShowAddLocation] = useState(false);
+  const canvasRef = useRef();
   const markerInst = useRef();
+  const layerIds = ["clusters", "cluster-count", "unclustered-point"];
 
   // useRef hook required so that we reference the SAME function in map.on and map.off in useEffect hook
   const mapClickFn = useRef((e) => {
@@ -31,13 +31,19 @@ export default function MapContainer() {
     const marker = new mapboxgl.Marker(el, { draggable: true });
     marker.setLngLat(coordinates).addTo(e.target);
     // update coords on drag
+    marker.on("dragstart", () => {
+      canvasRef.current.classList.remove("crosshair");
+    });
     marker.on("dragend", () => {
       const coordinates = marker.getLngLat();
       setSearchLatLon([coordinates.lng, coordinates.lat]);
+      canvasRef.current.classList.add("crosshair");
     });
     // update marker instance to new marker
     markerInst.current = marker;
   });
+
+  const handleAddLocationClick = () => setShowAddLocation(!showAddLocation);
 
   // visible parameter should be 'visible' or 'none'
   const toggleLayers = (visible) => {
@@ -53,6 +59,7 @@ export default function MapContainer() {
       if (showAddLocation) {
         mapbox.on("click", mapClickFn.current);
         toggleLayers("none");
+        canvasRef.current.classList.add("crosshair");
       } else {
         mapbox.off("click", mapClickFn.current);
         toggleLayers("visible");
@@ -60,6 +67,7 @@ export default function MapContainer() {
           markerInst.current.remove();
         }
         setSearchLatLon([]);
+        canvasRef.current.classList.remove("crosshair");
       }
     }
   }, [showAddLocation]);
@@ -68,27 +76,32 @@ export default function MapContainer() {
     console.log(searchLatLon);
   }, [searchLatLon]);
 
-  const handleAddLocationClick = () => setShowAddLocation(!showAddLocation);
+  useEffect(() => {
+    canvasRef.current = document.querySelector(".mapboxgl-canvas");
+  }, [mapboxLoaded]);
 
   return (
-    <>
-      <button
-        id="add-location-button"
-        className="btn add-location__btn"
-        name={showAddLocation.toString()}
-        onClick={handleAddLocationClick}
-        // hide button until layers loaded
-        style={{ display: `${mapboxLoaded ? "" : "none"}` }}
+    <div className="content-cont">
+      <AddLocationForm
+        setShowForm={setShowAddLocation}
+        handleFormSubmitClick={handleAddLocationClick}
+        searchLatLon={searchLatLon}
+        show={showAddLocation}
+      />
+      <div
+        className="mapbox-cont"
+        style={{ cursor: `${showAddLocation ? "crosshair" : "initial"}` }}
       >
-        {showAddLocation ? "Close" : "Add Location"}
-      </button>
-        <AddLocationForm
-          setShowForm={setShowAddLocation}
-          handleFormSubmitClick={handleAddLocationClick}
-					searchLatLon={searchLatLon}
-					show={showAddLocation}
-        />
-      <div className="mapbox-cont">
+        <button
+          id="add-location-button"
+          className="btn add-location__btn"
+          name={showAddLocation.toString()}
+          onClick={handleAddLocationClick}
+          // hide button until layers loaded
+          style={{ display: `${mapboxLoaded ? "" : "none"}` }}
+        >
+          {showAddLocation ? "Close" : "Add Location"}
+        </button>
         <BuildMap
           setMapbox={setMapbox}
           setMapboxLoaded={setMapboxLoaded}
@@ -98,6 +111,6 @@ export default function MapContainer() {
         />
         <div id="mapbox" />
       </div>
-    </>
+    </div>
   );
 }
