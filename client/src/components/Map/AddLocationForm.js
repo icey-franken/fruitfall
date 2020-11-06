@@ -3,8 +3,12 @@ import AddLocationForm2 from "./AddLocationForm2";
 
 export default function AddLocationForm({
   handleFormSubmitClick,
-  searchLatLon,
+	searchLatLon,
+	slide
 }) {
+
+	console.log(slide);
+
   const types = [
     [1, "apple"],
     [2, "orange"],
@@ -34,8 +38,8 @@ export default function AddLocationForm({
   ];
   const emptyForm = {
     type_ids: "",
-    lat: '',
-    lng: '',
+    lat: "",
+    lng: "",
     address: "",
     description: "",
     season_start: "",
@@ -49,14 +53,13 @@ export default function AddLocationForm({
     "fruiting-status": 0,
     quality: 0,
     yield: 0,
-	};
+  };
 
   const [formData, setFormData] = useState(emptyForm);
 
-	useEffect(()=>{
-		setFormData({...formData, lat: searchLatLon[0], lng: searchLatLon[1]})
-	}, [searchLatLon])
-
+  useEffect(() => {
+    setFormData({ ...formData, lat: searchLatLon[0], lng: searchLatLon[1] });
+  }, [searchLatLon]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -138,8 +141,7 @@ export default function AddLocationForm({
 
     setFormData({ ...formData, [id]: value });
     console.log(formData);
-	};
-
+  };
 
   const [address, setAddress] = useState("");
 
@@ -148,182 +150,210 @@ export default function AddLocationForm({
   };
 
   return (
-    <div className="add-loc__cont">
-      <form onSubmit={handleSubmit}>
-        <div className="add-loc__el add-loc__el-col">
-          <label className="add-loc__label" htmlFor="type">
-            Types (include other text here about custom types)
-          </label>
-          <select
-            defaultValue=""
-            name="type"
-            id="type_ids"
-            onChange={handleChange}
-          >
-            <option className="invalid" value="" disabled hidden>
-              Select a type
+    <div className={`add-loc__cont ${slide ? 'slide-in' : 'slide-out'}`}>
+      {/* <form onSubmit={handleSubmit}> */}
+      <div className="add-loc__el add-loc__el-col">
+        <label className="add-loc__label" htmlFor="type">
+          Type
+        </label>
+        <div className="add-loc__sub-label">
+          Choose from the dropdown list, submitting new types only if
+          appropriate choices do not already exist. SIKE, you can't add types.
+        </div>
+        <select
+          defaultValue=""
+          name="type"
+          id="type_ids"
+          onChange={handleChange}
+        >
+          <option className="invalid" value="" disabled hidden>
+            Select a type
+          </option>
+          {types.map(([typeId, typeName], idx) => (
+            <option key={idx} value={typeId}>
+              {typeName}
             </option>
-            {types.map(([typeId, typeName], idx) => (
-              <option key={idx} value={typeId}>
-                {typeName}
-              </option>
-            ))}
-          </select>
+          ))}
+        </select>
+      </div>
+      <div className="add-loc__el add-loc__el-col">
+        <label className="add-loc__label" htmlFor="position">
+          Position
+        </label>
+        <div className="add-loc__sub-label">
+          Click on the map for a moveable pin to get coordinates, or search for
+          a location's address in the upper right-hand corner.
         </div>
-        <div className="add-loc__el add-loc__el-col">
-          <label className="add-loc__label" htmlFor="position">
-            Position (lat lng)
-          </label>
-          <div className="add-loc__el-row">
-            <input
-              className="add-loc__pos"
-              name="position"
-              id="lat"
-              type="number"
-              onChange={handleChange}
-							placeholder="Latitude"
-							value={formData.lat}
-            />
-            <div className="add-loc__pos-spacer" />
-            <input
-              className="add-loc__pos"
-              name="position"
-              id="lng"
-              type="number"
-              onChange={handleChange}
-							placeholder="Longitude"
-							value={formData.lng}
-
-            />
-          </div>
+        <div className="add-loc__el-row">
+          <input
+            className="add-loc__pos"
+            name="position"
+            id="lat"
+            type="number"
+            onChange={handleChange}
+            placeholder="Latitude"
+            value={formData.lat}
+          />
+          <div className="add-loc__pos-spacer" />
+          <input
+            className="add-loc__pos"
+            name="position"
+            id="lng"
+            type="number"
+            onChange={handleChange}
+            placeholder="Longitude"
+            value={formData.lng}
+          />
         </div>
-        {/* <div className="add-loc__el add-loc__el-col">
+      </div>
+      {/* <div className="add-loc__el add-loc__el-col">
           <label className="add-loc__label" htmlFor="address">
             Address
           </label>
           <textarea name="address" id="address" onChange={handleAddress} />
         </div> */}
-        <div className="add-loc__el add-loc__el-col">
-          <label className="add-loc__label" htmlFor="description">
-            Description
-          </label>
-          <textarea
-            name="description"
-            id="description"
-            onChange={handleChange}
-          />
+      <div className="add-loc__el add-loc__el-col">
+        <label className="add-loc__label" htmlFor="description">
+          Description
+        </label>
+        <div className="add-loc__sub-label">
+          Location details, access issues, plant health, your mother's maiden
+          name...
         </div>
-        <div className="add-loc__el add-loc__el-col">
-          <div className="add-loc__el-row">
-            <label className="add-loc__label" htmlFor="season">
-              Season
+        <textarea name="description" id="description" onChange={handleChange} />
+      </div>
+      <div className="add-loc__el add-loc__el-col">
+        <div className="add-loc__el-row">
+          <label className="add-loc__label" htmlFor="season">
+            Season
+          </label>
+
+          <div>
+            <input
+              type="checkbox"
+              name="no-season"
+              id="no_season"
+              onChange={handleChange}
+            />
+            <label className="add-loc__label" htmlFor="no-season">
+              No Season
             </label>
-            <div>
-              <input
-                type="checkbox"
-                name="no-season"
-                id="no_season"
-                onChange={handleChange}
-              />
-              <label className="add-loc__label" htmlFor="no-season">
-                No Season
-              </label>
-            </div>
-          </div>
-
-          <div className="add-loc__el-row">
-            <select
-              defaultValue=""
-              className="add-loc__pos"
-              name="season"
-              id="season_start"
-              onChange={handleChange}
-              disabled={formData.no_season}
-            >
-              <option className="invalid" value="" disabled hidden>
-                Start
-              </option>
-
-              {months.map(([monthId, monthName], idx) => (
-                <option key={idx} value={monthId}>
-                  {monthName}
-                </option>
-              ))}
-            </select>
-            <div className="add-loc__pos-spacer" />
-            <select
-              defaultValue=""
-              className="add-loc__pos"
-              name="season"
-              id="season_end"
-              onChange={handleChange}
-              disabled={formData.no_season}
-            >
-              <option className="invalid" value="" disabled hidden>
-                End
-              </option>
-
-              {months.map(([monthId, monthName], idx) => (
-                <option key={idx} value={monthId}>
-                  {monthName}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
-        <div className="add-loc__el add-loc__el-col">
-          <label className="add-loc__label" htmlFor="access">
-            Access
-          </label>
+        <div className="add-loc__sub-label">
+          When can the source be harvested? Leave blank if you don't know.
+        </div>
+        <div className="add-loc__el-row">
           <select
             defaultValue=""
-            required
-            name="access"
-            id="access"
+            className="add-loc__pos"
+            name="season"
+            id="season_start"
             onChange={handleChange}
+            disabled={formData.no_season}
           >
             <option className="invalid" value="" disabled hidden>
-              Access status of source
+              Start
             </option>
 
-            {accesses.map(([accessId, accessName], idx) => (
-              <option key={idx} value={accessId}>
-                {accessName}
+            {months.map(([monthId, monthName], idx) => (
+              <option key={idx} value={monthId}>
+                {monthName}
+              </option>
+            ))}
+          </select>
+          <div className="add-loc__pos-spacer" />
+          <select
+            defaultValue=""
+            className="add-loc__pos"
+            name="season"
+            id="season_end"
+            onChange={handleChange}
+            disabled={formData.no_season}
+          >
+            <option className="invalid" value="" disabled hidden>
+              End
+            </option>
+
+            {months.map(([monthId, monthName], idx) => (
+              <option key={idx} value={monthId}>
+                {monthName}
               </option>
             ))}
           </select>
         </div>
-        <div className="add-loc__el">
-          <input
-            type="checkbox"
-            id="unverified"
-            name="unverified"
-            onChange={handleChange}
-          />
-          <label className="add-loc__label" htmlFor="unverified">
-            Verified?
-          </label>
+      </div>
+      <div className="add-loc__el add-loc__el-col">
+        <label className="add-loc__label" htmlFor="access">
+          Access
+        </label>
+        <div className="add-loc__sub-label">
+          Access status of the source. Leave blank if you don't know.
         </div>
+        <select
+          defaultValue=""
+          required
+          name="access"
+          id="access"
+          onChange={handleChange}
+        >
+          <option className="invalid" value="" disabled hidden>
+            Access status of source
+          </option>
+
+          {accesses.map(([accessId, accessName], idx) => (
+            <option key={idx} value={accessId}>
+              {accessName}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="add-loc__el-col">
         <div className="add-loc__el">
+          <div className="add-loc__label">
+            <input
+              type="checkbox"
+              id="unverified"
+              name="unverified"
+              onChange={handleChange}
+            />
+            <label htmlFor="unverified">Verified?</label>
+          </div>
+          <div className="add-loc__sub-label">
+            If you doubt the existence, location, or identity of this source.
+          </div>
+        </div>
+      </div>
+
+      <div className="add-loc__el">
+        <div className="add-loc__label">
           <input
             type="checkbox"
             id="visited"
             name="visited"
             onChange={handleChange}
           />
-          <label className="add-loc__label" htmlFor="visited">
-            Have you visted this location?
-          </label>
+          <label htmlFor="visited">Have you visted this location?</label>
         </div>
-        {formData.visited === true ? (
-          <AddLocationForm2
-            handleChange={handleChange}
-            formData={formData}
-            setFormData={setFormData}
-          />
-        ) : null}
-        <button className="btn">Add Location</button>
-      </form>
+        <div className="add-loc__sub-label">Go on.....</div>
+      </div>
+      {formData.visited === true ? (
+        <AddLocationForm2
+          handleChange={handleChange}
+          formData={formData}
+          setFormData={setFormData}
+        />
+      ) : null}
+      <div className="add-loc__btn-cont">
+        <button
+          type="submit"
+          onSubmit={handleSubmit}
+          className="btn add-loc__btn"
+        >
+          Add Location
+        </button>
+      </div>
+      {/* </form> */}
     </div>
   );
 }
