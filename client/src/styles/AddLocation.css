@@ -94,8 +94,8 @@
 /* button for opening the form */
 .add-location__btn {
   position: absolute;
-  top: 0px;
-	left: 10px;
+  top: 64px;
+	left: 26px;
 	/* height: 36px; */
   z-index: 5;
 }
