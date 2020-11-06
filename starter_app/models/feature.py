@@ -1,6 +1,6 @@
 from . import db
 from dataclasses import dataclass
-
+from datetime import datetime
 # @dataclass
 
 
@@ -24,29 +24,37 @@ from dataclasses import dataclass
 class Property(db.Model):
     __tablename__ = 'properties'
 
-
     # id from sql - NOT dataset
     id = db.Column(db.Integer, primary_key=True)
-
-    # feature_id = db.Column(db.ForeignKey(
-    #     'features.id', ondelete='cascade'), nullable=False)
-
-    # geometry_id = db.Column(db.ForeignKey(
-    #     'geometry.id', ondelete='cascade'), nullable=False)
+    type_ids = db.Column(db.Integer)
     Latitude = db.Column(db.Float, nullable=False)
     Longitude = db.Column(db.Float, nullable=False)
+    unverified = db.Column(db.Boolean, default=True)
+    description = db.Column(db.Text)
+    author = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+    import_link = db.Column(db.String(100))
+    hidden = db.Column(db.Boolean, default=False)
 
     def to_dict(self):
         return {
             'type': 'Feature',
             'properties': {
-
                 'id': self.id,
+                'type_ids': self.type_ids,
                 'Latitude': self.Latitude,
                 'Longitude': self.Longitude,
+                'unverified': self.unverified,
+                'description': self.description,
+                'author': self.author,
+                'created_at': self.created_at,
+                'updated_at': self.updated_at,
+                'import_link': self.import_link,
+                'hidden': self.hidden,
             },
             'geometry': {
-                'type':'Point',
+                'type': 'Point',
                 'coordinates': [self.Latitude, self.Longitude]
             }
         }
