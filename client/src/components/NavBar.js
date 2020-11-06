@@ -17,7 +17,7 @@ export default function NavBar() {
               width="20px"
               height="20px"
               viewBox="0 0 20 20"
-              style={{ "enable-background": "new 0 0 20 20" }}
+              style={{ "enableBackground": "new 0 0 20 20" }}
               // xml:space="preserve"
             >
               <path
