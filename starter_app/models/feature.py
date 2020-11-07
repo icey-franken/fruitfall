@@ -21,21 +21,40 @@ from datetime import datetime
 #         }
 
 
+# add defaults!
+# add separate models for:
+#   type_ids, season, access
 class Property(db.Model):
     __tablename__ = 'properties'
 
     # id from sql - NOT dataset
     id = db.Column(db.Integer, primary_key=True)
-    type_ids = db.Column(db.Integer)
+
+    # change to type foreign key
+    type_ids = db.Column(db.ARRAY(db.Integer), default=[])
     Latitude = db.Column(db.Float, nullable=False)
     Longitude = db.Column(db.Float, nullable=False)
     unverified = db.Column(db.Boolean, default=True)
     description = db.Column(db.Text)
+
+    # change to foreign key referencing a user
+    # if anonymous - default to a "anonymous" user
     author = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
-    import_link = db.Column(db.String(100))
+    import_link = db.Column(db.String(200))
     hidden = db.Column(db.Boolean, default=False)
+    no_season = db.Column(db.Boolean, default=True)
+
+    # we're not including address - lat/lon and description is plenty
+    # address = db.Column(db.Text)
+
+    # change to season foreign key
+    season_start = db.Column(db.String(20))
+    season_stop = db.Column(db.String(20))
+
+    # change to access foreign key
+    access = db.Column(db.String(150))
 
     def to_dict(self):
         return {
@@ -52,6 +71,11 @@ class Property(db.Model):
                 'updated_at': self.updated_at,
                 'import_link': self.import_link,
                 'hidden': self.hidden,
+                'no_season': self.no_season,
+                'season_start': self.season_start,
+                'season_stop': self.season_stop,
+                'access': self.access,
+                'address': self.address,
             },
             'geometry': {
                 'type': 'Point',
