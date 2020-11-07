@@ -8,7 +8,15 @@ feature_routes = Blueprint('feature', __name__)
 def get_all():
     properties = Property.query.all()
     response = {'type': 'FeatureCollection', 'features': [
-                          prop.to_dict() for prop in properties]}
+        prop.for_map_just_coords_small() for prop in properties]}
+
+    return json.dumps(response)
+
+
+@feature_routes.route('/<int:id>')
+def get_one(id):
+    popup_info = Property.query.one_or_none(int(id))
+    response = {'properties': popup_info.for_popup()}
 
     return json.dumps(response)
 

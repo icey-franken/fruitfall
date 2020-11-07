@@ -56,7 +56,47 @@ class Property(db.Model):
     # change to access foreign key
     access = db.Column(db.String(150))
 
-    def to_dict(self):
+    # should we just send coords and convert to geojson on frontend?
+    def for_map(self):
+        return {
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [self.Latitude, self.Longitude]
+            }
+        }
+
+    def for_map_just_coords(self):
+        return{
+            'id': self.id,
+            'coordinates': [self.Latitude, self.Longitude]
+        }
+
+    def for_map_just_coords_small(self):
+        return f'{self.id} {self.Latitude} {self.Longitude}'
+
+    def for_popup(self):
+        return {
+            'properties': {
+                'id': self.id,
+                'type_ids': self.type_ids,
+                'Latitude': self.Latitude,
+                'Longitude': self.Longitude,
+                'unverified': self.unverified,
+                'description': self.description,
+                'author': self.author,
+                'created_at': self.created_at,
+                'updated_at': self.updated_at,
+                'import_link': self.import_link,
+                'hidden': self.hidden,
+                'no_season': self.no_season,
+                'season_start': self.season_start,
+                'season_stop': self.season_stop,
+                'access': self.access,
+            },
+        }
+
+    def for_all(self):
         return {
             'type': 'Feature',
             'properties': {
@@ -75,14 +115,12 @@ class Property(db.Model):
                 'season_start': self.season_start,
                 'season_stop': self.season_stop,
                 'access': self.access,
-                'address': self.address,
             },
             'geometry': {
                 'type': 'Point',
                 'coordinates': [self.Latitude, self.Longitude]
             }
         }
-
 
 # class Geometry(db.Model):
 #     __tablename__ = 'geometry'
