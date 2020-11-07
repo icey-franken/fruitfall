@@ -335,7 +335,10 @@ export default function BuildMap({
       style: mapStyle,
       center: [-94.6859, 46.5],
       zoom: 5,
-      movingMethod: "easeTo",
+			movingMethod: "easeTo",
+			pitchWithRotate: false,
+			dragRotate: false,
+			touchZoomRotate: false
     });
     map.on("load", () => loadMap(map));
     setMapbox(map);
