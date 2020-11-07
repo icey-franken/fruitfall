@@ -68,7 +68,7 @@ def seed_features():
                     date_time_str, '%Y-%m-%d %H:%M:%S')
 
                 prop[date_val] = date_time_obj
-
+        prop.pop('address')
         # for now we leave these as strings! Eventually convert to foreign key
         month_vals = ['season_start', 'season_stop']
 
