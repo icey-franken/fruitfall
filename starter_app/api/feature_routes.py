@@ -8,7 +8,7 @@ feature_routes = Blueprint('feature', __name__)
 def get_all():
     properties = Property.query.all()
     response = {'type': 'FeatureCollection', 'features': [
-        prop.for_map_just_coords_small() for prop in properties]}
+        prop.for_map() for prop in properties]}
 
     return json.dumps(response)
 

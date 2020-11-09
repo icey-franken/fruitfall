@@ -1,5 +1,5 @@
-from try_database import seed_features
-from starter_app.models import User, Property
+from try_database import seed_features, seed_types
+from starter_app.models import User, Property, Type, Season, Access
 from starter_app import app, db
 from dotenv import load_dotenv
 load_dotenv()
@@ -22,6 +22,35 @@ with app.app_context():
     db.session.add(soonmi)
     db.session.add(alissa)
 
+    db.session.commit()
+
+# add months
+    month_arr = ['January', 'February', 'March', 'April', 'May', 'June',
+                 'July', 'August', 'September', 'October', 'November', 'December']
+    for month in month_arr:
+        entry = Season(month=month)
+        db.session.add(entry)
+    db.session.commit()
+
+# add access
+    access_arr = [
+        "Source is on my property",
+        "I have permission from the owner to add the source",
+        "Source is on public land",
+        "Source is on private property but overhangs public land",
+        "Source is on private property (ask before you pick)",
+        "Unknown",
+    ]
+    for access in access_arr:
+        entry = Access(access=access)
+        db.session.add(entry)
+    db.session.commit()
+
+# add types
+    types_arr = seed_types()
+    for types in types_arr:
+        type_db = Type(**types)
+        db.session.add(type_db)
     db.session.commit()
 
     properties = seed_features()

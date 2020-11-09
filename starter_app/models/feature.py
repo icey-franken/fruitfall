@@ -1,4 +1,4 @@
-from . import db
+from . import db, Type, Access
 from dataclasses import dataclass
 from datetime import datetime
 # @dataclass
@@ -31,7 +31,11 @@ class Property(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # change to type foreign key
-    type_ids = db.Column(db.ARRAY(db.Integer), default=[])
+    # falling fruit allows multiple types - we do not.
+    type_ids = db.Column(db.ForeignKey('types.id', ondelete='cascade'))
+    types = db.relationship('Type', backref='properties')
+
+
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     unverified = db.Column(db.Boolean, default=True)
@@ -50,11 +54,11 @@ class Property(db.Model):
     # address = db.Column(db.Text)
 
     # change to season foreign key
-    season_start = db.Column(db.String(20))
-    season_stop = db.Column(db.String(20))
+    season_start = db.Column(db.ForeignKey('seasons.id'), nullable=True)
+    season_stop = db.Column(db.ForeignKey('seasons.id'), nullable=True)
 
     # change to access foreign key
-    access = db.Column(db.String(150))
+    access = db.Column(db.ForeignKey('accesses.id'), nullable=False)
 
     # should we just send coords and convert to geojson on frontend?
     def for_map(self):
@@ -62,26 +66,29 @@ class Property(db.Model):
             'type': 'Feature',
             'geometry': {
                 'type': 'Point',
-                'coordinates': [self.Latitude, self.Longitude]
+                'coordinates': [self.latitude, self.longitude]
+            },
+            'properties': {
+                'id': self.id,
             }
         }
 
     def for_map_just_coords(self):
         return{
             'id': self.id,
-            'coordinates': [self.Latitude, self.Longitude]
+            'coordinates': [self.latitude, self.longitude]
         }
 
     def for_map_just_coords_small(self):
-        return f'{self.id} {self.Latitude} {self.Longitude}'
+        return f'{self.id} {self.latitude} {self.longitude}'
 
     def for_popup(self):
         return {
             'properties': {
                 'id': self.id,
                 'type_ids': self.type_ids,
-                'Latitude': self.Latitude,
-                'Longitude': self.Longitude,
+                'latitude': self.latitude,
+                'longitude': self.longitude,
                 'unverified': self.unverified,
                 'description': self.description,
                 'author': self.author,
@@ -102,8 +109,8 @@ class Property(db.Model):
             'properties': {
                 'id': self.id,
                 'type_ids': self.type_ids,
-                'Latitude': self.Latitude,
-                'Longitude': self.Longitude,
+                'latitude': self.latitude,
+                'longitude': self.longitude,
                 'unverified': self.unverified,
                 'description': self.description,
                 'author': self.author,
@@ -118,7 +125,7 @@ class Property(db.Model):
             },
             'geometry': {
                 'type': 'Point',
-                'coordinates': [self.Latitude, self.Longitude]
+                'coordinates': [self.latitude, self.longitude]
             }
         }
 
