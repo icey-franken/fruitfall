@@ -24,12 +24,12 @@ with app.app_context():
 
     db.session.commit()
 
-    properties = seed_features()
+    # properties = seed_features()
 
-    for prop in properties:
-        prop_db = Property(**prop)
-        db.session.add(prop_db)
-    db.session.commit()
+    # for prop in properties:
+    #     prop_db = Property(**prop)
+    #     db.session.add(prop_db)
+    # db.session.commit()
 
     # prop = Property(Latitude=50.1234567890, Longitude=-90.12345678901234567890)
     # db.session.add(prop)
