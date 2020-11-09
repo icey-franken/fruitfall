@@ -15,7 +15,7 @@ def read_in_chunks(file_object, chunk_size=1024):
 def seed_features():
 
     data = ''
-    with open('locations_MN_array.txt', 'r') as f:
+    with open('locations_MN_under10000-geo.txt', 'r') as f:
         for piece in read_in_chunks(f):
             # print(piece)
             data += piece
