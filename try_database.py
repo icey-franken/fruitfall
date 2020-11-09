@@ -53,7 +53,7 @@ def seed_features():
                     prop[int_val] = int(prop[int_val])
                 # print(prop)
 
-        float_vals = ['Latitude', 'Longitude']
+        float_vals = ['latitude', 'longitude']
         for float_val in float_vals:
             if float_val in keys:
                 prop[float_val] = float(prop[float_val])

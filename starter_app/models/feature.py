@@ -32,8 +32,8 @@ class Property(db.Model):
 
     # change to type foreign key
     type_ids = db.Column(db.ARRAY(db.Integer), default=[])
-    Latitude = db.Column(db.Float, nullable=False)
-    Longitude = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
     unverified = db.Column(db.Boolean, default=True)
     description = db.Column(db.Text)
 
