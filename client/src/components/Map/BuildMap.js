@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 // import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import { accessToken, mapStyle } from "../../config";
@@ -39,7 +39,6 @@ const circle_radius_scale = [
   40,
 ];
 
-
 export default function BuildMap({
   setMapbox,
   setMapboxLoaded,
@@ -53,9 +52,9 @@ export default function BuildMap({
   //   movingMethod: "easeTo",
   //   // maxBounds: [[-98,43.2], [-89.5, 50]]  //I don't care about maxBounds - look whereever you please, data is only in mn
   // });
+  const [data, setData] = useState();
 
   const loadMap = (map) => {
-
     const geocoder = new MapboxGeocoder({
       accessToken: accessToken,
       mapboxgl: mapboxgl,
@@ -70,8 +69,8 @@ export default function BuildMap({
       // clear previous marker if it exists
       if (markerInst.current) {
         markerInst.current.remove();
-			}
-			markerInst.current = marker;
+      }
+      markerInst.current = marker;
       //this will fill in whatever result user clicks on
       setSearchLatLon([...result.center]);
       // make their search result draggable and set coords in form
@@ -86,7 +85,7 @@ export default function BuildMap({
     // add the point_count property to your source data.
     map.addSource("fruitfall", {
       type: "geojson",
-      data: "./locations_MN.geojson", //change this to come from database
+      data: data, //"./locations_MN.geojson", //change this to come from database
       cluster: true,
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
@@ -329,19 +328,35 @@ export default function BuildMap({
   };
 
   useEffect(() => {
-    mapboxgl.accessToken = accessToken;
+		mapboxgl.accessToken = accessToken;
+		console.log('map use effect:',data)
     const map = new mapboxgl.Map({
       container: "mapbox",
       style: mapStyle,
       center: [-94.6859, 46.5],
       zoom: 5,
-			movingMethod: "easeTo",
-			pitchWithRotate: false,
-			dragRotate: false,
-			touchZoomRotate: false
+      movingMethod: "easeTo",
+      pitchWithRotate: false,
+      dragRotate: false,
+      touchZoomRotate: false,
     });
     map.on("load", () => loadMap(map));
     setMapbox(map);
+  }, [data]);
+
+  useEffect(() => {
+		async function get_data(){
+			const res = await fetch("/api/features/")
+			console.log(res)
+			const res_data = await res.json();
+
+			// console.log(res_data)
+			const json_data =JSON.stringify(res_data)
+			setData(json_data);
+		}
+		get_data();
+		console.log('data use effect:', data)
   }, []);
+
   return null;
 }
