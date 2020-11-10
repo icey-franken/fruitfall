@@ -57,7 +57,8 @@ export default function AddLocationForm({
   const [formData, setFormData] = useState(emptyForm);
 
   useEffect(() => {
-    setFormData({ ...formData, lat: searchLatLon[0], lng: searchLatLon[1] });
+		// functional update removes complaint about missing form data dependency
+    setFormData((formData)=>({ ...formData, lat: searchLatLon[0], lng: searchLatLon[1] }));
   }, [searchLatLon]);
 
   const handleSubmit = (e) => {

@@ -53,11 +53,16 @@ class Property(db.Model):
     # address = db.Column(db.Text)
 
     # change to season foreign key
-    season_start = db.Column(db.ForeignKey('seasons.id'), nullable=True)
-    season_stop = db.Column(db.ForeignKey('seasons.id'), nullable=True)
+    season_start_id = db.Column(db.ForeignKey('seasons.id'), nullable=True)
+    season_stop_id = db.Column(db.ForeignKey('seasons.id'), nullable=True)
+    season_stop = db.relationship('Season',  foreign_keys=[
+                                  season_stop_id], backref='properties')
+    season_start = db.relationship('Season',  foreign_keys=[
+                                   season_start_id])
 
     # change to access foreign key
-    access = db.Column(db.ForeignKey('accesses.id'), nullable=False)
+    access_id = db.Column(db.ForeignKey('accesses.id'), nullable=False)
+    access = db.relationship('Access', backref='properties')
 
     # should we just send coords and convert to geojson on frontend?
     def for_map(self):
@@ -82,10 +87,18 @@ class Property(db.Model):
         return f'{self.id} {self.longitude} {self.latitude}'
 
     def for_popup(self):
+        start_month = None
+        stop_month = None
+
+        if self.season_start_id:
+            start_month = self.season_start.month
+        if self.season_stop_id:
+            stop_month = self.season_stop.month
+
         return {
             'properties': {
                 'id': self.id,
-                'type_ids': self.type_ids,
+                **self.types.to_dict(),
                 'latitude': self.latitude,
                 'longitude': self.longitude,
                 'unverified': self.unverified,
@@ -96,9 +109,9 @@ class Property(db.Model):
                 'import_link': self.import_link,
                 'hidden': self.hidden,
                 'no_season': self.no_season,
-                'season_start': self.season_start,
-                'season_stop': self.season_stop,
-                'access': self.access,
+                'season_start': start_month,
+                'season_stop': stop_month,
+                'access': self.access.access,
             },
         }
 
