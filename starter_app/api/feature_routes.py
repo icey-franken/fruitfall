@@ -10,7 +10,7 @@ def get_all():
     response = {'type': 'FeatureCollection', 'features': [
         prop.for_map() for prop in properties]}
 
-    return json.dumps(response)
+    return response  # json.dumps(response)
 
 
 @feature_routes.route('/<int:id>')

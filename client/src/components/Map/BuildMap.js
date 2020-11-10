@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
 // import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import { accessToken, mapStyle } from "../../config";
@@ -6,6 +6,10 @@ import mapboxgl from "mapbox-gl";
 import InfoPopup from "./InfoPopup";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+
+import { MapContext } from "../../MapContextProvider";
+
+mapboxgl.accessToken = accessToken;
 const primary_color = "#11b4da"; //update
 const secondary_color = "#fff"; //update
 // must have odd number of entries. Color, number, color, etc. Same for radius scale
@@ -39,12 +43,11 @@ const circle_radius_scale = [
   40,
 ];
 
-
 export default function BuildMap({
   setMapbox,
   setMapboxLoaded,
   setSearchLatLon,
-  showAddLocation,
+  // showAddLocation,
   markerInst,
 }) {
   // const [viewport, setViewport] = useState({
@@ -54,8 +57,9 @@ export default function BuildMap({
   //   // maxBounds: [[-98,43.2], [-89.5, 50]]  //I don't care about maxBounds - look whereever you please, data is only in mn
   // });
 
-  const loadMap = (map) => {
+  const { mapData } = useContext(MapContext);
 
+  const loadMap = (map) => {
     const geocoder = new MapboxGeocoder({
       accessToken: accessToken,
       mapboxgl: mapboxgl,
@@ -70,8 +74,8 @@ export default function BuildMap({
       // clear previous marker if it exists
       if (markerInst.current) {
         markerInst.current.remove();
-			}
-			markerInst.current = marker;
+      }
+      markerInst.current = marker;
       //this will fill in whatever result user clicks on
       setSearchLatLon([...result.center]);
       // make their search result draggable and set coords in form
@@ -86,7 +90,7 @@ export default function BuildMap({
     // add the point_count property to your source data.
     map.addSource("fruitfall", {
       type: "geojson",
-      data: "./locations_MN.geojson", //change this to come from database
+      data: mapData, //"./locations_MN.geojson", //change this to come from database
       cluster: true,
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
@@ -316,7 +320,8 @@ export default function BuildMap({
     // 	// 		.addTo(map);
     // });
     setMapboxLoaded(true);
-  };
+	};
+
 
   const addPopup = (map, coordinates, info) => {
     const placeholder = document.createElement("div");
@@ -329,19 +334,20 @@ export default function BuildMap({
   };
 
   useEffect(() => {
-    mapboxgl.accessToken = accessToken;
     const map = new mapboxgl.Map({
       container: "mapbox",
       style: mapStyle,
       center: [-94.6859, 46.5],
       zoom: 5,
-			movingMethod: "easeTo",
-			pitchWithRotate: false,
-			dragRotate: false,
-			touchZoomRotate: false
+      movingMethod: "easeTo",
+      pitchWithRotate: false,
+      dragRotate: false,
+      touchZoomRotate: false,
     });
+    // console.log()
     map.on("load", () => loadMap(map));
     setMapbox(map);
-  }, []);
+  }, [mapData, setMapbox]); //setMapbox only included so react stops complaining. Including loadMap results in render loop. Mentioned useCallback but that makes things worse.
+
   return null;
 }

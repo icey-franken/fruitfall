@@ -35,7 +35,6 @@ class Property(db.Model):
     type_ids = db.Column(db.ForeignKey('types.id', ondelete='cascade'))
     types = db.relationship('Type', backref='properties')
 
-
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     unverified = db.Column(db.Boolean, default=True)
@@ -66,7 +65,7 @@ class Property(db.Model):
             'type': 'Feature',
             'geometry': {
                 'type': 'Point',
-                'coordinates': [self.latitude, self.longitude]
+                'coordinates': [self.longitude, self.latitude]
             },
             'properties': {
                 'id': self.id,
@@ -76,11 +75,11 @@ class Property(db.Model):
     def for_map_just_coords(self):
         return{
             'id': self.id,
-            'coordinates': [self.latitude, self.longitude]
+            'coordinates': [self.longitude, self.latitude]
         }
 
     def for_map_just_coords_small(self):
-        return f'{self.id} {self.latitude} {self.longitude}'
+        return f'{self.id} {self.longitude} {self.latitude}'
 
     def for_popup(self):
         return {
@@ -125,7 +124,7 @@ class Property(db.Model):
             },
             'geometry': {
                 'type': 'Point',
-                'coordinates': [self.latitude, self.longitude]
+                'coordinates': [self.longitude, self.latitude]
             }
         }
 

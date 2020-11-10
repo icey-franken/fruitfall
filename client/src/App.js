@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, Switch, Route, NavLink } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-import UserList from "./components/UsersList";
+// import UserList from "./components/UsersList";
 import UserForm from "./components/UserForm";
 import AuthContext from "./auth";
+import MapContextProvider from './MapContextProvider';
 import NavBar from "./components/NavBar";
 import MapContainer from "./components/Map/MapContainer";
 
@@ -11,8 +12,9 @@ function App() {
   const [fetchWithCSRF, setFetchWithCSRF] = useState(() => fetch);
   const authContextValue = {
     fetchWithCSRF,
-  };
-  useEffect(() => {
+	};
+
+	useEffect(() => {
     async function restoreCSRF() {
       const response = await fetch("/api/csrf/restore", {
         method: "GET",
@@ -37,8 +39,12 @@ function App() {
     restoreCSRF();
   }, []);
 
-  return (
+// setting up map context
+
+
+	return (
     <AuthContext.Provider value={authContextValue}>
+			<MapContextProvider>
       <BrowserRouter>
         <NavBar />
         <Switch>
@@ -55,6 +61,7 @@ function App() {
           <Route exact path="/" component={MapContainer}/>
         </Switch>
       </BrowserRouter>
+			</MapContextProvider>
     </AuthContext.Provider>
   );
 }

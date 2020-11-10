@@ -11,6 +11,21 @@ export default function MapContainer() {
   const markerInst = useRef();
   const layerIds = ["clusters", "cluster-count", "unclustered-point"];
 
+  const addCrosshair = (canvasRef) => {
+    for (let i = 0; i < canvasRef.current.length; i++) {
+      canvasRef.current[i].classList.add("crosshair");
+    }
+  };
+  const removeCrosshair = (canvasRef) => {
+    for (let i = 0; i < canvasRef.current.length; i++) {
+      canvasRef.current[i].classList.remove("crosshair");
+    }
+	};
+
+  useEffect(() => {
+    canvasRef.current = document.querySelectorAll(".mapboxgl-canvas");
+	}, [mapboxLoaded]);
+
   // useRef hook required so that we reference the SAME function in map.on and map.off in useEffect hook
   const mapClickFn = useRef((e) => {
     // remove marker from search on click
@@ -30,14 +45,15 @@ export default function MapContainer() {
     el.className = "marker";
     const marker = new mapboxgl.Marker(el, { draggable: true });
     marker.setLngLat(coordinates).addTo(e.target);
-    // update coords on drag
-    marker.on("dragstart", () => {
-      canvasRef.current.classList.remove("crosshair");
+		// change cursor back to grabbing on drag
+		marker.on("dragstart", () => {
+			removeCrosshair(canvasRef);
     });
+		// update coords on drag
     marker.on("dragend", () => {
       const coordinates = marker.getLngLat();
       setSearchLatLon([coordinates.lng, coordinates.lat]);
-      canvasRef.current.classList.add("crosshair");
+      addCrosshair(canvasRef);
     });
     // update marker instance to new marker
     markerInst.current = marker;
@@ -59,7 +75,7 @@ export default function MapContainer() {
       if (showAddLocation) {
         mapbox.on("click", mapClickFn.current);
         toggleLayers("none");
-        canvasRef.current.classList.add("crosshair");
+        addCrosshair(canvasRef);
       } else {
         mapbox.off("click", mapClickFn.current);
         toggleLayers("visible");
@@ -67,7 +83,7 @@ export default function MapContainer() {
           markerInst.current.remove();
         }
         setSearchLatLon([]);
-        canvasRef.current.classList.remove("crosshair");
+        removeCrosshair(canvasRef);
       }
     }
   }, [showAddLocation]);
@@ -76,9 +92,7 @@ export default function MapContainer() {
     console.log(searchLatLon);
   }, [searchLatLon]);
 
-  useEffect(() => {
-    canvasRef.current = document.querySelector(".mapboxgl-canvas");
-  }, [mapboxLoaded]);
+
 
   return (
     <div className="content-cont">
@@ -90,7 +104,6 @@ export default function MapContainer() {
       />
       <div
         className="mapbox-cont"
-        style={{ cursor: `${showAddLocation ? "crosshair" : "initial"}` }}
       >
         <button
           id="add-location-button"
@@ -106,7 +119,7 @@ export default function MapContainer() {
           setMapbox={setMapbox}
           setMapboxLoaded={setMapboxLoaded}
           setSearchLatLon={setSearchLatLon}
-          showAddLocation={showAddLocation}
+          // showAddLocation={showAddLocation}
           markerInst={markerInst}
         />
         <div id="mapbox" />
