@@ -122,7 +122,10 @@ def seed_features():
         for month_val in month_vals:
             if month_val in keys:
                 month_idx = month_arr.index(prop[month_val])
-                prop[month_val] = int(month_idx)
+                prop[f'{month_val}_id'] = int(month_idx)
+                del prop[month_val]
+
+
         access_arr_db = [
             "Added by owner",
             "Permitted by owner",
@@ -133,9 +136,10 @@ def seed_features():
         ]
         if 'access' in keys:
             access_idx = access_arr_db.index(prop['access'])+1
-            prop['access'] = int(access_idx)
+            prop['access_id'] = int(access_idx)
+            del prop['access']
         else:
-            prop['access'] = 6
+            prop['access_id'] = 6
         # converting access and author to foreign keys would be ideal
         string_vals = ['address',
                        'import_link', 'author', 'description']

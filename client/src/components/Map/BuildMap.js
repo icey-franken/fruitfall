@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 // import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import { accessToken, mapStyle } from "../../config";
 import mapboxgl from "mapbox-gl";
-import InfoPopup from "./InfoPopup";
+import InfoPopup from "./PopupForm/InfoPopup";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
@@ -193,25 +193,20 @@ export default function BuildMap({
     // the unclustered-point layer, open a popup at
     // the location of the feature, with
     // description HTML from its properties.
-    map.on("click", "unclustered-point", function (e) {
+    map.on("click", "unclustered-point", async function (e) {
       const coordinates = e.features[0].geometry.coordinates.slice();
-      // change this to the info - the popup will be an info component
-      const mag = e.features[0].properties;
-      let tsunami;
-
-      if (e.features[0].properties.tsunami === 1) {
-        tsunami = "yes";
-      } else {
-        tsunami = "no";
-      }
-
+			// get id from click
+			const id = parseInt(e.features[0].properties.id,10)
+			// fetch popup info to display
+			const res = await fetch(`/api/features/${id}`)
+			const {properties} = await res.json()
       // Ensure that if the map is zoomed out such that
       // multiple copies of the feature are visible, the
       // popup appears over the copy being pointed to.
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
       }
-      addPopup(map, coordinates, mag);
+      addPopup(map, coordinates, properties);
     });
 
     // start cluster hover features----------------
@@ -226,7 +221,6 @@ export default function BuildMap({
           });
         }
         featureId = e.features[0].id;
-        // console.log(featureId);
         map.setFeatureState(
           {
             source: "fruitfall",

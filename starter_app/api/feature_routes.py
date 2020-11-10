@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from starter_app.models import Property
+from starter_app.models import db, Property, Access
 from flask import json
 feature_routes = Blueprint('feature', __name__)
 
@@ -15,12 +15,8 @@ def get_all():
 
 @feature_routes.route('/<int:id>')
 def get_one(id):
-    popup_info = Property.query.one_or_none(int(id))
-    response = {'properties': popup_info.for_popup()}
+    print(id)
+    popup_info = Property.query.filter(id == Property.id).one()
+    response = popup_info.for_popup()
 
-    return json.dumps(response)
-
-
-@feature_routes.route('/<int:id>', methods=['GET', 'POST'])
-def user_detail(id):
-    return {}
+    return response

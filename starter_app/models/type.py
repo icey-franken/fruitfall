@@ -21,3 +21,10 @@ class Type(db.Model):
     scientific_synonyms = db.Column(db.String(300))
     taxonomic_rank = db.Column(db.String(100))
     pending = db.Column(db.Boolean, default=True)
+
+    def to_dict(self):
+        return {
+            'type_name': self.en_name,
+            'type_syn': self.en_synonyms,
+            'type_url': self.en_wikipedia_url,
+        }

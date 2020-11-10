@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import BuildMap from "./BuildMap";
-import AddLocationForm from "./AddLocationForm";
+import AddLocationForm from "./LocationForm/AddLocationForm";
 import mapboxgl from "mapbox-gl";
 export default function MapContainer() {
   const [mapbox, setMapbox] = useState(null);
