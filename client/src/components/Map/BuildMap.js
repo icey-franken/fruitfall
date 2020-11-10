@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from "react-dom";
 // import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import { accessToken, mapStyle } from "../../config";
@@ -52,7 +52,7 @@ export default function BuildMap({
   //   movingMethod: "easeTo",
   //   // maxBounds: [[-98,43.2], [-89.5, 50]]  //I don't care about maxBounds - look whereever you please, data is only in mn
   // });
-  const [data, setData] = useState();
+  const mapData = useRef();
 
   const loadMap = (map) => {
     const geocoder = new MapboxGeocoder({
@@ -80,12 +80,75 @@ export default function BuildMap({
       });
     });
 
+    //------------------------------ figuring out valid geojson
+    // this works!
+    const geojson_obj = {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          properties: {
+            id: "2112",
+            type_ids: "61",
+            Latitude: "46.874249",
+            Longitude: "-96.793518",
+            unverified: "FALSE",
+            description: "Red Raven Espresso Parlor (in Alley)",
+            author: "Lauryn",
+            created_at: "2013-02-07 07:11:39 UTC",
+            updated_at: "2016-12-06 04:01:03 UTC",
+            import_link: "https://fallingfruit.org/imports/44",
+            hidden: "FALSE",
+          },
+          geometry: { type: "Point", coordinates: [-96.793518, 46.874249] },
+        },
+        {
+          type: "Feature",
+          properties: {
+            id: "2113",
+            type_ids: "61",
+            Latitude: "46.874187",
+            Longitude: "-96.78801",
+            unverified: "FALSE",
+            description: "Main Ave & 6th St S",
+            author: "Lauryn",
+            created_at: "2013-02-07 07:11:39 UTC",
+            updated_at: "2016-12-08 21:57:28 UTC",
+            import_link: "https://fallingfruit.org/imports/44",
+            hidden: "FALSE",
+          },
+          geometry: { type: "Point", coordinates: [-96.78801, 46.874187] },
+        },
+      ],
+    };
+
+    // this does NOT
+    const geojson_obj2 = {
+      features: [
+        {
+          geometry: { coordinates: [-96.793518, 46.874249], type: "Point" },
+          properties: { id: 2112 },
+          type: "Feature",
+        },
+        {
+          geometry: { coordinates: [ -96.78801, 46.874187], type: "Point" },
+          properties: { id: 2113 },
+          type: "Feature",
+        },
+      ],
+      type: "FeatureCollection",
+    };
+
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will
-    // add the point_count property to your source data.
+		// add the point_count property to your source data.
+		console.log(mapData.current)
+		const geojson = JSON.stringify(mapData.current)
+		console.log(typeof mapData.current)
+		console.log(typeof geojson)
     map.addSource("fruitfall", {
       type: "geojson",
-      data: data, //"./locations_MN.geojson", //change this to come from database
+      data: mapData.current,//geojson_obj2, //data, //"./locations_MN.geojson", //change this to come from database
       cluster: true,
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
@@ -328,8 +391,8 @@ export default function BuildMap({
   };
 
   useEffect(() => {
-		mapboxgl.accessToken = accessToken;
-		console.log('map use effect:',data)
+		console.log('hits map use effect. Data:', mapData.current)
+    mapboxgl.accessToken = accessToken;
     const map = new mapboxgl.Map({
       container: "mapbox",
       style: mapStyle,
@@ -342,20 +405,22 @@ export default function BuildMap({
     });
     map.on("load", () => loadMap(map));
     setMapbox(map);
-  }, [data]);
+  }, [mapData]);
 
   useEffect(() => {
-		async function get_data(){
-			const res = await fetch("/api/features/")
-			console.log(res)
-			const res_data = await res.json();
-
-			// console.log(res_data)
-			const json_data =JSON.stringify(res_data)
-			setData(json_data);
-		}
-		get_data();
-		console.log('data use effect:', data)
+		console.log('hits get_data use effect. Data:', mapData)
+    async function get_data() {
+      const res = await fetch("/api/features/");
+      console.log(res);
+      const res_data = await res.json();
+			console.log(res_data)
+      // console.log(res_data)
+      // const json_data = JSON.stringify(res_data);
+			// setData(res_data);
+			mapData.current = res_data
+    }
+    get_data();
+    console.log("data use effect:", mapData);
   }, []);
 
   return null;
