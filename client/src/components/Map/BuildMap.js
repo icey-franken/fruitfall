@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
 // import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import { accessToken, mapStyle } from "../../config";
@@ -47,7 +47,7 @@ export default function BuildMap({
   setMapbox,
   setMapboxLoaded,
   setSearchLatLon,
-  showAddLocation,
+  // showAddLocation,
   markerInst,
 }) {
   // const [viewport, setViewport] = useState({
@@ -58,22 +58,6 @@ export default function BuildMap({
   // });
 
   const { mapData } = useContext(MapContext);
-
-  useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: "mapbox",
-      style: mapStyle,
-      center: [-94.6859, 46.5],
-      zoom: 5,
-      movingMethod: "easeTo",
-      pitchWithRotate: false,
-      dragRotate: false,
-      touchZoomRotate: false,
-    });
-    // console.log()
-    map.on("load", () => loadMap(map));
-    setMapbox(map);
-  }, [mapData]);
 
   const loadMap = (map) => {
     const geocoder = new MapboxGeocoder({
@@ -336,7 +320,8 @@ export default function BuildMap({
     // 	// 		.addTo(map);
     // });
     setMapboxLoaded(true);
-  };
+	};
+
 
   const addPopup = (map, coordinates, info) => {
     const placeholder = document.createElement("div");
@@ -347,6 +332,22 @@ export default function BuildMap({
       .setLngLat(coordinates)
       .addTo(map);
   };
+
+  useEffect(() => {
+    const map = new mapboxgl.Map({
+      container: "mapbox",
+      style: mapStyle,
+      center: [-94.6859, 46.5],
+      zoom: 5,
+      movingMethod: "easeTo",
+      pitchWithRotate: false,
+      dragRotate: false,
+      touchZoomRotate: false,
+    });
+    // console.log()
+    map.on("load", () => loadMap(map));
+    setMapbox(map);
+  }, [mapData, setMapbox]); //setMapbox only included so react stops complaining. Including loadMap results in render loop. Mentioned useCallback but that makes things worse.
 
   return null;
 }

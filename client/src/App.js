@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, Switch, Route, NavLink } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-import UserList from "./components/UsersList";
+// import UserList from "./components/UsersList";
 import UserForm from "./components/UserForm";
 import AuthContext from "./auth";
 import MapContextProvider from './MapContextProvider';

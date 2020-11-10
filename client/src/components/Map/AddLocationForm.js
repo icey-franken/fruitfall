@@ -142,11 +142,11 @@ export default function AddLocationForm({
     console.log(formData);
   };
 
-  const [address, setAddress] = useState("");
-
-  const handleAddress = (e) => {
-    const input = e.target.value;
-  };
+	// we don't save address - we save coords
+  // const [address, setAddress] = useState("");
+  // const handleAddress = (e) => {
+  //   const input = e.target.value;
+  // };
 
   return (
     <div className={`add-loc__cont fade-in ${show ? 'show' : ''}`}>
