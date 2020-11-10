@@ -7,7 +7,9 @@ import InfoPopup from "./InfoPopup";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
-import MapContext from '../../MapContext';
+import { MapContext } from "../../MapContextProvider";
+
+mapboxgl.accessToken = accessToken;
 const primary_color = "#11b4da"; //update
 const secondary_color = "#fff"; //update
 // must have odd number of entries. Color, number, color, etc. Same for radius scale
@@ -54,16 +56,10 @@ export default function BuildMap({
   //   movingMethod: "easeTo",
   //   // maxBounds: [[-98,43.2], [-89.5, 50]]  //I don't care about maxBounds - look whereever you please, data is only in mn
   // });
-  // const mapData = useRef();
 
-	const mapContextStuff = useContext(MapContext)
-	console.log(mapContextStuff)
-	const {mapData} = mapContextStuff
-	console.log('map data at top of build map:', mapData)
+  const { mapData } = useContext(MapContext);
 
   useEffect(() => {
-		mapboxgl.accessToken = accessToken;
-		console.log('hits mpaData use efect:', mapData)
     const map = new mapboxgl.Map({
       container: "mapbox",
       style: mapStyle,
@@ -73,8 +69,8 @@ export default function BuildMap({
       pitchWithRotate: false,
       dragRotate: false,
       touchZoomRotate: false,
-		});
-		// console.log()
+    });
+    // console.log()
     map.on("load", () => loadMap(map));
     setMapbox(map);
   }, [mapData]);
@@ -107,11 +103,10 @@ export default function BuildMap({
 
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will
-		// add the point_count property to your source data.
-		console.log('map data right before add source:', mapData)
+    // add the point_count property to your source data.
     map.addSource("fruitfall", {
       type: "geojson",
-      data: mapData,//geojson_obj2, //data, //"./locations_MN.geojson", //change this to come from database
+      data: mapData, //"./locations_MN.geojson", //change this to come from database
       cluster: true,
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
@@ -352,23 +347,6 @@ export default function BuildMap({
       .setLngLat(coordinates)
       .addTo(map);
   };
-
-
-  // useEffect(() => {
-	// 	console.log('hits get_data use effect. Data:', mapData)
-  //   async function get_data() {
-  //     const res = await fetch("/api/features/");
-  //     console.log(res);
-  //     const res_data = await res.json();
-	// 		console.log(res_data)
-  //     // console.log(res_data)
-  //     // const json_data = JSON.stringify(res_data);
-	// 		// setData(res_data);
-	// 		mapData.current = res_data
-  //   }
-  //   get_data();
-  //   console.log("data use effect:", mapData);
-  // }, []);
 
   return null;
 }
