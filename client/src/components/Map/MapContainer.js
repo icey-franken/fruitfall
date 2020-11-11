@@ -21,11 +21,11 @@ export default function MapContainer() {
     for (let i = 0; i < canvasRef.current.length; i++) {
       canvasRef.current[i].classList.remove("crosshair");
     }
-	};
+  };
 
   useEffect(() => {
     canvasRef.current = document.querySelectorAll(".mapboxgl-canvas");
-	}, [mapboxLoaded]);
+  }, [mapboxLoaded]);
 
   // useRef hook required so that we reference the SAME function in map.on and map.off in useEffect hook
   const mapClickFn = useRef((e) => {
@@ -46,11 +46,11 @@ export default function MapContainer() {
     el.className = "marker";
     const marker = new mapboxgl.Marker(el, { draggable: true });
     marker.setLngLat(coordinates).addTo(e.target);
-		// change cursor back to grabbing on drag
-		marker.on("dragstart", () => {
-			removeCrosshair(canvasRef);
+    // change cursor back to grabbing on drag
+    marker.on("dragstart", () => {
+      removeCrosshair(canvasRef);
     });
-		// update coords on drag
+    // update coords on drag
     marker.on("dragend", () => {
       const coordinates = marker.getLngLat();
       setSearchLatLon([coordinates.lng, coordinates.lat]);
@@ -93,23 +93,23 @@ export default function MapContainer() {
     console.log(searchLatLon);
   }, [searchLatLon]);
 
-
-
   return (
     <div className="content-cont">
-      <AddLocationForm
-				handleAddLocationClick={handleAddLocationClick}
-        setShowForm={setShowAddLocation}
-        handleFormSubmitClick={handleAddLocationClick}
-        searchLatLon={searchLatLon}
-        show={showAddLocation}
-      />
-      <div
-        className="mapbox-cont"
-      >
+      {mapboxLoaded ? (//do this conditionally to reduce number of rerenders
+        <AddLocationForm
+          handleAddLocationClick={handleAddLocationClick}
+          setShowForm={setShowAddLocation}
+          handleFormSubmitClick={handleAddLocationClick}
+          searchLatLon={searchLatLon}
+          show={showAddLocation}
+        />
+      ) : null}
+      <div className="mapbox-cont">
         <button
           id="add-location-button"
-          className={`btn add-location__btn ${showAddLocation ? 'add-location__btn--hide' : ''}`}
+          className={`btn add-location__btn ${
+            showAddLocation ? "add-location__btn--hide" : ""
+          }`}
           name={showAddLocation.toString()}
           onClick={handleAddLocationClick}
           // hide button until layers loaded

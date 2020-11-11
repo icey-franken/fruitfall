@@ -1,6 +1,12 @@
 import React from "react";
 
-export default function AddLocationSlider({ id, label, handleChange, currentValue }) {
+export default function AddLocationSlider({
+  id,
+  label,
+  // handleChange,
+  // currentValue,
+  register,
+}) {
   let sliderValues = [
     [0, "Unsure"],
     [1, "Poor"],
@@ -25,6 +31,7 @@ export default function AddLocationSlider({ id, label, handleChange, currentValu
         {label}
       </label>
       <input
+        ref={register({ required: true })}
         type="range"
         min="0"
         max={`${sliderValues.length - 1}`}
@@ -32,8 +39,8 @@ export default function AddLocationSlider({ id, label, handleChange, currentValu
         list={`${id}-values`}
         id={id}
         name={id}
-				onChange={handleChange}
-				value={currentValue}
+        // onChange={handleChange}
+        // value={currentValue}
       />
       <div
         className={`add-loc__slider-cont ${
