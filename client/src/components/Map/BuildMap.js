@@ -80,15 +80,10 @@ export default function BuildMap({
       //this will fill in whatever result user clicks on
       setValue("lng", result.center[0]);
       setValue("lat", result.center[1]);
-      // !!!
-      // searchLatLonRef.current=[...result.center];
-      // make their search result draggable and set coords in form
       marker.on("dragend", (e) => {
         const coordinates = e.target.getLngLat();
         setValue("lat", coordinates.lat);
         setValue("lng", coordinates.lng);
-        // !!!
-        // searchLatLonRef.current = [coordinates.lng, coordinates.lat];
       });
     });
 

@@ -3,12 +3,11 @@ import AddLocationForm2 from "./AddLocationFormHook2";
 
 export default function AddLocationFormHook({
   handleFormSubmitClick,
-  // searchLatLonRef,
   show,
 	handleAddLocationClick,
 	useFormObj
 }) {
-	const { register, handleSubmit, errors, setValue, getValues, watch } = useFormObj
+	const { register, handleSubmit, errors, watch } = useFormObj
 
   const watchNoSeason = watch("no_season");
   const watchVisited = watch("visited");
@@ -36,20 +35,6 @@ export default function AddLocationFormHook({
   }, []);
 
   console.log("hits");
-	// update
-	// !!!
-  // useEffect(() => {
-  //   // functional update removes complaint about missing form data dependency
-  //   setValue("lng", searchLatLonRef.current[0]);
-  //   setValue("lat", searchLatLonRef.current[1]);
-	// 	console.log('use effect ', searchLatLonRef)
-  //   // setFormData((formData) => ({
-  //   //   ...formData,
-  //   //   lng: searchLatLon[0],
-  //   //   lat: searchLatLon[1],
-  //   // }));
-  // }, [searchLatLonRef.current]);
-	// console.log('outside use effect', searchLatLonRef)
 
   // const handleSubmit = (e) => {
   //   e.preventDefault();
@@ -119,25 +104,7 @@ export default function AddLocationFormHook({
   //   }
   // };
 
-  // const handleChange = (e) => {
-  //   const id = e.target.id;
-  //   let value = e.target.value;
-  //   console.log(typeof value);
-  //   if (id === "unverified") {
-  //     value = !e.target.checked;
-  //   } else if (id === "no_season" || id === "visited") {
-  //     value = e.target.checked;
-  //   }
 
-  //   setFormData({ ...formData, [id]: value });
-  //   console.log(formData);
-  // };
-
-  // we don't save address - we save coords
-  // const [address, setAddress] = useState("");
-  // const handleAddress = (e) => {
-  //   const input = e.target.value;
-  // };
   if (loading) {
     return null;
   }
@@ -161,10 +128,8 @@ export default function AddLocationFormHook({
             </div>
             <select
               ref={register({ required: true })}
-              defaultValue=""
               name="type_ids"
               id="type_ids"
-              // onChange={handleChange}
             >
               <option className="invalid" value="" disabled hidden>
                 Select a type
@@ -191,10 +156,7 @@ export default function AddLocationFormHook({
                 className="add-loc__pos"
                 name="lat"
                 id="lat"
-                // type="number"
-                // onChange={handleChange}
                 placeholder="Latitude"
-                // value={searchLatLon[1]}
               />
               <div className="add-loc__pos-spacer" />
               <input
@@ -202,19 +164,10 @@ export default function AddLocationFormHook({
                 className="add-loc__pos"
                 name="lng"
                 id="lng"
-                // type="number"
-                // onChange={handleChange}
                 placeholder="Longitude"
-                // value={searchLatLon[0]}
               />
             </div>
           </div>
-          {/* <div className="add-loc__el add-loc__el-col">
-          <label className="add-loc__label" htmlFor="address">
-            Address
-          </label>
-          <textarea name="address" id="address" onChange={handleAddress} />
-        </div> */}
           <div className="add-loc__el add-loc__el-col">
             <label className="add-loc__label" htmlFor="description">
               Description
@@ -227,7 +180,6 @@ export default function AddLocationFormHook({
               ref={register({ required: true })}
               name="description"
               id="description"
-              // onChange={handleChange}
             />
           </div>
           <div className="add-loc__el add-loc__el-col">
@@ -240,7 +192,6 @@ export default function AddLocationFormHook({
                   type="checkbox"
                   name="no_season"
                   id="no_season"
-                  // onChange={handleChange}
                 />
                 <label className="add-loc__label" htmlFor="no-season">
                   No Season
@@ -253,11 +204,9 @@ export default function AddLocationFormHook({
             <div className="add-loc__el-row">
               <select
                 ref={register}
-                defaultValue=""
                 className="add-loc__pos"
                 name="season_start"
                 id="season_start"
-                // onChange={handleChange}
                 disabled={watchNoSeason}
               >
                 <option className="invalid" value="" disabled hidden>
@@ -273,11 +222,9 @@ export default function AddLocationFormHook({
               <div className="add-loc__pos-spacer" />
               <select
                 ref={register}
-                defaultValue=""
                 className="add-loc__pos"
                 name="season_end"
                 id="season_end"
-                // onChange={handleChange}
                 disabled={watchNoSeason}
               >
                 <option className="invalid" value="" disabled hidden>
@@ -301,11 +248,8 @@ export default function AddLocationFormHook({
             </div>
             <select
               ref={register({ required: true })}
-              defaultValue=""
-              required
               name="access"
               id="access"
-              // onChange={handleChange}
             >
               <option className="invalid" value="" disabled hidden>
                 Access status of source
@@ -326,7 +270,6 @@ export default function AddLocationFormHook({
                   type="checkbox"
                   id="unverified"
                   name="unverified"
-                  // onChange={handleChange}
                 />
                 <label htmlFor="unverified">Verified?</label>
               </div>
@@ -344,7 +287,6 @@ export default function AddLocationFormHook({
                 type="checkbox"
                 id="visited"
                 name="visited"
-                // onChange={handleChange}
               />
               <label htmlFor="visited">Have you visted this location?</label>
             </div>
@@ -353,9 +295,6 @@ export default function AddLocationFormHook({
           {watchVisited === true ? (
             <AddLocationForm2
               register={register}
-              // handleChange={handleChange}
-              // formData={formData}
-              // setFormData={setFormData}
             />
           ) : null}
           <div className="add-loc__btn-cont">
