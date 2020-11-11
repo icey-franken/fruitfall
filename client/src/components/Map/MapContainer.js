@@ -33,7 +33,7 @@ export default function MapContainer() {
       yield: 0,
     },
   });
-  const { setValue } = useFormObj;
+  const { setValue, clearErrors } = useFormObj;
 
   const addCrosshair = (canvasRef) => {
     for (let i = 0; i < canvasRef.current.length; i++) {
@@ -64,7 +64,8 @@ export default function MapContainer() {
     const coordinates = e.lngLat;
     // set coords on click
     setValue("lat", coordinates.lat);
-    setValue("lng", coordinates.lng);
+		setValue("lng", coordinates.lng);
+		clearErrors(['lat','lng'])
     // !!!
     // searchLatLonRef.current = [coordinates.lng, coordinates.lat];
     // create new marker on click
@@ -80,7 +81,9 @@ export default function MapContainer() {
     marker.on("dragend", () => {
       const coordinates = marker.getLngLat();
       setValue("lat", coordinates.lat);
-      setValue("lng", coordinates.lng);
+			setValue("lng", coordinates.lng);
+		clearErrors(['lat','lng'])
+
       // !!!
       // searchLatLonRef.current = [coordinates.lng, coordinates.lat];
       addCrosshair(canvasRef);
@@ -154,7 +157,8 @@ export default function MapContainer() {
         <BuildMap
           setMapbox={setMapbox}
           setMapboxLoaded={setMapboxLoaded}
-          setValue={setValue}
+					setValue={setValue}
+					clearErrors={clearErrors}
           // searchLatLonRef={searchLatLonRef}
           // showAddLocation={showAddLocation}
           markerInst={markerInst}

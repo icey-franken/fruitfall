@@ -48,6 +48,7 @@ export default function BuildMap({
   setMapboxLoaded,
   // searchLatLonRef,
   setValue,
+  clearErrors,
   // showAddLocation,
   markerInst,
 }) {
@@ -80,10 +81,13 @@ export default function BuildMap({
       //this will fill in whatever result user clicks on
       setValue("lng", result.center[0]);
       setValue("lat", result.center[1]);
+      clearErrors(["lat", "lng"]);
+
       marker.on("dragend", (e) => {
         const coordinates = e.target.getLngLat();
         setValue("lat", coordinates.lat);
         setValue("lng", coordinates.lng);
+        clearErrors(["lat", "lng"]);
       });
     });
 

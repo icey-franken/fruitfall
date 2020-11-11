@@ -4,18 +4,18 @@ import AddLocationForm2 from "./AddLocationFormHook2";
 export default function AddLocationFormHook({
   handleFormSubmitClick,
   show,
-	handleAddLocationClick,
-	useFormObj
+  handleAddLocationClick,
+  useFormObj,
 }) {
-	const { register, handleSubmit, errors, watch } = useFormObj
+  const { register, handleSubmit, errors, watch, getValues } = useFormObj;
 
   const watchNoSeason = watch("no_season");
   const watchVisited = watch("visited");
   console.log(watchNoSeason, watchVisited);
   const onSubmitHook = (data) => {
     console.log(data);
-		// remember to switch unverified value before making post
-	};
+    // remember to switch unverified value before making post
+  };
 
   // get select field values from database
   const typesRef = useRef();
@@ -104,7 +104,6 @@ export default function AddLocationFormHook({
   //   }
   // };
 
-
   if (loading) {
     return null;
   }
@@ -126,6 +125,9 @@ export default function AddLocationFormHook({
               appropriate choices do not already exist. SIKE, you can't add
               types.
             </div>
+            {errors.type_ids && (
+              <div className="add-loc__err">Please select a type</div>
+            )}
             <select
               ref={register({ required: true })}
               name="type_ids"
@@ -140,7 +142,6 @@ export default function AddLocationFormHook({
                 </option>
               ))}
             </select>
-            {errors.type_ids && <div className="add-loc__err">REQUIRED</div>}
           </div>
           <div className="add-loc__el add-loc__el-col">
             <div className="add-loc__label" htmlFor="position">
@@ -150,9 +151,12 @@ export default function AddLocationFormHook({
               Click on the map for a moveable pin to get coordinates, or search
               for a location's address in the upper right-hand corner.
             </div>
+            {errors.lat || errors.lng ? (
+              <div className="add-loc__err">Please enter a position</div>
+            ) : null}
             <div className="add-loc__el-row">
               <input
-                ref={register({ required: true })} //add custom validation
+                ref={register({required:true})} //add custom validation
                 className="add-loc__pos"
                 name="lat"
                 id="lat"
@@ -160,7 +164,7 @@ export default function AddLocationFormHook({
               />
               <div className="add-loc__pos-spacer" />
               <input
-                ref={register({ required: true })}
+                ref={register({required:true})}
                 className="add-loc__pos"
                 name="lng"
                 id="lng"
@@ -176,6 +180,9 @@ export default function AddLocationFormHook({
               Location details, access issues, plant health, your mother's
               maiden name...
             </div>
+            {errors.description && (
+              <div className="add-loc__err">Please enter a description</div>
+            )}
             <textarea
               ref={register({ required: true })}
               name="description"
@@ -293,14 +300,12 @@ export default function AddLocationFormHook({
             <div className="add-loc__sub-label">Go on.....</div>
           </div>
           {watchVisited === true ? (
-            <AddLocationForm2
-              register={register}
-            />
+            <AddLocationForm2 register={register} />
           ) : null}
           <div className="add-loc__btn-cont">
             <button
-              type="submit"
-              onSubmit={handleSubmit}
+              // type="submit"
+              // onSubmit={handleSubmit}
               className="btn add-loc__btn"
             >
               Add Location
