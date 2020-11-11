@@ -97,6 +97,7 @@ export default function MapContainer() {
   return (
     <div className="content-cont">
       <AddLocationForm
+				handleAddLocationClick={handleAddLocationClick}
         setShowForm={setShowAddLocation}
         handleFormSubmitClick={handleAddLocationClick}
         searchLatLon={searchLatLon}
@@ -107,13 +108,13 @@ export default function MapContainer() {
       >
         <button
           id="add-location-button"
-          className="btn add-location__btn"
+          className={`btn add-location__btn ${showAddLocation ? 'add-location__btn--hide' : ''}`}
           name={showAddLocation.toString()}
           onClick={handleAddLocationClick}
           // hide button until layers loaded
           style={{ display: `${mapboxLoaded ? "" : "none"}` }}
         >
-          {showAddLocation ? "Close" : "Add Location"}
+          Add Location
         </button>
         <BuildMap
           setMapbox={setMapbox}
