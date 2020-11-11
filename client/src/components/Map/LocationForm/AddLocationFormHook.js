@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import AddLocationForm2 from "./AddLocationForm2";
+import {useForm} from 'react-hook-form';
 
 export default function AddLocationForm({
   handleFormSubmitClick,
@@ -127,7 +128,6 @@ export default function AddLocationForm({
   };
 
   const handleChange = (e) => {
-		console.log(e.target.name)
     const id = e.target.id;
     let value = e.target.value;
     console.log(typeof value);
@@ -168,7 +168,7 @@ export default function AddLocationForm({
           </div>
           <select
             defaultValue=""
-						name="type"
+            name="type"
             id="type_ids"
             onChange={handleChange}
           >
