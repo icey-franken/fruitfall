@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import AddLocationForm2 from "./AddLocationFormHook2";
+import AuthContext from "../../../auth";
 
 export default function AddLocationFormHook({
   handleFormSubmitClick,
@@ -8,12 +9,17 @@ export default function AddLocationFormHook({
   useFormObj,
 }) {
   const { register, handleSubmit, errors, watch, getValues } = useFormObj;
-
+  const { fetchWithCSRF } = useContext(AuthContext);
   const watchNoSeason = watch("no_season");
   const watchVisited = watch("visited");
   console.log(watchNoSeason, watchVisited);
   const onSubmitHook = (data) => {
     console.log(data);
+    fetchWithCSRF("/api/features/add-location-form", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+    });
     // remember to switch unverified value before making post
   };
 
@@ -156,7 +162,7 @@ export default function AddLocationFormHook({
             ) : null}
             <div className="add-loc__el-row">
               <input
-                ref={register({required:true})} //add custom validation
+                ref={register({ required: true })} //add custom validation
                 className="add-loc__pos"
                 name="lat"
                 id="lat"
@@ -164,7 +170,7 @@ export default function AddLocationFormHook({
               />
               <div className="add-loc__pos-spacer" />
               <input
-                ref={register({required:true})}
+                ref={register({ required: true })}
                 className="add-loc__pos"
                 name="lng"
                 id="lng"
