@@ -46,7 +46,8 @@ const circle_radius_scale = [
 export default function BuildMap({
   setMapbox,
   setMapboxLoaded,
-  setSearchLatLon,
+  // searchLatLonRef,
+  setValue,
   // showAddLocation,
   markerInst,
 }) {
@@ -77,11 +78,17 @@ export default function BuildMap({
       }
       markerInst.current = marker;
       //this will fill in whatever result user clicks on
-      setSearchLatLon([...result.center]);
+      setValue("lng", result.center[0]);
+      setValue("lat", result.center[1]);
+      // !!!
+      // searchLatLonRef.current=[...result.center];
       // make their search result draggable and set coords in form
       marker.on("dragend", (e) => {
         const coordinates = e.target.getLngLat();
-        setSearchLatLon([coordinates.lng, coordinates.lat]);
+        setValue("lat", coordinates.lat);
+        setValue("lng", coordinates.lng);
+        // !!!
+        // searchLatLonRef.current = [coordinates.lng, coordinates.lat];
       });
     });
 
@@ -195,11 +202,11 @@ export default function BuildMap({
     // description HTML from its properties.
     map.on("click", "unclustered-point", async function (e) {
       const coordinates = e.features[0].geometry.coordinates.slice();
-			// get id from click
-			const id = parseInt(e.features[0].properties.id,10)
-			// fetch popup info to display
-			const res = await fetch(`/api/features/${id}`)
-			const {properties} = await res.json()
+      // get id from click
+      const id = parseInt(e.features[0].properties.id, 10);
+      // fetch popup info to display
+      const res = await fetch(`/api/features/${id}`);
+      const { properties } = await res.json();
       // Ensure that if the map is zoomed out such that
       // multiple copies of the feature are visible, the
       // popup appears over the copy being pointed to.
@@ -314,8 +321,7 @@ export default function BuildMap({
     // 	// 		.addTo(map);
     // });
     setMapboxLoaded(true);
-	};
-
+  };
 
   const addPopup = (map, coordinates, info) => {
     const placeholder = document.createElement("div");

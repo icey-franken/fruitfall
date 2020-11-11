@@ -1,57 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 import AddLocationForm2 from "./AddLocationFormHook2";
-import { useForm } from "react-hook-form";
 
 export default function AddLocationFormHook({
   handleFormSubmitClick,
-  searchLatLon,
+  // searchLatLonRef,
   show,
-  handleAddLocationClick,
+	handleAddLocationClick,
+	useFormObj
 }) {
-  const { register, handleSubmit, errors, setValue, watch } = useForm({
-    defaultValues: {
-      type_ids: "",
-      lat: "",
-      lng: "",
-      description: "",
-      season_start: "",
-      season_end: "",
-      no_season: false,
-      author: "", //don't have yet
-      access: "",
-      unverified: true,
-      visited: false,
-      "date_visited": null, //the next four come from second form
-      "fruiting-status": 0,
-      quality: 0,
-      yield: 0,
-    },
-  });
+	const { register, handleSubmit, errors, setValue, getValues, watch } = useFormObj
+
   const watchNoSeason = watch("no_season");
   const watchVisited = watch("visited");
   console.log(watchNoSeason, watchVisited);
   const onSubmitHook = (data) => {
     console.log(data);
-  };
-  // // set up empty form
-  // const emptyForm = {
-  //   type_ids: "",
-  //   lat: "",
-  //   lng: "",
-  //   description: "",
-  //   season_start: "",
-  //   season_end: "",
-  //   no_season: false,
-  //   author: "", //don't have yet
-  //   access: "",
-  //   unverified: true,
-  //   visited: false,
-  //   "date-visited": null,//the next four come from second form
-  //   "fruiting-status": 0,
-  //   quality: 0,
-  //   yield: 0,
-  // };
-  // const [formData, setFormData] = useState(emptyForm);
+		// remember to switch unverified value before making post
+	};
 
   // get select field values from database
   const typesRef = useRef();
@@ -71,18 +36,20 @@ export default function AddLocationFormHook({
   }, []);
 
   console.log("hits");
-  // update
-  useEffect(() => {
-    // functional update removes complaint about missing form data dependency
-    setValue("lng", searchLatLon[0]);
-    setValue("lat", searchLatLon[1]);
-
-    // setFormData((formData) => ({
-    //   ...formData,
-    //   lng: searchLatLon[0],
-    //   lat: searchLatLon[1],
-    // }));
-  }, [searchLatLon]);
+	// update
+	// !!!
+  // useEffect(() => {
+  //   // functional update removes complaint about missing form data dependency
+  //   setValue("lng", searchLatLonRef.current[0]);
+  //   setValue("lat", searchLatLonRef.current[1]);
+	// 	console.log('use effect ', searchLatLonRef)
+  //   // setFormData((formData) => ({
+  //   //   ...formData,
+  //   //   lng: searchLatLon[0],
+  //   //   lat: searchLatLon[1],
+  //   // }));
+  // }, [searchLatLonRef.current]);
+	// console.log('outside use effect', searchLatLonRef)
 
   // const handleSubmit = (e) => {
   //   e.preventDefault();
