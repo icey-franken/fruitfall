@@ -1,15 +1,39 @@
 import React, { useState, useRef, useEffect } from "react";
 import BuildMap from "./BuildMap";
-import AddLocationForm from "./LocationForm/AddLocationForm";
+import AddLocationForm from "./LocationForm/AddLocationFormHook";
+import { useForm } from "react-hook-form";
+
 import mapboxgl from "mapbox-gl";
 export default function MapContainer() {
   const [mapbox, setMapbox] = useState(null);
   const [mapboxLoaded, setMapboxLoaded] = useState(false);
-  const [searchLatLon, setSearchLatLon] = useState([]);
+  const searchLatLonRef = useRef(["", ""]);
   const [showAddLocation, setShowAddLocation] = useState(false);
   const canvasRef = useRef();
   const markerInst = useRef();
   const layerIds = ["clusters", "cluster-count", "unclustered-point"];
+
+  // include form here so we can pass it to build map to update lat/lon
+  const useFormObj = useForm({
+    defaultValues: {
+      type_ids: "",
+      lat: "",
+      lng: "",
+      description: "",
+      season_start: "",
+      season_end: "",
+      no_season: false,
+      author: "", //don't have yet
+      access: "",
+      unverified: false,
+      visited: false,
+      date_visited: null, //the next four come from second form
+      "fruiting-status": 0,
+      quality: 0,
+      yield: 0,
+    },
+  });
+  const { setValue, clearErrors } = useFormObj;
 
   const addCrosshair = (canvasRef) => {
     for (let i = 0; i < canvasRef.current.length; i++) {
@@ -20,11 +44,11 @@ export default function MapContainer() {
     for (let i = 0; i < canvasRef.current.length; i++) {
       canvasRef.current[i].classList.remove("crosshair");
     }
-	};
+  };
 
   useEffect(() => {
     canvasRef.current = document.querySelectorAll(".mapboxgl-canvas");
-	}, [mapboxLoaded]);
+  }, [mapboxLoaded]);
 
   // useRef hook required so that we reference the SAME function in map.on and map.off in useEffect hook
   const mapClickFn = useRef((e) => {
@@ -39,20 +63,29 @@ export default function MapContainer() {
     }
     const coordinates = e.lngLat;
     // set coords on click
-    setSearchLatLon([coordinates.lng, coordinates.lat]);
+    setValue("lat", coordinates.lat);
+		setValue("lng", coordinates.lng);
+		clearErrors(['lat','lng'])
+    // !!!
+    // searchLatLonRef.current = [coordinates.lng, coordinates.lat];
     // create new marker on click
     const el = document.createElement("div");
     el.className = "marker";
     const marker = new mapboxgl.Marker(el, { draggable: true });
     marker.setLngLat(coordinates).addTo(e.target);
-		// change cursor back to grabbing on drag
-		marker.on("dragstart", () => {
-			removeCrosshair(canvasRef);
+    // change cursor back to grabbing on drag
+    marker.on("dragstart", () => {
+      removeCrosshair(canvasRef);
     });
-		// update coords on drag
+    // update coords on drag
     marker.on("dragend", () => {
       const coordinates = marker.getLngLat();
-      setSearchLatLon([coordinates.lng, coordinates.lat]);
+      setValue("lat", coordinates.lat);
+			setValue("lng", coordinates.lng);
+		clearErrors(['lat','lng'])
+
+      // !!!
+      // searchLatLonRef.current = [coordinates.lng, coordinates.lat];
       addCrosshair(canvasRef);
     });
     // update marker instance to new marker
@@ -82,43 +115,51 @@ export default function MapContainer() {
         if (markerInst.current) {
           markerInst.current.remove();
         }
-        setSearchLatLon([]);
+        // setSearchLatLon([]);
+        // !!! don't reset lat lon - just leave it. There won't be a marker but that's fine
+        // 		setValue('lat', coordinates.lat)
+        // setValue('lng', coordinates.lng)
         removeCrosshair(canvasRef);
       }
     }
   }, [showAddLocation]);
 
-  useEffect(() => {
-    console.log(searchLatLon);
-  }, [searchLatLon]);
-
-
+  // !!!!
+  // useEffect(() => {
+  //   console.log(searchLatLonRef);
+  // }, [searchLatLonRef.current]);
 
   return (
     <div className="content-cont">
-      <AddLocationForm
-        setShowForm={setShowAddLocation}
-        handleFormSubmitClick={handleAddLocationClick}
-        searchLatLon={searchLatLon}
-        show={showAddLocation}
-      />
-      <div
-        className="mapbox-cont"
-      >
+      {mapboxLoaded ? ( //do this conditionally to reduce number of rerenders
+        <AddLocationForm
+          handleAddLocationClick={handleAddLocationClick}
+          setShowForm={setShowAddLocation}
+          handleFormSubmitClick={handleAddLocationClick}
+          // searchLatLonRef={searchLatLonRef}
+          show={showAddLocation}
+          useFormObj={useFormObj}
+        />
+      ) : null}
+      <div className="mapbox-cont">
         <button
           id="add-location-button"
-          className="btn add-location__btn"
+          className={`btn add-location__btn ${
+            showAddLocation ? "add-location__btn--hide" : ""
+          }`}
           name={showAddLocation.toString()}
           onClick={handleAddLocationClick}
           // hide button until layers loaded
           style={{ display: `${mapboxLoaded ? "" : "none"}` }}
         >
-          {showAddLocation ? "Close" : "Add Location"}
+          Add Location
         </button>
         <BuildMap
           setMapbox={setMapbox}
           setMapboxLoaded={setMapboxLoaded}
-          setSearchLatLon={setSearchLatLon}
+					setValue={setValue}
+					clearErrors={clearErrors}
+          // searchLatLonRef={searchLatLonRef}
           // showAddLocation={showAddLocation}
           markerInst={markerInst}
         />

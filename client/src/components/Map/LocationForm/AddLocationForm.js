@@ -1,40 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import AddLocationForm2 from "./AddLocationForm2";
 
 export default function AddLocationForm({
   handleFormSubmitClick,
-	searchLatLon,
-	show
+  searchLatLon,
+  show,
+  handleAddLocationClick,
 }) {
 
-
-  const types = [
-    [1, "apple"],
-    [2, "orange"],
-    [3, "strawberry"],
-  ]; //grab from db in future
-  const months = [
-    [0, "January"],
-    [1, "February"],
-    [2, "March"],
-    [3, "April"],
-    [4, "May"],
-    [5, "June"],
-    [6, "July"],
-    [7, "August"],
-    [8, "September"],
-    [9, "October"],
-    [10, "November"],
-    [11, "December"],
-  ];
-  const accesses = [
-    [0, "Source is on my property"],
-    [1, "I have permission from the owner to add the source"],
-    [2, "Source is on public land"],
-    [3, "Source is on private property bu overhangs public land"],
-    [4, "Source is on private property (ask before you pick)"],
-    [5, "I don't know"],
-  ];
+	// set up empty form
   const emptyForm = {
     type_ids: "",
     lat: "",
@@ -52,13 +26,36 @@ export default function AddLocationForm({
     "fruiting-status": 0,
     quality: 0,
     yield: 0,
-  };
-
+	};
   const [formData, setFormData] = useState(emptyForm);
 
+
+	// get select field values from database
+	const typesRef = useRef();
+	const monthsRef = useRef();
+	const accessesRef = useRef();
+	const [loading, setLoading] = useState(true)
+	useEffect(()=>{
+		async function get_form_fields(){
+			const res = await fetch('/api/features/add-location-form');
+			const fields = await res.json();
+			typesRef.current = fields.types
+			monthsRef.current = fields.months
+			accessesRef.current = fields.accesses
+			setLoading(false)
+		}
+		get_form_fields()
+	},[])
+
+	console.log('hits')
+	// update
   useEffect(() => {
-		// functional update removes complaint about missing form data dependency
-    setFormData((formData)=>({ ...formData, lng: searchLatLon[0], lat: searchLatLon[1] }));
+    // functional update removes complaint about missing form data dependency
+    setFormData((formData) => ({
+      ...formData,
+      lng: searchLatLon[0],
+      lat: searchLatLon[1],
+    }));
   }, [searchLatLon]);
 
   const handleSubmit = (e) => {
@@ -102,7 +99,7 @@ export default function AddLocationForm({
       }
     } else {
       delete formDataCopy.season_start;
-      delete formDataCopy.season_;
+      delete formDataCopy.season_stop;
     }
 
     // VALIDATE ACCESS
@@ -130,6 +127,7 @@ export default function AddLocationForm({
   };
 
   const handleChange = (e) => {
+		console.log(e.target.name)
     const id = e.target.id;
     let value = e.target.value;
     console.log(typeof value);
@@ -143,216 +141,230 @@ export default function AddLocationForm({
     console.log(formData);
   };
 
-	// we don't save address - we save coords
+  // we don't save address - we save coords
   // const [address, setAddress] = useState("");
   // const handleAddress = (e) => {
   //   const input = e.target.value;
-  // };
-
+	// };
+	if(loading) {
+		return null;
+	}
   return (
-    <div className={`add-loc__cont fade-in ${show ? 'show' : ''}`}>
+    <div className={`add-loc__cont fade-in ${show ? "show" : ""}`}>
       {/* <form onSubmit={handleSubmit}> */}
-      <div className="add-loc__el add-loc__el-col">
-        <label className="add-loc__label" htmlFor="type">
-          Type
-        </label>
-        <div className="add-loc__sub-label">
-          Choose from the dropdown list, submitting new types only if
-          appropriate choices do not already exist. SIKE, you can't add types.
+      <div className="add-loc__close-cont">
+        <div className="add-loc__close" onClick={handleAddLocationClick}>
+          &#10006;
         </div>
-        <select
-          defaultValue=""
-          name="type"
-          id="type_ids"
-          onChange={handleChange}
-        >
-          <option className="invalid" value="" disabled hidden>
-            Select a type
-          </option>
-          {types.map(([typeId, typeName], idx) => (
-            <option key={idx} value={typeId}>
-              {typeName}
+      </div>
+      <div className="add-loc__cont-inner">
+        <div className="add-loc__el add-loc__el-col">
+          <label className="add-loc__label" htmlFor="type">
+            Type
+          </label>
+          <div className="add-loc__sub-label">
+            Choose from the dropdown list, submitting new types only if
+            appropriate choices do not already exist. SIKE, you can't add types.
+          </div>
+          <select
+            defaultValue=""
+						name="type"
+            id="type_ids"
+            onChange={handleChange}
+          >
+            <option className="invalid" value="" disabled hidden>
+              Select a type
             </option>
-          ))}
-        </select>
-      </div>
-      <div className="add-loc__el add-loc__el-col">
-        <label className="add-loc__label" htmlFor="position">
-          Position
-        </label>
-        <div className="add-loc__sub-label">
-          Click on the map for a moveable pin to get coordinates, or search for
-          a location's address in the upper right-hand corner.
+            {typesRef.current.map(([typeId, typeName], idx) => (
+              <option key={idx} value={typeId}>
+                {typeName}
+              </option>
+            ))}
+          </select>
         </div>
-        <div className="add-loc__el-row">
-          <input
-            className="add-loc__pos"
-            name="position"
-            id="lat"
-            type="number"
-            onChange={handleChange}
-            placeholder="Latitude"
-            value={formData.lat}
-          />
-          <div className="add-loc__pos-spacer" />
-          <input
-            className="add-loc__pos"
-            name="position"
-            id="lng"
-            type="number"
-            onChange={handleChange}
-            placeholder="Longitude"
-            value={formData.lng}
-          />
+        <div className="add-loc__el add-loc__el-col">
+          <label className="add-loc__label" htmlFor="position">
+            Position
+          </label>
+          <div className="add-loc__sub-label">
+            Click on the map for a moveable pin to get coordinates, or search
+            for a location's address in the upper right-hand corner.
+          </div>
+          <div className="add-loc__el-row">
+            <input
+              className="add-loc__pos"
+              name="position"
+              id="lat"
+              type="number"
+              onChange={handleChange}
+              placeholder="Latitude"
+              value={formData.lat}
+            />
+            <div className="add-loc__pos-spacer" />
+            <input
+              className="add-loc__pos"
+              name="position"
+              id="lng"
+              type="number"
+              onChange={handleChange}
+              placeholder="Longitude"
+              value={formData.lng}
+            />
+          </div>
         </div>
-      </div>
-      {/* <div className="add-loc__el add-loc__el-col">
+        {/* <div className="add-loc__el add-loc__el-col">
           <label className="add-loc__label" htmlFor="address">
             Address
           </label>
           <textarea name="address" id="address" onChange={handleAddress} />
         </div> */}
-      <div className="add-loc__el add-loc__el-col">
-        <label className="add-loc__label" htmlFor="description">
-          Description
-        </label>
-        <div className="add-loc__sub-label">
-          Location details, access issues, plant health, your mother's maiden
-          name...
-        </div>
-        <textarea name="description" id="description" onChange={handleChange} />
-      </div>
-      <div className="add-loc__el add-loc__el-col">
-        <div className="add-loc__el-row">
-          <label className="add-loc__label" htmlFor="season">
-            Season
+        <div className="add-loc__el add-loc__el-col">
+          <label className="add-loc__label" htmlFor="description">
+            Description
           </label>
-
-          <div>
-            <input
-              type="checkbox"
-              name="no-season"
-              id="no_season"
-              onChange={handleChange}
-            />
-            <label className="add-loc__label" htmlFor="no-season">
-              No Season
+          <div className="add-loc__sub-label">
+            Location details, access issues, plant health, your mother's maiden
+            name...
+          </div>
+          <textarea
+            name="description"
+            id="description"
+            onChange={handleChange}
+          />
+        </div>
+        <div className="add-loc__el add-loc__el-col">
+          <div className="add-loc__el-row">
+            <label className="add-loc__label" htmlFor="season">
+              Season
             </label>
+
+            <div>
+              <input
+                type="checkbox"
+                name="no-season"
+                id="no_season"
+                onChange={handleChange}
+              />
+              <label className="add-loc__label" htmlFor="no-season">
+                No Season
+              </label>
+            </div>
+          </div>
+          <div className="add-loc__sub-label">
+            When can the source be harvested? Leave blank if you don't know.
+          </div>
+          <div className="add-loc__el-row">
+            <select
+              defaultValue=""
+              className="add-loc__pos"
+              name="season"
+              id="season_start"
+              onChange={handleChange}
+              disabled={formData.no_season}
+            >
+              <option className="invalid" value="" disabled hidden>
+                Start
+              </option>
+
+              {monthsRef.current.map(([monthId, monthName], idx) => (
+                <option key={idx} value={monthId}>
+                  {monthName}
+                </option>
+              ))}
+            </select>
+            <div className="add-loc__pos-spacer" />
+            <select
+              defaultValue=""
+              className="add-loc__pos"
+              name="season"
+              id="season_end"
+              onChange={handleChange}
+              disabled={formData.no_season}
+            >
+              <option className="invalid" value="" disabled hidden>
+                End
+              </option>
+
+              {monthsRef.current.map(([monthId, monthName], idx) => (
+                <option key={idx} value={monthId}>
+                  {monthName}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-        <div className="add-loc__sub-label">
-          When can the source be harvested? Leave blank if you don't know.
-        </div>
-        <div className="add-loc__el-row">
+        <div className="add-loc__el add-loc__el-col">
+          <label className="add-loc__label" htmlFor="access">
+            Access
+          </label>
+          <div className="add-loc__sub-label">
+            Access status of the source. Leave blank if you don't know.
+          </div>
           <select
             defaultValue=""
-            className="add-loc__pos"
-            name="season"
-            id="season_start"
+            required
+            name="access"
+            id="access"
             onChange={handleChange}
-            disabled={formData.no_season}
           >
             <option className="invalid" value="" disabled hidden>
-              Start
+              Access status of source
             </option>
 
-            {months.map(([monthId, monthName], idx) => (
-              <option key={idx} value={monthId}>
-                {monthName}
-              </option>
-            ))}
-          </select>
-          <div className="add-loc__pos-spacer" />
-          <select
-            defaultValue=""
-            className="add-loc__pos"
-            name="season"
-            id="season_end"
-            onChange={handleChange}
-            disabled={formData.no_season}
-          >
-            <option className="invalid" value="" disabled hidden>
-              End
-            </option>
-
-            {months.map(([monthId, monthName], idx) => (
-              <option key={idx} value={monthId}>
-                {monthName}
+            {accessesRef.current.map(([accessId, accessName], idx) => (
+              <option key={idx} value={accessId}>
+                {accessName}
               </option>
             ))}
           </select>
         </div>
-      </div>
-      <div className="add-loc__el add-loc__el-col">
-        <label className="add-loc__label" htmlFor="access">
-          Access
-        </label>
-        <div className="add-loc__sub-label">
-          Access status of the source. Leave blank if you don't know.
+        <div className="add-loc__el-col">
+          <div className="add-loc__el">
+            <div className="add-loc__label">
+              <input
+                type="checkbox"
+                id="unverified"
+                name="unverified"
+                onChange={handleChange}
+              />
+              <label htmlFor="unverified">Verified?</label>
+            </div>
+            <div className="add-loc__sub-label">
+              If you doubt the existence, location, or identity of this source.
+            </div>
+          </div>
         </div>
-        <select
-          defaultValue=""
-          required
-          name="access"
-          id="access"
-          onChange={handleChange}
-        >
-          <option className="invalid" value="" disabled hidden>
-            Access status of source
-          </option>
 
-          {accesses.map(([accessId, accessName], idx) => (
-            <option key={idx} value={accessId}>
-              {accessName}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="add-loc__el-col">
         <div className="add-loc__el">
           <div className="add-loc__label">
             <input
               type="checkbox"
-              id="unverified"
-              name="unverified"
+              id="visited"
+              name="visited"
               onChange={handleChange}
             />
-            <label htmlFor="unverified">Verified?</label>
+            <label htmlFor="visited">Have you visted this location?</label>
           </div>
-          <div className="add-loc__sub-label">
-            If you doubt the existence, location, or identity of this source.
-          </div>
+          <div className="add-loc__sub-label">Go on.....</div>
+        </div>
+        {formData.visited === true ? (
+          <AddLocationForm2
+            handleChange={handleChange}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        ) : null}
+        <div className="add-loc__btn-cont">
+          <button
+            type="submit"
+            onSubmit={handleSubmit}
+            className="btn add-loc__btn"
+          >
+            Add Location
+          </button>
         </div>
       </div>
 
-      <div className="add-loc__el">
-        <div className="add-loc__label">
-          <input
-            type="checkbox"
-            id="visited"
-            name="visited"
-            onChange={handleChange}
-          />
-          <label htmlFor="visited">Have you visted this location?</label>
-        </div>
-        <div className="add-loc__sub-label">Go on.....</div>
-      </div>
-      {formData.visited === true ? (
-        <AddLocationForm2
-          handleChange={handleChange}
-          formData={formData}
-          setFormData={setFormData}
-        />
-      ) : null}
-      <div className="add-loc__btn-cont">
-        <button
-          type="submit"
-          onSubmit={handleSubmit}
-          className="btn add-loc__btn"
-        >
-          Add Location
-        </button>
-      </div>
       {/* </form> */}
     </div>
   );
