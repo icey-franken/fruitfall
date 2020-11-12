@@ -32,7 +32,8 @@ export default function MapContainer() {
       "fruiting-status": 0,
       quality: 0,
       yield: 0,
-    },
+		},
+		reValidateMode: 'onSubmit'
   });
   const { setValue, clearErrors } = useFormObj;
 
