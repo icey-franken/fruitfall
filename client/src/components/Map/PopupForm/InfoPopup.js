@@ -38,7 +38,9 @@ export default function InfoPopup({ info }) {
             <div className="popup__info-item popup__type">
               <a
                 href={`${info.type_url}`}
-                target="_blank"
+								target="_blank"
+								// added rel here because... React told me to
+								rel="noopener noreferrer"
                 title={`Open Wikipedia page for ${info.type_name} in new tab`}
               >
                 {info.type_name}

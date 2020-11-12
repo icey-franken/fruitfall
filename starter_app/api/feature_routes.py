@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from starter_app.models import db, Property, Access, Type, Season, Feature
+from starter_app.models import db, Property, Access, Type, Season
 from flask import json
 feature_routes = Blueprint('feature', __name__)
 

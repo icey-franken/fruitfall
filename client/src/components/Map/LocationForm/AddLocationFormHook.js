@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import AddLocationForm2 from "./AddLocationFormHook2";
 import AuthContext from "../../../auth";
+import SeasonFormComponent from "./Season";
+import PositionFormComponent from "./Position";
 
 export default function AddLocationFormHook({
   handleFormSubmitClick,
@@ -10,10 +12,10 @@ export default function AddLocationFormHook({
 }) {
   const { register, handleSubmit, errors, watch, getValues } = useFormObj;
   const { fetchWithCSRF } = useContext(AuthContext);
-  const watchNoSeason = watch("no_season");
+
   const watchVisited = watch("visited");
-  console.log(watchNoSeason, watchVisited);
-  const onSubmitHook = (data) => {
+
+	const onSubmitHook = (data) => {
     console.log(data);
     fetchWithCSRF("/api/features/add-location-form", {
       method: "POST",
@@ -23,7 +25,7 @@ export default function AddLocationFormHook({
     // remember to switch unverified value before making post
   };
 
-  // get select field values from database
+  // get select field values from database - addd these to context
   const typesRef = useRef();
   const monthsRef = useRef();
   const accessesRef = useRef();
@@ -40,7 +42,7 @@ export default function AddLocationFormHook({
     get_form_fields();
   }, []);
 
-  console.log("hits");
+  console.log("re-renders add location form");
 
   // const handleSubmit = (e) => {
   //   e.preventDefault();
@@ -110,6 +112,8 @@ export default function AddLocationFormHook({
   //   }
   // };
 
+
+
   if (loading) {
     return null;
   }
@@ -149,35 +153,7 @@ export default function AddLocationFormHook({
               ))}
             </select>
           </div>
-          <div className="add-loc__el add-loc__el-col">
-            <div className="add-loc__label" htmlFor="position">
-              Position
-            </div>
-            <div className="add-loc__sub-label">
-              Click on the map for a moveable pin to get coordinates, or search
-              for a location's address in the upper right-hand corner.
-            </div>
-            {errors.lat || errors.lng ? (
-              <div className="add-loc__err">Please enter a position</div>
-            ) : null}
-            <div className="add-loc__el-row">
-              <input
-                ref={register({ required: true })} //add custom validation
-                className="add-loc__pos"
-                name="lat"
-                id="lat"
-                placeholder="Latitude"
-              />
-              <div className="add-loc__pos-spacer" />
-              <input
-                ref={register({ required: true })}
-                className="add-loc__pos"
-                name="lng"
-                id="lng"
-                placeholder="Longitude"
-              />
-            </div>
-          </div>
+          <PositionFormComponent useFormObj={useFormObj}/>
           <div className="add-loc__el add-loc__el-col">
             <label className="add-loc__label" htmlFor="description">
               Description
@@ -195,70 +171,17 @@ export default function AddLocationFormHook({
               id="description"
             />
           </div>
-          <div className="add-loc__el add-loc__el-col">
-            <div className="add-loc__el-row">
-              <div className="add-loc__label">Season</div>
-
-              <div>
-                <input
-                  ref={register}
-                  type="checkbox"
-                  name="no_season"
-                  id="no_season"
-                />
-                <label className="add-loc__label" htmlFor="no-season">
-                  No Season
-                </label>
-              </div>
-            </div>
-            <div className="add-loc__sub-label">
-              When can the source be harvested? Leave blank if you don't know.
-            </div>
-            <div className="add-loc__el-row">
-              <select
-                ref={register}
-                className="add-loc__pos"
-                name="season_start"
-                id="season_start"
-                disabled={watchNoSeason}
-              >
-                <option className="invalid" value="" disabled hidden>
-                  Start
-                </option>
-
-                {monthsRef.current.map(([monthId, monthName], idx) => (
-                  <option key={idx} value={monthId}>
-                    {monthName}
-                  </option>
-                ))}
-              </select>
-              <div className="add-loc__pos-spacer" />
-              <select
-                ref={register}
-                className="add-loc__pos"
-                name="season_end"
-                id="season_end"
-                disabled={watchNoSeason}
-              >
-                <option className="invalid" value="" disabled hidden>
-                  End
-                </option>
-
-                {monthsRef.current.map(([monthId, monthName], idx) => (
-                  <option key={idx} value={monthId}>
-                    {monthName}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+          <SeasonFormComponent useFormObj={useFormObj} monthsRef={monthsRef}/>
           <div className="add-loc__el add-loc__el-col">
             <label className="add-loc__label" htmlFor="access">
               Access
             </label>
             <div className="add-loc__sub-label">
-              Access status of the source. Leave blank if you don't know.
+              Access status of the source.
             </div>
+            {errors.access && (
+              <div className="add-loc__err">Please select an access</div>
+            )}
             <select
               ref={register({ required: true })}
               name="access"

@@ -21,8 +21,9 @@ export default function MapContainer() {
       lng: "",
       description: "",
       season_start: "",
-      season_end: "",
+      season_stop: "",
       no_season: false,
+      unknown_season: false,
       author: "", //don't have yet
       access: "",
       unverified: false,
@@ -64,8 +65,8 @@ export default function MapContainer() {
     const coordinates = e.lngLat;
     // set coords on click
     setValue("lat", coordinates.lat);
-		setValue("lng", coordinates.lng);
-		clearErrors(['lat','lng'])
+    setValue("lng", coordinates.lng);
+    clearErrors(["lat", "lng"]);
     // !!!
     // searchLatLonRef.current = [coordinates.lng, coordinates.lat];
     // create new marker on click
@@ -81,8 +82,8 @@ export default function MapContainer() {
     marker.on("dragend", () => {
       const coordinates = marker.getLngLat();
       setValue("lat", coordinates.lat);
-			setValue("lng", coordinates.lng);
-		clearErrors(['lat','lng'])
+      setValue("lng", coordinates.lng);
+      clearErrors(["lat", "lng"]);
 
       // !!!
       // searchLatLonRef.current = [coordinates.lng, coordinates.lat];
@@ -103,6 +104,10 @@ export default function MapContainer() {
 
   // toggle map layers and the map click effect based on show add location form state
   useEffect(() => {
+    console.log(
+      'mapboxLoaded - for "error - style is not done loading:"',
+      mapboxLoaded
+    );
     if (mapboxLoaded) {
       mapbox.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
       if (showAddLocation) {
@@ -157,8 +162,8 @@ export default function MapContainer() {
         <BuildMap
           setMapbox={setMapbox}
           setMapboxLoaded={setMapboxLoaded}
-					setValue={setValue}
-					clearErrors={clearErrors}
+          setValue={setValue}
+          clearErrors={clearErrors}
           // searchLatLonRef={searchLatLonRef}
           // showAddLocation={showAddLocation}
           markerInst={markerInst}
