@@ -133,10 +133,6 @@ const MapContainer = React.memo(({ setLngLat }) => {
     }
   }, [showAddLocation]);
 
-  // !!!!
-  // useEffect(() => {
-  //   console.log(searchLatLonRef);
-  // }, [searchLatLonRef.current]);
   console.log("map container re-rendered");
   return (
     <div className="content-cont">
@@ -176,4 +172,3 @@ const MapContainer = React.memo(({ setLngLat }) => {
     </div>
   );
 });
-// export default MapContainer;

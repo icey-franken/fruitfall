@@ -46,12 +46,10 @@ const circle_radius_scale = [
 export default function BuildMap({
   setMapbox,
   setMapboxLoaded,
-  // showAddLocation,
 	markerInst,
 	setLngLat
 }) {
   const { mapData } = useContext(MapContext);
-  // const { setLngLatContext } = useContext(SetLngLatContext);
 
   const loadMap = (map) => {
     const geocoder = new MapboxGeocoder({
