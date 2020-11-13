@@ -103,7 +103,6 @@ const MapContainer = React.memo(({ setLngLat }) => {
   });
 
   const handleAddLocationClick = () => setShowAddLocation(!showAddLocation);
-	const closeFormRef = useRef(()=>setShowAddLocation(false))
   // visible parameter should be 'visible' or 'none'
   const toggleLayers = (visible) => {
     layerIds.forEach((layerId) => {
@@ -150,16 +149,7 @@ const MapContainer = React.memo(({ setLngLat }) => {
               &#10006;
             </div>
           </div>
-          <AddLocationForm
-						closeForm={closeFormRef.current}
-            // handleAddLocationClick={handleAddLocationClick}
-            // setShowForm={setShowAddLocation}
-            // handleFormSubmitClick={handleAddLocationClick}
-            // searchLatLonRef={searchLatLonRef}
-            // lngLatRef={lngLatRef}
-            // show={showAddLocation}
-            // useFormObj={useFormObj}
-          />
+          <AddLocationForm closeForm={() => setShowAddLocation(false)} />
         </div>
       ) : null}
       <div className="mapbox-cont">
@@ -179,8 +169,6 @@ const MapContainer = React.memo(({ setLngLat }) => {
           setMapbox={setMapbox}
           setMapboxLoaded={setMapboxLoaded}
           setLngLat={setLngLat}
-          // updateLngLat={updateLngLat}
-          // showAddLocation={showAddLocation}
           markerInst={markerInst}
         />
         <div id="mapbox" />

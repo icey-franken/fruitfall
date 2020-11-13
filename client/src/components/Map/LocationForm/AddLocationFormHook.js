@@ -44,9 +44,7 @@ const AddLocationFormHook = React.memo(
     // const { lngLat } = useContext(LngLatContext);
 
     const onSubmitHook = (data) => {
-			// clear form on successful submit - leave open. Not sure how to close without threading props and getting in
 			// invoke this if no validation errors
-			console.log(closeForm)
 			closeForm();
       console.log(data);
       // fetchWithCSRF("/api/features/add-location-form", {
@@ -63,6 +61,7 @@ const AddLocationFormHook = React.memo(
     const accessesRef = useRef();
     const [loading, setLoading] = useState(true);
     useEffect(() => {
+			console.log('hits get form fields use effect')
       async function get_form_fields() {
         const res = await fetch("/api/features/add-location-form");
         const fields = await res.json();
@@ -75,74 +74,6 @@ const AddLocationFormHook = React.memo(
     }, []);
 
     console.log("re-renders add location form");
-
-    // const handleSubmit = (e) => {
-    //   e.preventDefault();
-    //   const formDataCopy = { ...formData };
-    //   console.log(e);
-    //   let validated = true;
-    //   // validations:
-    //   // must have type_ids
-    //   if (formData.type_ids === "") {
-    //     validated = false;
-    //     console.log("type error");
-
-    //     // add error
-    //   }
-    //   // must have lat/lng OR an address, which we need to convert to a lat/lng before sending to db.
-    //   if (
-    //     formData.lat === "" ||
-    //     formData.lat === undefined ||
-    //     formData.lng === "" ||
-    //     formData.lng === undefined
-    //   ) {
-    //     validated = false;
-    //     console.log("lat/lng error");
-    //     // add error
-    //     // add something to convert address input to lat/lng
-    //   }
-
-    //   // VALIDATE DESCRIPTION
-    //   if (formData.description === "") {
-    //     // add an error to the form and prevent submit
-    //     validated = false;
-    //     console.log("description error");
-    //   }
-
-    //   //VALIDATE SEASON
-    //   if (formData.no_season === false) {
-    //     if (formData.season_start === "" || formData.season_end === "") {
-    //       // add an error to the form and prevent submit
-    //       validated = false;
-    //     }
-    //   } else {
-    //     delete formDataCopy.season_start;
-    //     delete formDataCopy.season_stop;
-    //   }
-
-    //   // VALIDATE ACCESS
-    //   if (formData.access === "") {
-    //     // add an error to the form and prevent submit
-    //     validated = false;
-    //   }
-
-    //   if (validated) {
-    //     // make post to back end with formDataCopy
-    //     console.log("validated?:", validated);
-
-    //     // send form to db:
-
-    //     // hide form
-    //     // setShowForm(false);
-    //     handleFormSubmitClick();
-    //     //clear form - I might not need to do this.
-    //     // I have it right now so that the form is always loaded, but it's only shown if they click the button. My intent was to save form values.
-    //     // If I want form values to stay I'd have to save them elsewhere - when the prop to AddLocationForm changes (the showForm affecting display) the component is rerendered with empty form. I could set them in a parent component but that's a lot of work for a mostly useless feature.
-    //     setFormData(emptyForm);
-    //   } else {
-    //     console.log("not validated - show errors");
-    //   }
-    // };
 
     if (loading) {
       return null;

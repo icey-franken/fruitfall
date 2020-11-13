@@ -1,12 +1,11 @@
 import React from "react";
 import { useWatch } from "react-hook-form";
-export default function SeasonFormComponent({ useFormObj, monthsRef }) {
+
+const SeasonFormComponent = React.memo(({ useFormObj, monthsRef }) => {
   const {
     register,
-    handleSubmit,
     errors,
     setError,
-    watch,
     getValues,
     clearErrors,
     control,
@@ -15,27 +14,39 @@ export default function SeasonFormComponent({ useFormObj, monthsRef }) {
   // const watchNoSeason = watch("no_season");
   // const watchUnknownSeason = watch("unknown_season");
   //use watch to isolate re-renders to this component
-  const {no_season,unknown_season} = useWatch({
+  const { no_season, unknown_season } = useWatch({
     control,
     name: ["no_season", "unknown_season"],
-	});
+  });
 
-	const disableField = (no_season || unknown_season)
+  const disableField = no_season || unknown_season;
 
-	const validateSeason = (e) => {
-		console.log("hits validate season");
-    const season = getValues(['no_season', 'unknown_season', 'season_stop', 'season_start']);
-		const { no_season, unknown_season, season_stop, season_start } = season
-		// console.log(no_season, unknown_season, season_stop, season_start)
-		console.log(season)
-		if (no_season && unknown_season) {
+  const validateSeason = () => {
+    console.log("hits validate season");
+    const {
+      // we have no_season and unknown_season already with the useWatch hook in an outer scope - no reason to grab them again here.
+      // Also - check that both of them aren't "checked" before we go out of our way to grab the values
+      no_season,
+      unknown_season,
+      season_stop,
+      season_start,
+    } = getValues([
+      "no_season",
+      "unknown_season",
+      "season_stop",
+      "season_start",
+		]);
+		console.log(no_season, unknown_season)
+    if (no_season && unknown_season) {
       console.log("hits both checkbox error");
       setError("season", {
         type: "required",
         message: 'Please select only one of "No Season" or "Unknown"',
       });
-      // return;
-    } else if (
+      return;
+    }
+
+    if (
       !no_season &&
       !unknown_season &&
       (season_stop === "" || season_start === "")
@@ -46,14 +57,10 @@ export default function SeasonFormComponent({ useFormObj, monthsRef }) {
         message:
           'Please select a complete season range or one of "No Season" or "Unknown"',
       });
-      // return;
     } else {
       console.log("hits else - clear errors");
-      clearErrors('season');
-		}
-		console.log('errors', errors)
-		console.log(errors.season)
-    // return false;
+      clearErrors("season");
+    }
   };
   // console.log(watchNoSeason, watchUnknownSeason);
   console.log("re-renders season component");
@@ -64,8 +71,8 @@ export default function SeasonFormComponent({ useFormObj, monthsRef }) {
 
         <div>
           <input
-            ref={register}
-            onChange={validateSeason}
+            ref={register({validate: validateSeason})}
+            // onChange={validateSeason}
             type="checkbox"
             name="no_season"
             id="no_season"
@@ -76,8 +83,8 @@ export default function SeasonFormComponent({ useFormObj, monthsRef }) {
         </div>
         <div>
           <input
-            ref={register}
-            onChange={validateSeason}
+            ref={register({validate: validateSeason})}
+            // onChange={validateSeason}
             type="checkbox"
             name="unknown_season"
             id="unknown_season"
@@ -104,8 +111,8 @@ export default function SeasonFormComponent({ useFormObj, monthsRef }) {
       </div>
       <div className="add-loc__el-row">
         <select
-          ref={register}
-          onChange={validateSeason}
+         ref={register({validate: validateSeason})}
+				 // onChange={validateSeason}
           className="add-loc__pos"
           name="season_start"
           id="season_start"
@@ -125,8 +132,8 @@ export default function SeasonFormComponent({ useFormObj, monthsRef }) {
         <select
           // we leave validation here, on last season input, so it is only run once
           // NO - we do it on all four so error updates - but we put it in it's own component so only this piece rerenders
-          ref={register}
-          onChange={validateSeason}
+          ref={register({validate: validateSeason})}
+            // onChange={validateSeason}
           className="add-loc__pos"
           name="season_stop"
           id="season_stop"
@@ -145,4 +152,5 @@ export default function SeasonFormComponent({ useFormObj, monthsRef }) {
       </div>
     </div>
   );
-}
+});
+export default SeasonFormComponent;
