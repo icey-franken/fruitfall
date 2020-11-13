@@ -71,7 +71,7 @@ const SeasonFormComponent = React.memo(({ useFormObj, monthsRef }) => {
 
         <div>
           <input
-            ref={register({validate: validateSeason})}
+            ref={register}
             // onChange={validateSeason}
             type="checkbox"
             name="no_season"
@@ -83,7 +83,7 @@ const SeasonFormComponent = React.memo(({ useFormObj, monthsRef }) => {
         </div>
         <div>
           <input
-            ref={register({validate: validateSeason})}
+            ref={register}
             // onChange={validateSeason}
             type="checkbox"
             name="unknown_season"
@@ -111,7 +111,7 @@ const SeasonFormComponent = React.memo(({ useFormObj, monthsRef }) => {
       </div>
       <div className="add-loc__el-row">
         <select
-         ref={register({validate: validateSeason})}
+         ref={register}
 				 // onChange={validateSeason}
           className="add-loc__pos"
           name="season_start"

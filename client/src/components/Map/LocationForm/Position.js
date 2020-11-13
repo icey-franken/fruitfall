@@ -52,7 +52,7 @@ const PositionFormComponent = React.memo(({ useFormObj }) => {
       )}
       <div className="add-loc__el-row">
         <input
-          ref={register({ validate: validatePosition })} //add custom validation
+          ref={register} //add custom validation
           className="add-loc__pos"
           name="lat"
           id="lat"
