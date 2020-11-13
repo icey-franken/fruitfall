@@ -335,21 +335,22 @@ export default function BuildMap({
     } else {
       const clusters1 = mapbox.getLayer("clusters");
       console.log("clusters1:", clusters1);
-      mapbox.removeLayer("clusters");
-      mapbox.removeLayer("cluster-count");
-      mapbox.removeLayer("unclustered-point");
+      // mapbox.removeLayer("clusters");
+      // mapbox.removeLayer("cluster-count");
+			// mapbox.removeLayer("unclustered-point");
+			// need to update layers on source change
       mapbox.getSource("fruitfall").setData(Object.assign({},mapData));
-      console.log(mapData);
-      console.log(mapbox.getSource("fruitfall"));
-      console.log(mapbox.getSource("fruitfall")._options);
-      mapbox.getSource("fruitfall")._options.data = mapData;
-      console.log(mapbox.getSource("fruitfall")._options);
+      // console.log(mapData);
+      // console.log(mapbox.getSource("fruitfall"));
+      // console.log(mapbox.getSource("fruitfall")._options);
+      // mapbox.getSource("fruitfall")._options.data = mapData;
+      // console.log(mapbox.getSource("fruitfall")._options);
 
-      mapbox.addLayer(clusterLayer);
-      mapbox.addLayer(clusterCountLayer);
-      mapbox.addLayer(pointLayer);
-      const clusters2 = mapbox.getLayer("clusters");
-      console.log("clusters2:", clusters2);
+      // mapbox.addLayer(clusterLayer);
+      // mapbox.addLayer(clusterCountLayer);
+      // mapbox.addLayer(pointLayer);
+      // const clusters2 = mapbox.getLayer("clusters");
+      // console.log("clusters2:", clusters2);
     }
     setMapboxLoaded(true);
   }, [mapData]);
