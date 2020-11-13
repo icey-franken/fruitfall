@@ -4,7 +4,7 @@ import AddLocationForm from "./LocationForm/AddLocationFormHook";
 import { LngLatContext } from "./LngLatContext";
 import mapboxgl from "mapbox-gl";
 
-const MapContainer = React.memo(() => {
+const MapContainer = React.memo(({setLngLat}) => {
   const [mapbox, setMapbox] = useState(null);
   const [mapboxLoaded, setMapboxLoaded] = useState(false);
   const [showAddLocation, setShowAddLocation] = useState(false);
@@ -12,7 +12,7 @@ const MapContainer = React.memo(() => {
   const markerInst = useRef();
   const layerIds = ["clusters", "cluster-count", "unclustered-point"];
 
-  const { lngLat } = useContext(LngLatContext);
+  // const { lngLatContext } = useContext(LngLatContext);
 
   const addCrosshair = (canvasRef) => {
     for (let i = 0; i < canvasRef.current.length; i++) {
@@ -24,21 +24,21 @@ const MapContainer = React.memo(() => {
       canvasRef.current[i].classList.remove("crosshair");
     }
   };
-  useEffect(() => {
-    console.log(
-      "map container use effect - calling setLngLat considered update"
-    );
-	}, [lngLat.setLngLat]);
-	useEffect(() => {
-    console.log(
-      "map container use effect - setting lng considered update"
-    );
-  }, [lngLat.lng]);
-	useEffect(() => {
-    console.log(
-      "map container use effect - setting lat considered update"
-    );
-  }, [lngLat.lat]);
+  // useEffect(() => {
+  //   console.log(
+  //     "map container use effect - calling setLngLat considered update"
+  //   );
+	// }, [lngLatContext]);
+	// useEffect(() => {
+  //   console.log(
+  //     "map container use effect - setting lng considered update"
+  //   );
+  // }, [lngLat.lng]);
+	// useEffect(() => {
+  //   console.log(
+  //     "map container use effect - setting lat considered update"
+  //   );
+  // }, [lngLat.lat]);
 
 	useEffect(() => {
     console.log("map container use effect - calling mapbox or setMapbox");
@@ -70,7 +70,7 @@ const MapContainer = React.memo(() => {
     }
     const coordinates = e.lngLat;
     // set coords on click
-    lngLat.setLngLat(coordinates.lng, coordinates.lat);
+    setLngLat(coordinates.lng, coordinates.lat);
     // create new marker on click
     const el = document.createElement("div");
     el.className = "marker";
@@ -83,7 +83,7 @@ const MapContainer = React.memo(() => {
     // update coords on drag
     marker.on("dragend", () => {
       const coordinates = marker.getLngLat();
-      lngLat.setLngLat(coordinates.lng, coordinates.lat);
+      setLngLat(coordinates.lng, coordinates.lat);
       addCrosshair(canvasRef);
     });
     // update marker instance to new marker
@@ -155,7 +155,8 @@ const MapContainer = React.memo(() => {
         </button>
         <BuildMap
           setMapbox={setMapbox}
-          setMapboxLoaded={setMapboxLoaded}
+					setMapboxLoaded={setMapboxLoaded}
+					setLngLat={setLngLat}
           // updateLngLat={updateLngLat}
           // showAddLocation={showAddLocation}
           markerInst={markerInst}

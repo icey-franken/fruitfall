@@ -6,7 +6,7 @@ import mapboxgl from "mapbox-gl";
 import InfoPopup from "./PopupForm/InfoPopup";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { LngLatContext } from "./LngLatContext";
+// import { SetLngLatContext } from "./LngLatContext";
 import { MapContext } from "../../MapContextProvider";
 
 mapboxgl.accessToken = accessToken;
@@ -47,10 +47,11 @@ export default function BuildMap({
   setMapbox,
   setMapboxLoaded,
   // showAddLocation,
-  markerInst,
+	markerInst,
+	setLngLat
 }) {
   const { mapData } = useContext(MapContext);
-  const { lngLat } = useContext(LngLatContext);
+  // const { setLngLatContext } = useContext(SetLngLatContext);
 
   const loadMap = (map) => {
     const geocoder = new MapboxGeocoder({
@@ -71,10 +72,10 @@ export default function BuildMap({
       markerInst.current = marker;
       //this will fill in whatever result user clicks on
       // setLngLatState(result.center[0], result.center[1]);
-      lngLat.setLngLat(result.center[0], result.center[1]);
+      setLngLat(result.center[0], result.center[1]);
       marker.on("dragend", (e) => {
         const coordinates = e.target.getLngLat();
-        lngLat.setLngLat(coordinates.lng, coordinates.lat);
+        setLngLat(coordinates.lng, coordinates.lat);
       });
     });
 
