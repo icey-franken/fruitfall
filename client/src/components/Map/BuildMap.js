@@ -46,8 +46,8 @@ const circle_radius_scale = [
 export default function BuildMap({
   setMapbox,
   setMapboxLoaded,
-	markerInst,
-	setLngLat
+  markerInst,
+  setLngLat,
 }) {
   const { mapData } = useContext(MapContext);
 
@@ -277,7 +277,20 @@ export default function BuildMap({
       featureId = null;
     });
     // end unclustered point hover features----------------
-    setMapboxLoaded(true);
+    // moved to use effect below - not sure if it'll fix "layer DNE in map's style and cannot be styled"
+    // setMapboxLoaded(true);
+    // hopefully this fixes it
+    // map.on("style.load", () => {
+    //   const waiting = () => {
+    //     console.log(map.isStyleLoaded());
+    //     if (!map.isStyleLoaded()) {
+    //       setTimeout(waiting, 200);
+    //     } else {
+    //       setMapboxLoaded(true);
+    //     }
+    //   };
+    //   waiting();
+    // });
   };
 
   const addPopup = (map, coordinates, info) => {
@@ -302,6 +315,7 @@ export default function BuildMap({
       touchZoomRotate: false,
     });
     map.on("load", () => loadMap(map));
+    map.on("style.load", () => setMapboxLoaded(true));
     setMapbox(map);
   }, [mapData, setMapbox]); //setMapbox only included so react stops complaining. Including loadMap results in render loop. Mentioned useCallback but that makes things worse.
 

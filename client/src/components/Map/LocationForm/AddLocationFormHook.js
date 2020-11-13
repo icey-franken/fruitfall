@@ -46,13 +46,14 @@ const AddLocationFormHook = React.memo(({ closeForm }) => {
 
   const onSubmitHook = (data) => {
     // invoke this if no validation errors
-    closeForm();
+		closeForm();
+		// also clear form!
     console.log(data);
-    // fetchWithCSRF("/api/features/add-location-form", {
-    //   method: "POST",
-    //   body: JSON.stringify(data),
-    //   headers: { "Content-Type": "application/json" },
-    // });
+    fetchWithCSRF("/api/features/add-location-form", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+    });
     // remember to switch unverified value before making post
   };
 
