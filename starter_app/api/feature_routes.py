@@ -15,7 +15,6 @@ def get_all():
 
 @feature_routes.route('/<int:id>')
 def get_one(id):
-    print(id)
     popup_info = Property.query.filter(id == Property.id).one()
     response = popup_info.for_popup()
 
@@ -26,7 +25,6 @@ def get_one(id):
 def get_form_fields():
     types = Type.query.with_entities(
         Type.id, Type.en_name).order_by(Type.en_name).all()
-    print(types)
     months = Season.query.with_entities(
         Season.id, Season.month).order_by(Season.id).all()
     accesses = Access.query.with_entities(
@@ -37,7 +35,6 @@ def get_form_fields():
 @feature_routes.route('/add-location-form', methods=['POST'])
 def add_feature():
     data = request.json
-    print(data)
 
     access_id = data.pop('access', None)
     data['access_id'] = int(access_id)

@@ -5,11 +5,24 @@ import SeasonFormComponent from "./Season";
 import PositionFormComponent from "./Position";
 // import { LngLatContext } from "../LngLatContext";
 import { useForm } from "react-hook-form";
-import {MapContext} from '../../../MapContextProvider'
+import { MapContext } from "../../../MapContextProvider";
 
-const AddLocationFormHook = React.memo(({ closeForm }) => {
-	const {updateMapData} = useContext(MapContext)
+export default function AddLocationFormHookContainer({ closeForm }) {
+  const { setNewFeature } = useContext(MapContext);
 
+  return (
+    <AddLocationFormHook setNewFeature={setNewFeature} closeForm={closeForm} />
+  );
+}
+
+const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
+  // const {updateMapData} = useContext(MapContext)
+	useEffect(()=>{
+		console.log('setNewFeature causing rerender')
+	}, [setNewFeature])
+	useEffect(()=>{
+		console.log('closeForm causing rerender')
+	}, [closeForm])
   const {
     register,
     errors,
@@ -38,8 +51,8 @@ const AddLocationFormHook = React.memo(({ closeForm }) => {
       "fruiting-status": 0,
       quality: 0,
       yield: 0,
-		},
-		// if form is too slow, turn this back on. Default is onChange. Looks better, but not if it's laggy
+    },
+    // if form is too slow, turn this back on. Default is onChange. Looks better, but not if it's laggy
     // reValidateMode: "onSubmit",
   });
 
@@ -49,16 +62,16 @@ const AddLocationFormHook = React.memo(({ closeForm }) => {
 
   const onSubmitHook = async (data) => {
     // invoke this if no validation errors
-		closeForm();
-		// also clear form!
+    closeForm();
+    // also clear form!
     console.log(data);
     const res = await fetchWithCSRF("/api/features/add-location-form", {
       method: "POST",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
-		});
-		const newFeature = await res.json();
-		updateMapData(newFeature)
+    });
+    const newFeature = await res.json();
+    setNewFeature(newFeature);
     // remember to switch unverified value before making post
   };
 
@@ -68,14 +81,16 @@ const AddLocationFormHook = React.memo(({ closeForm }) => {
   const accessesRef = useRef();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    console.log("hits get form fields use effect");
+    console.log("--------------------hits get form fields use effect");
     async function get_form_fields() {
       const res = await fetch("/api/features/add-location-form");
       const fields = await res.json();
       typesRef.current = fields.types;
       monthsRef.current = fields.months;
       accessesRef.current = fields.accesses;
-      setLoading(false);
+			setLoading(false);
+			console.log("--------------------get form fields data:", fields);
+
     }
     get_form_fields();
   }, []);
@@ -207,24 +222,22 @@ const AddLocationFormHook = React.memo(({ closeForm }) => {
             <div className="add-loc__sub-label">Go on.....</div>
           </div>
           {watchVisited === true ? (
-						<AddLocationForm2 register={register}
-						register={register}
-            errors={errors}
-            setError={setError}
-            getValues={getValues}
-            clearErrors={clearErrors}
-						/>
+            <AddLocationForm2
+              register={register}
+              register={register}
+              errors={errors}
+              setError={setError}
+              getValues={getValues}
+              clearErrors={clearErrors}
+            />
           ) : null}
           <div className="add-loc__btn-cont">
-            <button
-              className="btn add-loc__btn"
-            >
-              Add Location
-            </button>
+            <button className="btn add-loc__btn">Add Location</button>
           </div>
         </div>
       </form>
     </>
   );
-});
-export default AddLocationFormHook;
+};
+React.memo(AddLocationFormHook);
+// export default AddLocationFormHook;

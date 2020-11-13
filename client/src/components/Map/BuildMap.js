@@ -49,6 +49,7 @@ export default function BuildMap({
   setMapboxLoaded,
   markerInst,
   setLngLat,
+  canvasRef,
 }) {
   const {
     mapData,
@@ -57,9 +58,12 @@ export default function BuildMap({
     setMapLayers,
     mapbox,
     setMapbox,
+    setBuildMapMounted,
   } = useContext(MapContext);
   const [mapSource, setMapSource] = useState(null);
-
+  useEffect(() => {
+    setBuildMapMounted(true);
+  }, []);
   const clusterLayer = {
     id: "clusters",
     type: "circle",
@@ -319,7 +323,11 @@ export default function BuildMap({
   useEffect(() => {
     setCount(() => count + 1);
     console.log(count);
-    if (count <= 1) {
+    console.log(mapbox);
+    // if (mapbox) {
+    // canvasRef.current = mapbox.getCanvas();
+    console.log(mapData);
+    if (mapData.features.length > 1 && count < 2) {
       const map = new mapboxgl.Map({
         container: "mapbox",
         style: mapStyle,
@@ -331,15 +339,20 @@ export default function BuildMap({
         touchZoomRotate: false,
       });
       setMapbox(map);
+      // if (count === 1) {
       map.on("load", () => loadMap(map));
-    } else {
+      canvasRef.current = map.getCanvas();
+      console.log(canvasRef, mapbox);
+      // }
+      } else if (count > 1) {
       const clusters1 = mapbox.getLayer("clusters");
       console.log("clusters1:", clusters1);
       // mapbox.removeLayer("clusters");
       // mapbox.removeLayer("cluster-count");
-			// mapbox.removeLayer("unclustered-point");
-			// need to update layers on source change
-      mapbox.getSource("fruitfall").setData(Object.assign({},mapData));
+      // mapbox.removeLayer("unclustered-point");
+      // need to update layers on source change
+      mapbox.getSource("fruitfall") &&
+        mapbox.getSource("fruitfall").setData(Object.assign({}, mapData));
       // console.log(mapData);
       // console.log(mapbox.getSource("fruitfall"));
       // console.log(mapbox.getSource("fruitfall")._options);
@@ -351,8 +364,9 @@ export default function BuildMap({
       // mapbox.addLayer(pointLayer);
       // const clusters2 = mapbox.getLayer("clusters");
       // console.log("clusters2:", clusters2);
-    }
-    setMapboxLoaded(true);
+      }
+      setMapboxLoaded(true);
+    // }
   }, [mapData]);
 
   // useEffect(() => {

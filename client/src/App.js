@@ -39,13 +39,12 @@ function App() {
     restoreCSRF();
   }, []);
 
-
   return (
     <AuthContext.Provider value={authContextValue}>
-      <MapContextProvider>
-        <LngLatContextProvider>
-          <BrowserRouter>
-            <NavBar />
+      <BrowserRouter>
+        <NavBar />
+        <MapContextProvider>
+          <LngLatContextProvider>
             <Switch>
               <Route exact path="/activity">
                 <div>activity page</div>
@@ -59,9 +58,9 @@ function App() {
               <Route exact path="/users/:id/edit" component={UserForm} />
               <Route exact path="/" component={MapContainer} />
             </Switch>
-          </BrowserRouter>
-        </LngLatContextProvider>
-      </MapContextProvider>
+          </LngLatContextProvider>
+        </MapContextProvider>
+      </BrowserRouter>
     </AuthContext.Provider>
   );
 }
