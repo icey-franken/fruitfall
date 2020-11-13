@@ -52,6 +52,7 @@ export default function BuildMap({
   const { mapData } = useContext(MapContext);
 
   const loadMap = (map) => {
+
     const geocoder = new MapboxGeocoder({
       accessToken: accessToken,
       mapboxgl: mapboxgl,
@@ -290,7 +291,8 @@ export default function BuildMap({
     //     }
     //   };
     //   waiting();
-    // });
+		// });
+
   };
 
   const addPopup = (map, coordinates, info) => {
@@ -313,10 +315,15 @@ export default function BuildMap({
       pitchWithRotate: false,
       dragRotate: false,
       touchZoomRotate: false,
-    });
-    map.on("load", () => loadMap(map));
-    map.on("style.load", () => setMapboxLoaded(true));
+		});
+
+		map.on("load", () => loadMap(map));
+		// look into docs for events - docs/API are not perfect. DIscussion below.
+		// https://gis.stackexchange.com/questions/240134/mapbox-gl-js-source-loaded-event
+		// https://github.com/mapbox/mapbox-gl-js/issues/6707
+		map.on("style.load", () => console.log('style loaded???'))//setMapboxLoaded(true));
     setMapbox(map);
+		setMapboxLoaded(true)
   }, [mapData, setMapbox]); //setMapbox only included so react stops complaining. Including loadMap results in render loop. Mentioned useCallback but that makes things worse.
 
   return null;

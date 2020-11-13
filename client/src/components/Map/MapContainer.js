@@ -55,19 +55,23 @@ const MapContainer = React.memo(({ setLngLat }) => {
   // ---------------------------------------
   //canvas ref and the following effects/functions for changing cursor based on showAddLocation value. Crosshair functions used in mapClickFn
   const addCrosshair = (canvasRef) => {
+		console.log('hits add crosshair')
     for (let i = 0; i < canvasRef.current.length; i++) {
       canvasRef.current[i].classList.add("crosshair");
     }
   };
   const removeCrosshair = (canvasRef) => {
+		console.log('hits remove crosshair')
+
     for (let i = 0; i < canvasRef.current.length; i++) {
       canvasRef.current[i].classList.remove("crosshair");
     }
   };
 
   useEffect(() => {
-    canvasRef.current = document.querySelectorAll(".mapboxgl-canvas");
-  }, [mapboxLoaded]);
+		canvasRef.current = document.querySelectorAll(".mapboxgl-canvas");
+		console.log(canvasRef.current)
+  }, [mapboxLoaded, mapbox]);
 
   // useRef hook required so that we reference the SAME function in map.on and map.off in useEffect hook - otherwise click handlers not removed properly
   const mapClickFn = useRef((e) => {
@@ -114,7 +118,7 @@ const MapContainer = React.memo(({ setLngLat }) => {
   useEffect(() => {
     console.log(
       'mapboxLoaded - for "error - style is not done loading:"',
-      mapboxLoaded
+      'mapboxLoaded:', mapboxLoaded, 'show add location:',showAddLocation
     );
     if (mapboxLoaded) {
       mapbox.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
