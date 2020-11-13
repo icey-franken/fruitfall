@@ -4,7 +4,6 @@ export const LngLatContext = React.createContext({
   lng: "",
   lat: "",
   setLngLat: () => {},
-  // setLat: () => {},
 });
 
 export const LngLatContextProvider = (props) => {

@@ -4,7 +4,17 @@ import AddLocationForm from "./LocationForm/AddLocationFormHook";
 import { LngLatContext } from "./LngLatContext";
 import mapboxgl from "mapbox-gl";
 
-const MapContainer = React.memo(({setLngLat}) => {
+export default function MapContainerContainer() {
+  const {
+    lngLat: { setLngLat },
+  } = useContext(LngLatContext);
+  console.log(setLngLat);
+  // we pass relevant context value in here. This prevents entire mapcontainer component from rerendering because it's props (setLngLat) don't change!
+  // if we have context directly in mapcontainer, then whenever lng or lat change the entire component (and all it's children) re-render as well. I also used React.memo on map container so that it checks for prop change, and if none - no re-render!
+  return <MapContainer setLngLat={setLngLat} />;
+}
+
+const MapContainer = React.memo(({ setLngLat }) => {
   const [mapbox, setMapbox] = useState(null);
   const [mapboxLoaded, setMapboxLoaded] = useState(false);
   const [showAddLocation, setShowAddLocation] = useState(false);
@@ -12,35 +22,23 @@ const MapContainer = React.memo(({setLngLat}) => {
   const markerInst = useRef();
   const layerIds = ["clusters", "cluster-count", "unclustered-point"];
 
-  // const { lngLatContext } = useContext(LngLatContext);
-
-  const addCrosshair = (canvasRef) => {
-    for (let i = 0; i < canvasRef.current.length; i++) {
-      canvasRef.current[i].classList.add("crosshair");
-    }
-  };
-  const removeCrosshair = (canvasRef) => {
-    for (let i = 0; i < canvasRef.current.length; i++) {
-      canvasRef.current[i].classList.remove("crosshair");
-    }
-  };
+  // !!! testing re-render source
   // useEffect(() => {
   //   console.log(
   //     "map container use effect - calling setLngLat considered update"
   //   );
-	// }, [lngLatContext]);
-	// useEffect(() => {
+  // }, [lngLatContext]);
+  // useEffect(() => {
   //   console.log(
   //     "map container use effect - setting lng considered update"
   //   );
   // }, [lngLat.lng]);
-	// useEffect(() => {
+  // useEffect(() => {
   //   console.log(
   //     "map container use effect - setting lat considered update"
   //   );
   // }, [lngLat.lat]);
-
-	useEffect(() => {
+  useEffect(() => {
     console.log("map container use effect - calling mapbox or setMapbox");
   }, [mapbox, setMapbox]);
   useEffect(() => {
@@ -53,11 +51,25 @@ const MapContainer = React.memo(({setLngLat}) => {
       "map container use effect - calling showAddLocation or setShowAddLocation"
     );
   }, [showAddLocation, setShowAddLocation]);
+
+  // ---------------------------------------
+  //canvas ref and the following effects/functions for changing cursor based on showAddLocation value. Crosshair functions used in mapClickFn
+  const addCrosshair = (canvasRef) => {
+    for (let i = 0; i < canvasRef.current.length; i++) {
+      canvasRef.current[i].classList.add("crosshair");
+    }
+  };
+  const removeCrosshair = (canvasRef) => {
+    for (let i = 0; i < canvasRef.current.length; i++) {
+      canvasRef.current[i].classList.remove("crosshair");
+    }
+  };
+
   useEffect(() => {
     canvasRef.current = document.querySelectorAll(".mapboxgl-canvas");
   }, [mapboxLoaded]);
 
-  // useRef hook required so that we reference the SAME function in map.on and map.off in useEffect hook
+  // useRef hook required so that we reference the SAME function in map.on and map.off in useEffect hook - otherwise click handlers not removed properly
   const mapClickFn = useRef((e) => {
     // remove marker from search on click
     const geocoderMarker = e.target._controls[2].mapMarker;
@@ -130,15 +142,24 @@ const MapContainer = React.memo(({setLngLat}) => {
   return (
     <div className="content-cont">
       {mapboxLoaded ? ( //do this conditionally to reduce number of rerenders
-        <AddLocationForm
-          handleAddLocationClick={handleAddLocationClick}
-          setShowForm={setShowAddLocation}
-          handleFormSubmitClick={handleAddLocationClick}
-          // searchLatLonRef={searchLatLonRef}
-          // lngLatRef={lngLatRef}
-          show={showAddLocation}
-          // useFormObj={useFormObj}
-        />
+        <div
+          className={`add-loc__cont fade-in ${showAddLocation ? "show" : ""}`}
+        >
+          <div className="add-loc__close-cont">
+            <div className="add-loc__close" onClick={handleAddLocationClick}>
+              &#10006;
+            </div>
+          </div>
+          <AddLocationForm
+            // handleAddLocationClick={handleAddLocationClick}
+            // setShowForm={setShowAddLocation}
+            // handleFormSubmitClick={handleAddLocationClick}
+            // searchLatLonRef={searchLatLonRef}
+            // lngLatRef={lngLatRef}
+            // show={showAddLocation}
+            // useFormObj={useFormObj}
+          />
+        </div>
       ) : null}
       <div className="mapbox-cont">
         <button
@@ -155,8 +176,8 @@ const MapContainer = React.memo(({setLngLat}) => {
         </button>
         <BuildMap
           setMapbox={setMapbox}
-					setMapboxLoaded={setMapboxLoaded}
-					setLngLat={setLngLat}
+          setMapboxLoaded={setMapboxLoaded}
+          setLngLat={setLngLat}
           // updateLngLat={updateLngLat}
           // showAddLocation={showAddLocation}
           markerInst={markerInst}
@@ -166,4 +187,4 @@ const MapContainer = React.memo(({setLngLat}) => {
     </div>
   );
 });
-export default MapContainer;
+// export default MapContainer;

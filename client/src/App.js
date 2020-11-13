@@ -6,7 +6,7 @@ import UserForm from "./components/UserForm";
 import AuthContext from "./auth";
 import MapContextProvider from "./MapContextProvider";
 import NavBar from "./components/NavBar";
-import MapContainer from "./components/Map/MapContainerContainer";
+import MapContainer from "./components/Map/MapContainer";
 import { LngLatContextProvider } from "./components/Map/LngLatContext";
 function App() {
   const [fetchWithCSRF, setFetchWithCSRF] = useState(() => fetch);
@@ -39,7 +39,6 @@ function App() {
     restoreCSRF();
   }, []);
 
-  // setting up map context
 
   return (
     <AuthContext.Provider value={authContextValue}>

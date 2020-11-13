@@ -1,18 +1,14 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useWatch } from "react-hook-form";
+import React, { useEffect, useContext } from "react";
 import { LngLatContext } from "../LngLatContext";
 
 const PositionFormComponent = React.memo(({ useFormObj }) => {
   const {
     register,
-    handleSubmit,
     errors,
     setError,
-    watch,
 		getValues,
 		setValue,
     clearErrors,
-    control,
   } = useFormObj;
 
   const { lngLat } = useContext(LngLatContext);
@@ -27,7 +23,6 @@ const PositionFormComponent = React.memo(({ useFormObj }) => {
     const { lat, lng } = getValues(["lat", "lng"]);
     console.log(errors);
     if (isNaN(lat) || isNaN(lng)) {
-      // errors.position = {message:
       setError("position", {
         type: "required",
         message: "Latitude and Longitude must be numbers",

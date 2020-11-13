@@ -6,37 +6,35 @@ import PositionFormComponent from "./Position";
 // import { LngLatContext } from "../LngLatContext";
 import { useForm } from "react-hook-form";
 
-
 const AddLocationFormHook = React.memo(
   ({
-    handleFormSubmitClick,
-    show,
-    handleAddLocationClick,
+    // handleFormSubmitClick,
+    // show,
+    // handleAddLocationClick,
     // useFormObj,
     // lngLatRef,
   }) => {
-
-		const useFormObj = useForm({
-			defaultValues: {
-				type_ids: "",
-				lat: "",
-				lng: "",
-				description: "",
-				season_start: "",
-				season_stop: "",
-				no_season: false,
-				unknown_season: false,
-				author: "", //don't have yet
-				access: "",
-				unverified: false,
-				visited: false,
-				date_visited: null, //the next four come from second form
-				"fruiting-status": 0,
-				quality: 0,
-				yield: 0,
-			},
-			reValidateMode: "onSubmit",
-		});
+    const useFormObj = useForm({
+      defaultValues: {
+        type_ids: "",
+        lat: "",
+        lng: "",
+        description: "",
+        season_start: "",
+        season_stop: "",
+        no_season: false,
+        unknown_season: false,
+        author: "", //don't have yet
+        access: "",
+        unverified: false,
+        visited: false,
+        date_visited: null, //the next four come from second form
+        "fruiting-status": 0,
+        quality: 0,
+        yield: 0,
+      },
+      reValidateMode: "onSubmit",
+    });
 
     const { register, handleSubmit, errors, watch, getValues } = useFormObj;
     const { fetchWithCSRF } = useContext(AuthContext);
@@ -44,7 +42,7 @@ const AddLocationFormHook = React.memo(
     const watchVisited = watch("visited");
     // const { lngLat } = useContext(LngLatContext);
 
-		const onSubmitHook = (data) => {
+    const onSubmitHook = (data) => {
       console.log(data);
       // fetchWithCSRF("/api/features/add-location-form", {
       //   method: "POST",
@@ -145,12 +143,7 @@ const AddLocationFormHook = React.memo(
       return null;
     }
     return (
-      <div className={`add-loc__cont fade-in ${show ? "show" : ""}`}>
-        <div className="add-loc__close-cont">
-          <div className="add-loc__close" onClick={handleAddLocationClick}>
-            &#10006;
-          </div>
-        </div>
+      <>
         <form onSubmit={handleSubmit(onSubmitHook)}>
           <div className="add-loc__cont-inner">
             <div className="add-loc__el add-loc__el-col">
@@ -275,7 +268,7 @@ const AddLocationFormHook = React.memo(
             </div>
           </div>
         </form>
-      </div>
+      </>
     );
   }
 );
