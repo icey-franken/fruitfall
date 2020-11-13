@@ -4,17 +4,17 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 // import UserList from "./components/UsersList";
 import UserForm from "./components/UserForm";
 import AuthContext from "./auth";
-import MapContextProvider from './MapContextProvider';
+import MapContextProvider from "./MapContextProvider";
 import NavBar from "./components/NavBar";
 import MapContainer from "./components/Map/MapContainer";
-
+import { LngLatContextProvider } from "./components/Map/LngLatContext";
 function App() {
   const [fetchWithCSRF, setFetchWithCSRF] = useState(() => fetch);
   const authContextValue = {
     fetchWithCSRF,
-	};
+  };
 
-	useEffect(() => {
+  useEffect(() => {
     async function restoreCSRF() {
       const response = await fetch("/api/csrf/restore", {
         method: "GET",
@@ -39,29 +39,29 @@ function App() {
     restoreCSRF();
   }, []);
 
-// setting up map context
 
-
-	return (
+  return (
     <AuthContext.Provider value={authContextValue}>
-			<MapContextProvider>
-      <BrowserRouter>
-        <NavBar />
-        <Switch>
-          <Route exact path="/activity">
-            <div>activity page</div>
-          </Route>
-          <Route exact path="/data">
-            <div>...data page</div>
-          </Route>
-					<Route exact path="/about">
-            <div>about this is</div>
-          </Route>
-          <Route exact path="/users/:id/edit" component={UserForm} />
-          <Route exact path="/" component={MapContainer}/>
-        </Switch>
-      </BrowserRouter>
-			</MapContextProvider>
+      <MapContextProvider>
+        <LngLatContextProvider>
+          <BrowserRouter>
+            <NavBar />
+            <Switch>
+              <Route exact path="/activity">
+                <div>activity page</div>
+              </Route>
+              <Route exact path="/data">
+                <div>...data page</div>
+              </Route>
+              <Route exact path="/about">
+                <div>about this is</div>
+              </Route>
+              <Route exact path="/users/:id/edit" component={UserForm} />
+              <Route exact path="/" component={MapContainer} />
+            </Switch>
+          </BrowserRouter>
+        </LngLatContextProvider>
+      </MapContextProvider>
     </AuthContext.Provider>
   );
 }

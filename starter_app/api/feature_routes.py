@@ -37,16 +37,45 @@ def get_form_fields():
 @feature_routes.route('/add-location-form', methods=['POST'])
 def add_feature():
     data = request.json
+    print(data)
 
-    int_data = ['type_ids', 'season_start', 'season_end', 'access', ]
-    for entry in int_data:
-        data[entry] = int(data[entry])
+    access_id = data.pop('access', None)
+    data['access_id'] = int(access_id)
+    data['type_ids'] = int(data['type_ids'])
+    lat = data.pop('lat', None)
+    data['latitude'] = float(lat)
+    lng = data.pop('lng', None)
+    data['longitude'] = float(lng)
 
-    float_data = ['lat', 'lng']
-    for entry in float_data:
-        data[entry] = float(data[entry])
+    # clean up season data
+    if data['unknown_season']:
+        data.pop('season_start', None)
+        data.pop('season_stop', None)
+        data.pop('no_season', None)
+        data.pop('unknown_season', None)
+    elif data['no_season']:
+        data.pop('season_start', None)
+        data.pop('season_stop', None)
+        data.pop('unknown_season', None)
+    else:
+        data.pop('unknown_season', None)
+        data.pop('no_season', None)
+        season_start_id = data.pop('season_start', None)
+        data['season_start_id'] = int(season_start_id)
+        season_stop_id = data.pop('season_stop', None)
+        data['season_stop_id'] = int(season_stop_id)
 
+    if data['visited']:
+        # deal with extra visited data - data, ripeness, etc.
+        pass
 
+    # visited does not belong in our model
+    data.pop('visited', None)
+
+    newProperty = Property(**data)
+    db.session.add(newProperty)
+    db.session.commit()
+    # return new property in a format that makes it easy to shove into already loaded data
     return 'ok'
 
 

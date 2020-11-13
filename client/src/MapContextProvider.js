@@ -26,8 +26,9 @@ export default function MapContextProvider(props) {
       setMapData(res_data);
     }
     getMapData();
-  }, []);
+	}, []);
 
+	// on form submission we can add to map data from here and avoid loading entire database again
   return (
     <MapContext.Provider value={mapContextValue}>
       {props.children}

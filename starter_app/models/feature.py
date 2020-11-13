@@ -47,14 +47,14 @@ class Property(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
     import_link = db.Column(db.String(200))
     hidden = db.Column(db.Boolean, default=False)
-    no_season = db.Column(db.Boolean, default=True)
+    no_season = db.Column(db.Boolean, default=False)
 
     # we're not including address - lat/lon and description is plenty
     # address = db.Column(db.Text)
 
     # change to season foreign key
-    season_start_id = db.Column(db.ForeignKey('seasons.id'), nullable=True)
-    season_stop_id = db.Column(db.ForeignKey('seasons.id'), nullable=True)
+    season_start_id = db.Column(db.ForeignKey('seasons.id'), nullable=True, default=None)
+    season_stop_id = db.Column(db.ForeignKey('seasons.id'), nullable=True, default=None)
     season_stop = db.relationship('Season',  foreign_keys=[
                                   season_stop_id], backref='properties')
     season_start = db.relationship('Season',  foreign_keys=[
