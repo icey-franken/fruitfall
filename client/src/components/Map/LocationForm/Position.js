@@ -1,35 +1,45 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useWatch } from "react-hook-form";
-export default function PositionFormComponent({ useFormObj }) {
+import { LngLatContext } from "../LngLatContext";
+
+const PositionFormComponent = React.memo(({ useFormObj }) => {
   const {
     register,
     handleSubmit,
     errors,
     setError,
     watch,
-    getValues,
+		getValues,
+		setValue,
     clearErrors,
     control,
   } = useFormObj;
 
+  const { lngLat } = useContext(LngLatContext);
+
+  useEffect(() => {
+    console.log("position use effect - lngLatState change");
+    setValue("lng", lngLat.lng);
+    setValue("lat", lngLat.lat);
+  }, [lngLat.lng, lngLat.lat]);
+
   const validatePosition = () => {
-		console.log(errors)
-		const { lat, lng } = getValues(["lat", "lng"]);
-		console.log(parseInt(lat))
-		console.log(parseInt(lat) === NaN)
-    if (lat === "" || lng === "") {
-      setError("position", {
-        type: "required",
-        message: "Please enter a value for Latitude and Longitude",
-      });
-    } else if (parseInt(lat).isNaN() || parseInt(lng).isNaN()) {
+    const { lat, lng } = getValues(["lat", "lng"]);
+    console.log(errors);
+    if (isNaN(lat) || isNaN(lng)) {
+      // errors.position = {message:
       setError("position", {
         type: "required",
         message: "Latitude and Longitude must be numbers",
       });
+    } else if (lat === "" || lng === "") {
+      setError("position", {
+        type: "required",
+        message: "Please enter a value for Latitude and Longitude",
+      });
     } else {
-			clearErrors('position')
-		}
+      clearErrors("position");
+    }
   };
 
   console.log("re-renders position component");
@@ -64,4 +74,5 @@ export default function PositionFormComponent({ useFormObj }) {
       </div>
     </div>
   );
-}
+});
+export default PositionFormComponent;

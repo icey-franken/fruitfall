@@ -7,7 +7,7 @@ import AuthContext from "./auth";
 import MapContextProvider from './MapContextProvider';
 import NavBar from "./components/NavBar";
 import MapContainer from "./components/Map/MapContainer";
-
+import {LngLatContextProvider} from './components/Map/LngLatContext'
 function App() {
   const [fetchWithCSRF, setFetchWithCSRF] = useState(() => fetch);
   const authContextValue = {
@@ -45,6 +45,8 @@ function App() {
 	return (
     <AuthContext.Provider value={authContextValue}>
 			<MapContextProvider>
+			<LngLatContextProvider>
+
       <BrowserRouter>
         <NavBar />
         <Switch>
@@ -61,6 +63,8 @@ function App() {
           <Route exact path="/" component={MapContainer}/>
         </Switch>
       </BrowserRouter>
+			</LngLatContextProvider>
+
 			</MapContextProvider>
     </AuthContext.Provider>
   );

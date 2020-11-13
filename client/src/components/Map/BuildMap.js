@@ -6,7 +6,7 @@ import mapboxgl from "mapbox-gl";
 import InfoPopup from "./PopupForm/InfoPopup";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-
+import { LngLatContext } from "./LngLatContext";
 import { MapContext } from "../../MapContextProvider";
 
 mapboxgl.accessToken = accessToken;
@@ -46,20 +46,11 @@ const circle_radius_scale = [
 export default function BuildMap({
   setMapbox,
   setMapboxLoaded,
-  // searchLatLonRef,
-  setValue,
-  clearErrors,
   // showAddLocation,
   markerInst,
 }) {
-  // const [viewport, setViewport] = useState({
-  //   center: [-94.6859, 46.5],
-  //   zoom: [5],
-  //   movingMethod: "easeTo",
-  //   // maxBounds: [[-98,43.2], [-89.5, 50]]  //I don't care about maxBounds - look whereever you please, data is only in mn
-  // });
-
   const { mapData } = useContext(MapContext);
+  const { lngLat } = useContext(LngLatContext);
 
   const loadMap = (map) => {
     const geocoder = new MapboxGeocoder({
@@ -79,15 +70,11 @@ export default function BuildMap({
       }
       markerInst.current = marker;
       //this will fill in whatever result user clicks on
-      setValue("lng", result.center[0]);
-      setValue("lat", result.center[1]);
-      clearErrors(["lat", "lng"]);
-
+      // setLngLatState(result.center[0], result.center[1]);
+      lngLat.setLngLat(result.center[0], result.center[1]);
       marker.on("dragend", (e) => {
         const coordinates = e.target.getLngLat();
-        setValue("lat", coordinates.lat);
-        setValue("lng", coordinates.lng);
-        clearErrors(["lat", "lng"]);
+        lngLat.setLngLat(coordinates.lng, coordinates.lat);
       });
     });
 
@@ -187,7 +174,6 @@ export default function BuildMap({
         .getSource("fruitfall")
         .getClusterExpansionZoom(clusterId, function (err, zoom) {
           if (err) return;
-
           map.easeTo({
             center: features[0].geometry.coordinates,
             zoom: zoom,
@@ -195,10 +181,7 @@ export default function BuildMap({
         });
     });
 
-    // When a click event occurs on a feature in
-    // the unclustered-point layer, open a popup at
-    // the location of the feature, with
-    // description HTML from its properties.
+    // Open a popup on click of unclustered-point
     map.on("click", "unclustered-point", async function (e) {
       const coordinates = e.features[0].geometry.coordinates.slice();
       // get id from click
@@ -216,7 +199,7 @@ export default function BuildMap({
     });
 
     // start cluster hover features----------------
-    let featureId = null; //try grouping hover effect for clusters and unclustered points into one variable - we only want one hover effect at a time anyways - WORKS!
+    let featureId = null;
     map.on("mousemove", "clusters", function (e) {
       map.getCanvas().style.cursor = "pointer";
       if (e.features.length > 0) {
@@ -295,30 +278,6 @@ export default function BuildMap({
       featureId = null;
     });
     // end unclustered point hover features----------------
-
-    // RESIZE MAP ON CLICK ADD BUTTON-----------------------
-    // 		I gave up on this - not worth the time
-    //  next five lines moved to map container
-    // const addLocationButton = document.getElementById("add-location-button");
-    // addLocationButton.addEventListener("click", (e) => {
-    //   // console.log("hits map main");
-    // 	map.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
-    // });
-    // show map coords on click if viewing form
-    // map.on('click', function popupOnClick(e) {
-    // 	console.log('hits click')
-    // 	console.log(showAddLocation)
-    // 	if(showAddLocation) {
-    // 		console.log('e', e)
-    // 	// console.log('map', map)
-    // 	console.log(e.lngLat)
-    // 	}
-    // 	// var coordinates = e.lngLat;
-    // 	// 	new mapboxgl.Popup()
-    // 	// 		.setLngLat(coordinates)
-    // 	// 		.setHTML('you clicked here: <br/>' + coordinates)
-    // 	// 		.addTo(map);
-    // });
     setMapboxLoaded(true);
   };
 
@@ -343,7 +302,6 @@ export default function BuildMap({
       dragRotate: false,
       touchZoomRotate: false,
     });
-    // console.log()
     map.on("load", () => loadMap(map));
     setMapbox(map);
   }, [mapData, setMapbox]); //setMapbox only included so react stops complaining. Including loadMap results in render loop. Mentioned useCallback but that makes things worse.
