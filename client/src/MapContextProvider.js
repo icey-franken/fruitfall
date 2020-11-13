@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export const MapContext = React.createContext({});
 
@@ -13,12 +13,9 @@ export default function MapContextProvider(props) {
         geometry: { coordinates: [-93.265, 44.9778], type: "Point" },
       },
     ],
-	});
+  });
 
-  const mapContextValue = {
-    mapData,
-  };
-
+  // load map data from db immediately
   useEffect(() => {
     async function getMapData() {
       const res = await fetch("/api/features/");
@@ -26,9 +23,35 @@ export default function MapContextProvider(props) {
       setMapData(res_data);
     }
     getMapData();
-	}, []);
+  }, []);
 
-	// on form submission we can add to map data from here and avoid loading entire database again
+  // the intention of this is to be a trigger - reload map
+  const [mapDataUpdated, setMapDataUpdated] = useState(false);
+
+  // mapbox set in build map after initial render - mapbox requires an HTML element container to hook to
+  const [mapbox, setMapbox] = useState(null);
+
+  // on form submission we add to map data from here and avoid loading entire database again
+  // this function passed to form and called on successful submission with db response as newFeature arg
+  const updateMapData = (newFeature) => {
+    const newMapData = {
+      ...mapData,
+      features: [...mapData.features, newFeature],
+    };
+    setMapData(() => newMapData);
+    mapbox.getSource("fruitfall").setData(newMapData);
+    setMapDataUpdated(true);
+  };
+
+  const mapContextValue = {
+    mapData,
+    updateMapData,
+    mapDataUpdated,
+    setMapDataUpdated,
+    mapbox,
+    setMapbox,
+  };
+
   return (
     <MapContext.Provider value={mapContextValue}>
       {props.children}

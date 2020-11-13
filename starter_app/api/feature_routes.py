@@ -76,7 +76,7 @@ def add_feature():
     db.session.add(newProperty)
     db.session.commit()
     # return new property in a format that makes it easy to shove into already loaded data
-    return 'ok'
+    return {'newFeature': newProperty.for_map()}
 
 
 {'type_ids': '2977', 'lat': '45.44635541468608', 'lng': '-93.78502109375007', 'description': '6584',

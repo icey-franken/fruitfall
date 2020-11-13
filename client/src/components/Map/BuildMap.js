@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import ReactDOM from "react-dom";
 // import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import { accessToken, mapStyle } from "../../config";
@@ -44,14 +44,93 @@ const circle_radius_scale = [
 ];
 
 export default function BuildMap({
-  setMapbox,
+  // mapbox,
+  // setMapbox,
   setMapboxLoaded,
   markerInst,
   setLngLat,
 }) {
-  const { mapData } = useContext(MapContext);
+  const {
+    mapData,
+    setMapDataUpdated,
+    mapDataUpdated,
+    setMapLayers,
+    mapbox,
+    setMapbox,
+  } = useContext(MapContext);
+  const [mapSource, setMapSource] = useState(null);
+
+  const clusterLayer = {
+    id: "clusters",
+    type: "circle",
+    source: "fruitfall",
+    filter: ["has", "point_count"],
+    paint: {
+      // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+      // with three steps to implement three types of circles:
+      //   * Blue, 20px circles when point count is less than 100
+      //   * Yellow, 30px circles when point count is between 100 and 750
+      //   * Pink, 40px circles when point count is greater than or equal to 750
+      "circle-color": ["step", ["get", "point_count"], ...circle_color_scale],
+      // original circle color
+      // "circle-color": [
+      //   "step",
+      //   ["get", "point_count"],
+      //   "#51bbd6",
+      //   100,
+      //   "#f1f075",
+      //   750,
+      //   "#f28cb1",
+      // ],
+      "circle-radius": ["step", ["get", "point_count"], ...circle_radius_scale],
+      "circle-opacity": [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        1,
+        0.7,
+      ],
+    },
+  };
+  const clusterCountLayer = {
+    id: "cluster-count",
+    type: "symbol",
+    source: "fruitfall",
+    filter: ["has", "point_count"],
+    layout: {
+      "text-field": "{point_count_abbreviated}",
+      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+      "text-size": 14,
+      // "text-color": '#FFFFFF',
+    },
+  };
+  const pointLayer = {
+    id: "unclustered-point",
+    type: "circle",
+    source: "fruitfall",
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": primary_color,
+      "circle-radius": [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        6,
+        4,
+      ],
+      "circle-stroke-width": 1,
+      "circle-stroke-color": secondary_color,
+      "circle-opacity": [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        1,
+        0.7,
+      ],
+    },
+  };
 
   const loadMap = (map) => {
+    console.log("hits loadMap");
+    console.log(map);
+    console.log(mapData);
 
     const geocoder = new MapboxGeocoder({
       accessToken: accessToken,
@@ -91,78 +170,11 @@ export default function BuildMap({
       generateId: true, //will this work for clusters and unclustered-points??? YES!
     });
 
-    map.addLayer({
-      id: "clusters",
-      type: "circle",
-      source: "fruitfall",
-      filter: ["has", "point_count"],
-      paint: {
-        // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-        // with three steps to implement three types of circles:
-        //   * Blue, 20px circles when point count is less than 100
-        //   * Yellow, 30px circles when point count is between 100 and 750
-        //   * Pink, 40px circles when point count is greater than or equal to 750
-        "circle-color": ["step", ["get", "point_count"], ...circle_color_scale],
-        // original circle color
-        // "circle-color": [
-        //   "step",
-        //   ["get", "point_count"],
-        //   "#51bbd6",
-        //   100,
-        //   "#f1f075",
-        //   750,
-        //   "#f28cb1",
-        // ],
-        "circle-radius": [
-          "step",
-          ["get", "point_count"],
-          ...circle_radius_scale,
-        ],
-        "circle-opacity": [
-          "case",
-          ["boolean", ["feature-state", "hover"], false],
-          1,
-          0.7,
-        ],
-      },
-    });
+    map.addLayer(clusterLayer);
 
-    map.addLayer({
-      id: "cluster-count",
-      type: "symbol",
-      source: "fruitfall",
-      filter: ["has", "point_count"],
-      layout: {
-        "text-field": "{point_count_abbreviated}",
-        "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-        "text-size": 14,
-        // "text-color": '#FFFFFF',
-      },
-    });
+    map.addLayer(clusterCountLayer);
 
-    map.addLayer({
-      id: "unclustered-point",
-      type: "circle",
-      source: "fruitfall",
-      filter: ["!", ["has", "point_count"]],
-      paint: {
-        "circle-color": primary_color,
-        "circle-radius": [
-          "case",
-          ["boolean", ["feature-state", "hover"], false],
-          6,
-          4,
-        ],
-        "circle-stroke-width": 1,
-        "circle-stroke-color": secondary_color,
-        "circle-opacity": [
-          "case",
-          ["boolean", ["feature-state", "hover"], false],
-          1,
-          0.7,
-        ],
-      },
-    });
+    map.addLayer(pointLayer);
 
     // inspect a cluster on click
     map.on("click", "clusters", function (e) {
@@ -291,8 +303,7 @@ export default function BuildMap({
     //     }
     //   };
     //   waiting();
-		// });
-
+    // });
   };
 
   const addPopup = (map, coordinates, info) => {
@@ -304,27 +315,74 @@ export default function BuildMap({
       .setLngLat(coordinates)
       .addTo(map);
   };
-
+  const [count, setCount] = useState(0);
   useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: "mapbox",
-      style: mapStyle,
-      center: [-94.6859, 46.5],
-      zoom: 5,
-      movingMethod: "easeTo",
-      pitchWithRotate: false,
-      dragRotate: false,
-      touchZoomRotate: false,
-		});
+    setCount(() => count + 1);
+    console.log(count);
+    if (count <= 1) {
+      const map = new mapboxgl.Map({
+        container: "mapbox",
+        style: mapStyle,
+        center: [-94.6859, 46.5],
+        zoom: 5,
+        movingMethod: "easeTo",
+        pitchWithRotate: false,
+        dragRotate: false,
+        touchZoomRotate: false,
+      });
+      setMapbox(map);
+      map.on("load", () => loadMap(map));
+    } else {
+      const source = mapbox.getSource("fruitfall");
+      console.log(source);
+      source.setData(mapData);
+      const clusterLayer = mapbox.getLayer("clusters");
+      mapbox.removeLayer("clusters");
+      mapbox.removeLayer("cluster-count");
+      mapbox.removeLayer("unclustered-point");
+      mapbox.addLayer(clusterLayer);
+      mapbox.addLayer(clusterCountLayer);
+      mapbox.addLayer(pointLayer);
 
-		map.on("load", () => loadMap(map));
-		// look into docs for events - docs/API are not perfect. DIscussion below.
-		// https://gis.stackexchange.com/questions/240134/mapbox-gl-js-source-loaded-event
-		// https://github.com/mapbox/mapbox-gl-js/issues/6707
-		map.on("style.load", () => console.log('style loaded???'))//setMapboxLoaded(true));
-    setMapbox(map);
-		setMapboxLoaded(true)
-  }, [mapData, setMapbox]); //setMapbox only included so react stops complaining. Including loadMap results in render loop. Mentioned useCallback but that makes things worse.
+      console.log(clusterLayer);
+    }
+    setMapboxLoaded(true);
+  }, [mapData]);
+
+  // useEffect(() => {
+  //   // the parent component creates the mapbox container which is required to create a map. We trigger this on mapdata change
+  //   if (mapbox) {
+  //     console.log(mapbox);
+  //     console.log(mapData);
+  //     let mapDataCopy = { ...mapData };
+  //     const featureCopy = [...mapData.features];
+  //     console.log(featureCopy);
+  //     // let map = mapbox;
+  //     // if (map === null) {
+  //     console.log(featureCopy);
+  //     // }
+  //     mapbox.on("style.load", () => {
+  //       const source = mapbox.getSource("fruitfall");
+  //       console.log(source);
+  //       console.log("style loaded???");
+  //     }); //setMapboxLoaded(true));
+  //     // map.on("load", () => loadMap(map));
+  //     // map.getSource("fruitfall").setData(mapData);
+
+  //     // look into docs for events - docs/API are not perfect. DIscussion below.
+  //     // https://gis.stackexchange.com/questions/240134/mapbox-gl-js-source-loaded-event
+  //     // https://github.com/mapbox/mapbox-gl-js/issues/6707
+
+  //     setMapboxLoaded(true);
+  //   }
+  // }, [mapData]);
+
+  // useEffect(() => {
+  //   if (mapbox && mapDataUpdated) {
+  //     mapbox.getSource("fruitfall").setData(mapData);
+  //     setMapboxLoaded(true);
+  //   }
+  // }, [mapDataUpdated]);
 
   return null;
 }

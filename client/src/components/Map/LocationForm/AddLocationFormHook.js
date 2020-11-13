@@ -5,8 +5,11 @@ import SeasonFormComponent from "./Season";
 import PositionFormComponent from "./Position";
 // import { LngLatContext } from "../LngLatContext";
 import { useForm } from "react-hook-form";
+import {MapContext} from '../../../MapContextProvider'
 
 const AddLocationFormHook = React.memo(({ closeForm }) => {
+	const {updateMapData} = useContext(MapContext)
+
   const {
     register,
     errors,
@@ -44,16 +47,18 @@ const AddLocationFormHook = React.memo(({ closeForm }) => {
 
   const watchVisited = watch("visited");
 
-  const onSubmitHook = (data) => {
+  const onSubmitHook = async (data) => {
     // invoke this if no validation errors
 		closeForm();
 		// also clear form!
     console.log(data);
-    fetchWithCSRF("/api/features/add-location-form", {
+    const res = await fetchWithCSRF("/api/features/add-location-form", {
       method: "POST",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
-    });
+		});
+		const newFeature = await res.json();
+		updateMapData(newFeature)
     // remember to switch unverified value before making post
   };
 

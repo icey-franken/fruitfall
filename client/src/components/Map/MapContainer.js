@@ -3,19 +3,22 @@ import BuildMap from "./BuildMap";
 import AddLocationForm from "./LocationForm/AddLocationFormHook";
 import { LngLatContext } from "./LngLatContext";
 import mapboxgl from "mapbox-gl";
+import {MapContext} from '../../MapContextProvider'
 
 export default function MapContainerContainer() {
   const {
     lngLat: { setLngLat },
   } = useContext(LngLatContext);
-  console.log(setLngLat);
+	console.log(setLngLat);
+
+	const {mapbox, setMapbox} = useContext(MapContext)
   // we pass relevant context value in here. This prevents entire mapcontainer component from rerendering because it's props (setLngLat) don't change!
   // if we have context directly in mapcontainer, then whenever lng or lat change the entire component (and all it's children) re-render as well. I also used React.memo on map container so that it checks for prop change, and if none - no re-render!
-  return <MapContainer setLngLat={setLngLat} />;
+  return <MapContainer setLngLat={setLngLat} mapbox={mapbox} setMapbox={setMapbox}/>;
 }
 
-const MapContainer = React.memo(({ setLngLat }) => {
-  const [mapbox, setMapbox] = useState(null);
+const MapContainer = React.memo(({ setLngLat, mapbox, setMapbox }) => {
+  // const [mapbox, setMapbox] = useState(null);
   const [mapboxLoaded, setMapboxLoaded] = useState(false);
   const [showAddLocation, setShowAddLocation] = useState(false);
   const canvasRef = useRef();
@@ -166,7 +169,8 @@ const MapContainer = React.memo(({ setLngLat }) => {
           Add Location
         </button>
         <BuildMap
-          setMapbox={setMapbox}
+					// mapbox={mapbox}
+          // setMapbox={setMapbox}
           setMapboxLoaded={setMapboxLoaded}
           setLngLat={setLngLat}
           markerInst={markerInst}
