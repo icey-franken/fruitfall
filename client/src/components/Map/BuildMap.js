@@ -333,18 +333,23 @@ export default function BuildMap({
       setMapbox(map);
       map.on("load", () => loadMap(map));
     } else {
-      const source = mapbox.getSource("fruitfall");
-      console.log(source);
-      source.setData(mapData);
-      const clusterLayer = mapbox.getLayer("clusters");
+      const clusters1 = mapbox.getLayer("clusters");
+      console.log("clusters1:", clusters1);
       mapbox.removeLayer("clusters");
       mapbox.removeLayer("cluster-count");
       mapbox.removeLayer("unclustered-point");
+      mapbox.getSource("fruitfall").setData(Object.assign({},mapData));
+      console.log(mapData);
+      console.log(mapbox.getSource("fruitfall"));
+      console.log(mapbox.getSource("fruitfall")._options);
+      mapbox.getSource("fruitfall")._options.data = mapData;
+      console.log(mapbox.getSource("fruitfall")._options);
+
       mapbox.addLayer(clusterLayer);
       mapbox.addLayer(clusterCountLayer);
       mapbox.addLayer(pointLayer);
-
-      console.log(clusterLayer);
+      const clusters2 = mapbox.getLayer("clusters");
+      console.log("clusters2:", clusters2);
     }
     setMapboxLoaded(true);
   }, [mapData]);
