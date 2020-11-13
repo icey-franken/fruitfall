@@ -12,7 +12,8 @@ const AddLocationFormHook = React.memo(
     // show,
     // handleAddLocationClick,
     // useFormObj,
-    // lngLatRef,
+		// lngLatRef,
+		closeForm
   }) => {
     const useFormObj = useForm({
       defaultValues: {
@@ -43,6 +44,10 @@ const AddLocationFormHook = React.memo(
     // const { lngLat } = useContext(LngLatContext);
 
     const onSubmitHook = (data) => {
+			// clear form on successful submit - leave open. Not sure how to close without threading props and getting in
+			// invoke this if no validation errors
+			console.log(closeForm)
+			closeForm();
       console.log(data);
       // fetchWithCSRF("/api/features/add-location-form", {
       //   method: "POST",
