@@ -15,7 +15,6 @@ export default function MapContextProvider(props) {
       },
     ],
   });
-  const [buildMapMounted, setBuildMapMounted] = useState(false);
 
   // load map data from db immediately
   useEffect(() => {
@@ -35,7 +34,8 @@ export default function MapContextProvider(props) {
   // the intention of this is to be a trigger - reload map
   const [mapDataUpdated, setMapDataUpdated] = useState(false);
 
-  // mapbox set in build map after initial render - mapbox requires an HTML element container to hook to
+	// mapbox set in build map after initial render - mapbox requires an HTML element container to hook to
+	// we save it in context to reduce reload time
   const [mapbox, setMapbox] = useState(null);
 
   // on form submission we add set new feature. This hook is triggered and map source data updated
@@ -54,26 +54,6 @@ export default function MapContextProvider(props) {
     }
   }, [newFeature]);
 
-  // // from build map
-  // const [count, setCount] = useState(0);
-  // useEffect(() => {
-  //   setCount(() => count + 1);
-  //   console.log(count);
-  //   if (count <= 1) {
-  //     const map = new mapboxgl.Map({
-  //       container: "mapbox",
-  //       style: mapStyle,
-  //       center: [-94.6859, 46.5],
-  //       zoom: 5,
-  //       movingMethod: "easeTo",
-  //       pitchWithRotate: false,
-  //       dragRotate: false,
-  //       touchZoomRotate: false,
-  //     });
-  //     setMapbox(map);
-  //   }
-  // }, [mapData]);
-
   const mapContextValue = {
     mapData,
     mapDataUpdated,
@@ -81,7 +61,6 @@ export default function MapContextProvider(props) {
     mapbox,
     setMapbox,
     setNewFeature,
-    setBuildMapMounted,
   };
 
   return (

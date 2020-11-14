@@ -53,17 +53,12 @@ export default function BuildMap({
 }) {
   const {
     mapData,
-    setMapDataUpdated,
-    mapDataUpdated,
-    setMapLayers,
     mapbox,
     setMapbox,
-    setBuildMapMounted,
+    mapDataUpdated,
+    setMapDataUpdated,
   } = useContext(MapContext);
-  const [mapSource, setMapSource] = useState(null);
-  useEffect(() => {
-    setBuildMapMounted(true);
-  }, []);
+
   const clusterLayer = {
     id: "clusters",
     type: "circle",
@@ -294,19 +289,30 @@ export default function BuildMap({
       featureId = null;
     });
     // end unclustered point hover features----------------
-    // moved to use effect below - not sure if it'll fix "layer DNE in map's style and cannot be styled"
-    // setMapboxLoaded(true);
-    // hopefully this fixes it
-    // map.on("style.load", () => {
-    //   const waiting = () => {
-    //     console.log(map.isStyleLoaded());
-    //     if (!map.isStyleLoaded()) {
-    //       setTimeout(waiting, 200);
-    //     } else {
-    //       setMapboxLoaded(true);
+
+    // map.on("sourcedata", (e) => {
+    //   // console.log(e)
+    //   // should hit whenever source data is changed
+    //   if (e.isSourceLoaded) {
+    //     console.log("hits second load trigger - source loaded");
+    //     console.log(e);
+    //     if ((e.sourceDataType = "metadata")) {
+    //       // map.removeLayer("clusters");
+    //       // map.removeLayer("cluster-count");
+    //       // map.removeLayer("unclustered-point");
+    //       // map.addLayer(clusterLayer);
+    //       // map.addLayer(clusterCountLayer);
+    //       // map.addLayer(pointLayer);
+    //       // console.log("hits metadata - what triggers???");
     //     }
-    //   };
-    //   waiting();
+    //     // map.removeLayer('clusters')
+    //     // map.removeLayer('cluster-count')
+    //     // map.removeLayer('unclustered-point')
+    //     // map.addLayer(clusterLayer);
+    //     // map.addLayer(clusterCountLayer);
+    //     // map.addLayer(pointLayer);
+    //   }
+    //   // loadMap(mapbox);
     // });
   };
 
@@ -321,12 +327,9 @@ export default function BuildMap({
   };
   const [count, setCount] = useState(0);
   useEffect(() => {
+    setMapboxLoaded(false);
     setCount(() => count + 1);
-    console.log(count);
-    console.log(mapbox);
-    // if (mapbox) {
-    // canvasRef.current = mapbox.getCanvas();
-    console.log(mapData);
+    // this ensures only one map created, and only after data loaded.
     if (mapData.features.length > 1 && count < 2) {
       const map = new mapboxgl.Map({
         container: "mapbox",
@@ -339,70 +342,46 @@ export default function BuildMap({
         touchZoomRotate: false,
       });
       setMapbox(map);
-      // if (count === 1) {
       map.on("load", () => loadMap(map));
       canvasRef.current = map.getCanvas();
-      console.log(canvasRef, mapbox);
-      // }
-      } else if (count > 1) {
-      const clusters1 = mapbox.getLayer("clusters");
-      console.log("clusters1:", clusters1);
-      // mapbox.removeLayer("clusters");
-      // mapbox.removeLayer("cluster-count");
-      // mapbox.removeLayer("unclustered-point");
-      // need to update layers on source change
-      mapbox.getSource("fruitfall") &&
-        mapbox.getSource("fruitfall").setData(Object.assign({}, mapData));
-      // console.log(mapData);
-      // console.log(mapbox.getSource("fruitfall"));
-      // console.log(mapbox.getSource("fruitfall")._options);
-      // mapbox.getSource("fruitfall")._options.data = mapData;
-      // console.log(mapbox.getSource("fruitfall")._options);
-
-      // mapbox.addLayer(clusterLayer);
-      // mapbox.addLayer(clusterCountLayer);
-      // mapbox.addLayer(pointLayer);
-      // const clusters2 = mapbox.getLayer("clusters");
-      // console.log("clusters2:", clusters2);
-      }
-      setMapboxLoaded(true);
+    }
+    setMapboxLoaded(true);
     // }
   }, [mapData]);
 
-  // useEffect(() => {
-  //   // the parent component creates the mapbox container which is required to create a map. We trigger this on mapdata change
-  //   if (mapbox) {
-  //     console.log(mapbox);
-  //     console.log(mapData);
-  //     let mapDataCopy = { ...mapData };
-  //     const featureCopy = [...mapData.features];
-  //     console.log(featureCopy);
-  //     // let map = mapbox;
-  //     // if (map === null) {
-  //     console.log(featureCopy);
-  //     // }
-  //     mapbox.on("style.load", () => {
-  //       const source = mapbox.getSource("fruitfall");
-  //       console.log(source);
-  //       console.log("style loaded???");
-  //     }); //setMapboxLoaded(true));
-  //     // map.on("load", () => loadMap(map));
-  //     // map.getSource("fruitfall").setData(mapData);
+  useEffect(() => {
+    setMapboxLoaded(false);
+    // this use effect should update layers
+    if (mapbox && mapDataUpdated) {
+      // need to update layers on source change
+      // this triggers map.on sourcedata event in loadMap function
+			const source = mapbox.getSource("fruitfall");
+			// !!!NEED TO FIX
+      if (source) {
+        source.setData(Object.assign({}, mapData));
+        mapbox.once("sourcedata", (e) => {
+					console.log('first e', e)
+          mapbox.once("sourcedata", (e) => {
+						console.log('second e', e);
+						console.log(e.isSourceLoaded)
+            // if (e.isSourceLoaded) {
+            const source = mapbox.getSource("fruitfall");
+            mapbox.removeLayer("clusters");
+            mapbox.removeLayer("cluster-count");
+            mapbox.removeLayer("unclustered-points");
 
-  //     // look into docs for events - docs/API are not perfect. DIscussion below.
-  //     // https://gis.stackexchange.com/questions/240134/mapbox-gl-js-source-loaded-event
-  //     // https://github.com/mapbox/mapbox-gl-js/issues/6707
-
-  //     setMapboxLoaded(true);
-  //   }
-  // }, [mapData]);
-
-  // useEffect(() => {
-  //   if (mapbox && mapDataUpdated) {
-  //     mapbox.getSource("fruitfall").setData(mapData);
-  //     setMapboxLoaded(true);
-  //   }
-  // }, [mapDataUpdated]);
+            mapbox.addLayer({ ...clusterLayer, source: source });
+            mapbox.addLayer({ ...clusterCountLayer, source: source });
+            mapbox.addLayer({ ...pointLayer, source: source });
+            // }
+          });
+        });
+      }
+    }
+    setMapboxLoaded(true);
+    setMapDataUpdated(false);
+    // }
+  }, [mapData, mapDataUpdated]);
 
   return null;
 }
