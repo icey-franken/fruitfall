@@ -3,24 +3,24 @@
   display: flex;
   justify-content: space-around;
   background-color: #b49edc;
-	color: white;
-	height: 30px;
-	box-sizing: border-box;
-	border-radius: 3px;
-	/* margin-bottom: 8px; */
+  color: white;
+  height: 30px;
+  box-sizing: border-box;
+  border-radius: 3px;
+  /* margin-bottom: 8px; */
 }
 
 .popup__nav-item {
-	box-sizing: border-box;
-	width: fit-content;
-	height: 21px;
-	padding-left: 8px;
-	padding-right: 8px;
-	margin: auto;
+  box-sizing: border-box;
+  width: fit-content;
+  height: 21px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin: auto;
   text-align: center;
-	min-width: unset !important;
-	display: flex;
-	align-items: center;
+  min-width: unset !important;
+  display: flex;
+  align-items: center;
 }
 
 .popup__nav-item:hover {
@@ -34,16 +34,23 @@
 /* end popup nav styles */
 
 /* start popup info styles */
-.popup__info-cont{
+.mapboxgl-popup-content,
+.popup__info-cont {
+  min-width: 200px;
+}
+.popup__info-item {
+  margin-top: 8px;
+}
 
+.popup__info-item--coords:hover {
+  cursor: pointer;
+  color: #403075;
 }
-.popup__info-item{
-	margin-top: 8px;
+
+.popup__type {
+  font-size: 1.5em;
+  font-weight: bold;
 }
-.popup__type{
-	font-size: 1.5em;
-	font-weight: bold;
-}
-.popup__type:hover{
-	color: #403075;
+.popup__type > a:hover {
+  color: #403075;
 }

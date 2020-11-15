@@ -2,9 +2,6 @@ import React from "react";
 import AddLocationSlider from "./AddLocationSlider";
 
 export default function Visited({
-  handleChange,
-  formData,
-  setFormData,
   register,
   errors,
 }) {

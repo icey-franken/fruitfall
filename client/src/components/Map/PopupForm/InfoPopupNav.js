@@ -24,10 +24,10 @@ export default function InfoPopupNav({setShow}) {
 			>
         Access
       </div>
-      <div onClick={handleClick} className="popup__nav-item"
+      {/* <div onClick={handleClick} className="popup__nav-item"
 			id='popup-street-view'>
         Street View
-      </div>
+      </div> */}
     </div>
   );
 }

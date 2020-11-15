@@ -11,7 +11,7 @@ import { MapContext } from "../../MapContextProvider";
 import U from "mapbox-gl-utils";
 
 mapboxgl.accessToken = accessToken;
-const primary_color = "#11b4da"; //update
+const primary_color = "#403075"; //update #403075
 const secondary_color = "#fff"; //update
 // must have odd number of entries. Color, number, color, etc. Same for radius scale
 const circle_color_scale = [
@@ -72,7 +72,9 @@ export default function BuildMap({
       // with three steps to implement three types of circles:
       //   * Blue, 20px circles when point count is less than 100
       //   * Yellow, 30px circles when point count is between 100 and 750
-      //   * Pink, 40px circles when point count is greater than or equal to 750
+			//   * Pink, 40px circles when point count is greater than or equal to 750
+			"circle-stroke-width": 1,
+      "circle-stroke-color": secondary_color,
       "circle-color": ["step", ["get", "point_count"], ...circle_color_scale],
       // original circle color
       // "circle-color": [
@@ -115,8 +117,8 @@ export default function BuildMap({
       "circle-radius": [
         "case",
         ["boolean", ["feature-state", "hover"], false],
+        8,
         6,
-        4,
       ],
       "circle-stroke-width": 1,
       "circle-stroke-color": secondary_color,

@@ -17,12 +17,12 @@ export default function AddLocationFormHookContainer({ closeForm }) {
 
 const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
   // const {updateMapData} = useContext(MapContext)
-	useEffect(()=>{
-		console.log('setNewFeature causing rerender')
-	}, [setNewFeature])
-	useEffect(()=>{
-		console.log('closeForm causing rerender')
-	}, [closeForm])
+  useEffect(() => {
+    console.log("setNewFeature causing rerender");
+  }, [setNewFeature]);
+  useEffect(() => {
+    console.log("closeForm causing rerender");
+  }, [closeForm]);
   const {
     register,
     errors,
@@ -48,7 +48,7 @@ const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
       unverified: false,
       visited: false,
       date_visited: null, //the next four come from second form
-      "fruiting_status": 0,
+      fruiting_status: 0,
       quality: 0,
       yield: 0,
     },
@@ -88,9 +88,8 @@ const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
       typesRef.current = fields.types;
       monthsRef.current = fields.months;
       accessesRef.current = fields.accesses;
-			setLoading(false);
-			console.log("--------------------get form fields data:", fields);
-
+      setLoading(false);
+      console.log("--------------------get form fields data:", fields);
     }
     get_form_fields();
   }, []);
@@ -222,13 +221,7 @@ const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
             <div className="add-loc__sub-label">Go on.....</div>
           </div>
           {watchVisited === true ? (
-            <VisitedFormComponent
-              register={register}
-              errors={errors}
-              setError={setError}
-              getValues={getValues}
-              clearErrors={clearErrors}
-            />
+            <VisitedFormComponent register={register} errors={errors} />
           ) : null}
           <div className="add-loc__btn-cont">
             <button className="btn add-loc__btn">Add Location</button>

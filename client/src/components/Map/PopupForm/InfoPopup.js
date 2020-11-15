@@ -2,31 +2,16 @@ import React, { useState } from "react";
 import InfoPopupNav from "./InfoPopupNav";
 
 export default function InfoPopup({ info }) {
-  console.log("hits");
   const [show, setShow] = useState("popup-info");
-	console.log(info);
 
-	// const handleCoordClick = (e)=>{
-	// 	console.log(e)
-	// 	document.execCommand('copy')
-	// }
-
-
-	const handleCoordClick = (e) => {
-		console.log(e)
-		const el = document.createElement('textarea');
-		el.value = `${info.latitude} ${info.longitude}`;
-		console.log(info.latitude, info.longitude)
-		el.setAttribute('readonly', '');
-		// el.style.position = 'absolute';
-		// el.style.left = '-9999px';
-		el.style.display = 'none'
-		document.body.appendChild(el);
-		el.select();
-		document.execCommand('copy');
-		document.body.removeChild(el);
-	};
-
+  const handleCoordClick = () => {
+		const tempInput = document.createElement('input')
+		tempInput.value = `${info.latitude}, ${info.longitude}`;
+		document.body.appendChild(tempInput);
+		tempInput.select();
+		document.execCommand('copy')
+		document.body.removeChild(tempInput)
+  };
 
   return (
     <>
@@ -38,9 +23,9 @@ export default function InfoPopup({ info }) {
             <div className="popup__info-item popup__type">
               <a
                 href={`${info.type_url}`}
-								target="_blank"
-								// added rel here because... React told me to
-								rel="noopener noreferrer"
+                target="_blank"
+                // added rel here because... React told me to
+                rel="noopener noreferrer"
                 title={`Open Wikipedia page for ${info.type_name} in new tab`}
               >
                 {info.type_name}
@@ -59,7 +44,11 @@ export default function InfoPopup({ info }) {
                 ? "No access specifics provided"
                 : info.access}
             </div>
-            <div onClick={handleCoordClick} className="popup__info-item">
+            <div
+              title="Click to copy coordinates"
+              onClick={handleCoordClick}
+              className="popup__info-item popup__info-item--coords"
+            >
               Coordinates: {info.latitude} {info.longitude}
             </div>
           </>
