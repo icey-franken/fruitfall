@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, jsonify, request
 from starter_app.models import db, Property, Access, Type, Season
 from flask import json
@@ -15,7 +16,6 @@ def get_all():
 
 @feature_routes.route('/<int:id>')
 def get_one(id):
-    print(id)
     popup_info = Property.query.filter(id == Property.id).one()
     response = popup_info.for_popup()
 
@@ -26,7 +26,6 @@ def get_one(id):
 def get_form_fields():
     types = Type.query.with_entities(
         Type.id, Type.en_name).order_by(Type.en_name).all()
-    print(types)
     months = Season.query.with_entities(
         Season.id, Season.month).order_by(Season.id).all()
     accesses = Access.query.with_entities(
@@ -37,7 +36,6 @@ def get_form_fields():
 @feature_routes.route('/add-location-form', methods=['POST'])
 def add_feature():
     data = request.json
-    print(data)
 
     access_id = data.pop('access', None)
     data['access_id'] = int(access_id)
@@ -65,18 +63,26 @@ def add_feature():
         season_stop_id = data.pop('season_stop', None)
         data['season_stop_id'] = int(season_stop_id)
 
-    if data['visited']:
-        # deal with extra visited data - data, ripeness, etc.
-        pass
+    visited = data.pop('visited', None)
+    date_visited = data.pop('date_visited', None)
+    fruiting_status_id = data.pop('fruiting_status', None)
+    quality_id = data.pop('quality', None)
+    yield_id = data.pop('yield', None)
 
-    # visited does not belong in our model
-    data.pop('visited', None)
+    # if not visited - we just toss these values
+    if visited:
+        # probably have to convert this to datetime object
+        date_arr = date_visited.split('-')
+        data['date_visited'] = datetime(int(date_arr[0]), int(date_arr[1]), int(date_arr[2]))
+        data['fruiting_status_id'] = int(fruiting_status_id)+1
+        data['quality_id'] = int(quality_id)+1
+        data['yield_id'] = int(yield_id)+1
 
     newProperty = Property(**data)
     db.session.add(newProperty)
     db.session.commit()
     # return new property in a format that makes it easy to shove into already loaded data
-    return 'ok'
+    return {'newFeature': newProperty.for_map()}
 
 
 {'type_ids': '2977', 'lat': '45.44635541468608', 'lng': '-93.78502109375007', 'description': '6584',

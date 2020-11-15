@@ -49,16 +49,28 @@ class Property(db.Model):
     hidden = db.Column(db.Boolean, default=False)
     no_season = db.Column(db.Boolean, default=False)
 
-    # we're not including address - lat/lon and description is plenty
-    # address = db.Column(db.Text)
+    date_visited = db.Column(db.DateTime, default=None)
+
+    fruiting_status_id = db.Column(db.ForeignKey(
+        'fruiting_statuses.id'), nullable=True, default=None)
+    yield_id = db.Column(db.ForeignKey('yields.id'),
+                         nullable=True, default=None)
+    quality_id = db.Column(db.ForeignKey('qualities.id'),
+                           nullable=True, default=None)
+
+# we're not including address - lat/lon and description is plenty
+# address = db.Column(db.Text)
+
 
     # change to season foreign key
-    season_start_id = db.Column(db.ForeignKey('seasons.id'), nullable=True, default=None)
-    season_stop_id = db.Column(db.ForeignKey('seasons.id'), nullable=True, default=None)
+    season_start_id = db.Column(db.ForeignKey(
+        'seasons.id'), nullable=True, default=None)
+    season_stop_id = db.Column(db.ForeignKey(
+        'seasons.id'), nullable=True, default=None)
     season_stop = db.relationship('Season',  foreign_keys=[
-                                  season_stop_id], backref='properties')
+        season_stop_id], backref='properties')
     season_start = db.relationship('Season',  foreign_keys=[
-                                   season_start_id])
+        season_start_id])
 
     # change to access foreign key
     access_id = db.Column(db.ForeignKey('accesses.id'), nullable=False)

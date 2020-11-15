@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import ReactDOM from "react-dom";
 // import "../../../node_modules/mapbox-gl/dist/mapbox-gl.css";
 import { accessToken, mapStyle } from "../../config";
@@ -8,9 +8,10 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 // import { SetLngLatContext } from "./LngLatContext";
 import { MapContext } from "../../MapContextProvider";
+import U from "mapbox-gl-utils";
 
 mapboxgl.accessToken = accessToken;
-const primary_color = "#11b4da"; //update
+const primary_color = "#403075"; //update #403075
 const secondary_color = "#fff"; //update
 // must have odd number of entries. Color, number, color, etc. Same for radius scale
 const circle_color_scale = [
@@ -44,15 +45,95 @@ const circle_radius_scale = [
 ];
 
 export default function BuildMap({
-  setMapbox,
-  setMapboxLoaded,
   markerInst,
   setLngLat,
+  canvasRef,
 }) {
-  const { mapData } = useContext(MapContext);
+  const {
+    mapData,
+    setMapbox,
+  } = useContext(MapContext);
+  const sourceGeo = {
+    type: "geojson",
+    data: mapData, //"./locations_MN.geojson", //change this to come from database
+    cluster: true,
+    clusterMaxZoom: 14, // Max zoom to cluster points on
+    clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+    // promoteId: 'id'//this moves id from properties into feature id - but it breaks clusters!
+    generateId: true, //will this work for clusters and unclustered-points??? YES!
+  };
+  const clusterLayer = {
+    id: "clusters",
+    type: "circle",
+    source: "fruitfall",
+    filter: ["has", "point_count"],
+    paint: {
+      // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+      // with three steps to implement three types of circles:
+      //   * Blue, 20px circles when point count is less than 100
+      //   * Yellow, 30px circles when point count is between 100 and 750
+			//   * Pink, 40px circles when point count is greater than or equal to 750
+			"circle-stroke-width": 1,
+      "circle-stroke-color": secondary_color,
+      "circle-color": ["step", ["get", "point_count"], ...circle_color_scale],
+      // original circle color
+      // "circle-color": [
+      //   "step",
+      //   ["get", "point_count"],
+      //   "#51bbd6",
+      //   100,
+      //   "#f1f075",
+      //   750,
+      //   "#f28cb1",
+      // ],
+      "circle-radius": ["step", ["get", "point_count"], ...circle_radius_scale],
+      "circle-opacity": [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        1,
+        0.7,
+      ],
+    },
+  };
+  const clusterCountLayer = {
+    id: "cluster-count",
+    type: "symbol",
+    source: "fruitfall",
+    filter: ["has", "point_count"],
+    layout: {
+      "text-field": "{point_count_abbreviated}",
+      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+      "text-size": 14,
+      // "text-color": '#FFFFFF',
+    },
+  };
+  const pointLayer = {
+    id: "unclustered-point",
+    type: "circle",
+    source: "fruitfall",
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": primary_color,
+      "circle-radius": [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        8,
+        6,
+      ],
+      "circle-stroke-width": 1,
+      "circle-stroke-color": secondary_color,
+      "circle-opacity": [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        1,
+        0.7,
+      ],
+    },
+  };
 
   const loadMap = (map) => {
 
+    // add geocoder box and link it to position fields in form
     const geocoder = new MapboxGeocoder({
       accessToken: accessToken,
       mapboxgl: mapboxgl,
@@ -81,88 +162,13 @@ export default function BuildMap({
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will
     // add the point_count property to your source data.
-    map.addSource("fruitfall", {
-      type: "geojson",
-      data: mapData, //"./locations_MN.geojson", //change this to come from database
-      cluster: true,
-      clusterMaxZoom: 14, // Max zoom to cluster points on
-      clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
-      // promoteId: 'id'//this moves id from properties into feature id - but it breaks clusters!
-      generateId: true, //will this work for clusters and unclustered-points??? YES!
-    });
+    map.addSource("fruitfall", sourceGeo);
 
-    map.addLayer({
-      id: "clusters",
-      type: "circle",
-      source: "fruitfall",
-      filter: ["has", "point_count"],
-      paint: {
-        // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-        // with three steps to implement three types of circles:
-        //   * Blue, 20px circles when point count is less than 100
-        //   * Yellow, 30px circles when point count is between 100 and 750
-        //   * Pink, 40px circles when point count is greater than or equal to 750
-        "circle-color": ["step", ["get", "point_count"], ...circle_color_scale],
-        // original circle color
-        // "circle-color": [
-        //   "step",
-        //   ["get", "point_count"],
-        //   "#51bbd6",
-        //   100,
-        //   "#f1f075",
-        //   750,
-        //   "#f28cb1",
-        // ],
-        "circle-radius": [
-          "step",
-          ["get", "point_count"],
-          ...circle_radius_scale,
-        ],
-        "circle-opacity": [
-          "case",
-          ["boolean", ["feature-state", "hover"], false],
-          1,
-          0.7,
-        ],
-      },
-    });
+    map.addLayer(clusterLayer);
 
-    map.addLayer({
-      id: "cluster-count",
-      type: "symbol",
-      source: "fruitfall",
-      filter: ["has", "point_count"],
-      layout: {
-        "text-field": "{point_count_abbreviated}",
-        "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-        "text-size": 14,
-        // "text-color": '#FFFFFF',
-      },
-    });
+    map.addLayer(clusterCountLayer);
 
-    map.addLayer({
-      id: "unclustered-point",
-      type: "circle",
-      source: "fruitfall",
-      filter: ["!", ["has", "point_count"]],
-      paint: {
-        "circle-color": primary_color,
-        "circle-radius": [
-          "case",
-          ["boolean", ["feature-state", "hover"], false],
-          6,
-          4,
-        ],
-        "circle-stroke-width": 1,
-        "circle-stroke-color": secondary_color,
-        "circle-opacity": [
-          "case",
-          ["boolean", ["feature-state", "hover"], false],
-          1,
-          0.7,
-        ],
-      },
-    });
+    map.addLayer(pointLayer);
 
     // inspect a cluster on click
     map.on("click", "clusters", function (e) {
@@ -278,21 +284,6 @@ export default function BuildMap({
       featureId = null;
     });
     // end unclustered point hover features----------------
-    // moved to use effect below - not sure if it'll fix "layer DNE in map's style and cannot be styled"
-    // setMapboxLoaded(true);
-    // hopefully this fixes it
-    // map.on("style.load", () => {
-    //   const waiting = () => {
-    //     console.log(map.isStyleLoaded());
-    //     if (!map.isStyleLoaded()) {
-    //       setTimeout(waiting, 200);
-    //     } else {
-    //       setMapboxLoaded(true);
-    //     }
-    //   };
-    //   waiting();
-		// });
-
   };
 
   const addPopup = (map, coordinates, info) => {
@@ -304,27 +295,27 @@ export default function BuildMap({
       .setLngLat(coordinates)
       .addTo(map);
   };
-
+  const [count, setCount] = useState(0);
   useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: "mapbox",
-      style: mapStyle,
-      center: [-94.6859, 46.5],
-      zoom: 5,
-      movingMethod: "easeTo",
-      pitchWithRotate: false,
-      dragRotate: false,
-      touchZoomRotate: false,
-		});
-
-		map.on("load", () => loadMap(map));
-		// look into docs for events - docs/API are not perfect. DIscussion below.
-		// https://gis.stackexchange.com/questions/240134/mapbox-gl-js-source-loaded-event
-		// https://github.com/mapbox/mapbox-gl-js/issues/6707
-		map.on("style.load", () => console.log('style loaded???'))//setMapboxLoaded(true));
-    setMapbox(map);
-		setMapboxLoaded(true)
-  }, [mapData, setMapbox]); //setMapbox only included so react stops complaining. Including loadMap results in render loop. Mentioned useCallback but that makes things worse.
+    setCount(() => count + 1);
+    // this ensures only one map created, and only after data loaded.
+    if (mapData.features.length > 1 && count < 2) {
+      const map = new mapboxgl.Map({
+        container: "mapbox",
+        style: mapStyle,
+        center: [-94.6859, 46.5],
+        zoom: 5,
+        movingMethod: "easeTo",
+        pitchWithRotate: false,
+        dragRotate: false,
+        touchZoomRotate: false,
+      });
+      setMapbox(map);
+      U.init(map, mapboxgl);
+      map.once("load", () => loadMap(map));
+      canvasRef.current = map.getCanvas();
+    }
+  }, [mapData]);
 
   return null;
 }

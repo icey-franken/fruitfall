@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, useRef } from "react";
+import { accessToken, mapStyle } from "./config";
+import mapboxgl from "mapbox-gl";
 export const MapContext = React.createContext({});
 
 export default function MapContextProvider(props) {
@@ -13,12 +14,9 @@ export default function MapContextProvider(props) {
         geometry: { coordinates: [-93.265, 44.9778], type: "Point" },
       },
     ],
-	});
+  });
 
-  const mapContextValue = {
-    mapData,
-  };
-
+  // load map data from db immediately
   useEffect(() => {
     async function getMapData() {
       const res = await fetch("/api/features/");
@@ -26,9 +24,35 @@ export default function MapContextProvider(props) {
       setMapData(res_data);
     }
     getMapData();
-	}, []);
+  }, []);
 
-	// on form submission we can add to map data from here and avoid loading entire database again
+  // mapbox set in build map after initial render - mapbox requires an HTML element container to hook to
+  // we save it in context to reduce reload time
+  const [mapbox, setMapbox] = useState(null);
+
+  // on form submission we add set new feature. This hook is triggered and map source data updated
+  const [newFeature, setNewFeature] = useState(null);
+
+  useEffect(() => {
+    if (newFeature) {
+      // update map data
+      const newMapData = {
+        type: "FeatureCollection",
+        features: [...mapData.features, newFeature],
+      };
+      mapbox.U.setData("fruitfall", newMapData);
+      setMapData(() => newMapData);
+      setNewFeature(() => null);
+    }
+  }, [newFeature]);
+
+  const mapContextValue = {
+    mapData,
+    mapbox,
+    setMapbox,
+    setNewFeature,
+  };
+
   return (
     <MapContext.Provider value={mapContextValue}>
       {props.children}

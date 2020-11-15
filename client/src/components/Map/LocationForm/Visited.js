@@ -1,25 +1,24 @@
 import React from "react";
 import AddLocationSlider from "./AddLocationSlider";
 
-export default function AddLocationForm2({
-  handleChange,
-  formData,
-  setFormData,
+export default function Visited({
   register,
+  errors,
 }) {
   // eventually get from db
   const elements = [
-    ["fruiting-status", "Fruiting Status"],
+    ["fruiting_status", "Fruiting Status"],
     ["quality", "Quality"],
     ["yield", "Yield"],
   ];
-
+console.log(errors)
   return (
     <>
       <div className="add-loc__el add-loc__el-col">
         <label className="add-loc__label" htmlFor="date">
           Date Visited
         </label>
+        {errors.date_visited && <div className="add-loc__err">Please enter a date</div>}
         <input
           ref={register({ required: true })}
           type="date"
