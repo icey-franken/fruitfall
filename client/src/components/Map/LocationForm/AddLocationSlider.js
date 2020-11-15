@@ -8,20 +8,20 @@ export default function AddLocationSlider({
   register,
 }) {
   let sliderValues = [
-    [0, "Unsure"],
-    [1, "Poor"],
-    [2, "Fair"],
-    [3, "Good"],
-    [4, "Great"],
-    [5, "Excellent"],
+    [1, "Unsure"],
+    [2, "Poor"],
+    [3, "Fair"],
+    [4, "Good"],
+    [5, "Great"],
+    [6, "Excellent"],
   ];
 
   if (id === "fruiting-status") {
     sliderValues = [
-      [0, "Unsure/Other"],
-      [1, "Flowers"],
-      [2, "Unripe Fruit"],
-      [3, "Ripe Fruit"],
+      [1, "Unsure/Other"],
+      [2, "Flowers"],
+      [3, "Unripe Fruit"],
+      [4, "Ripe Fruit"],
     ];
   }
 

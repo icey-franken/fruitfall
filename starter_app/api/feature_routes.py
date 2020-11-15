@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, jsonify, request
 from starter_app.models import db, Property, Access, Type, Season
 from flask import json
@@ -62,12 +63,20 @@ def add_feature():
         season_stop_id = data.pop('season_stop', None)
         data['season_stop_id'] = int(season_stop_id)
 
-    if data['visited']:
-        # deal with extra visited data - data, ripeness, etc.
-        pass
+    visited = data.pop('visited', None)
+    date_visited = data.pop('date_visited', None)
+    fruiting_status_id = data.pop('fruiting_status', None)
+    quality_id = data.pop('quality', None)
+    yield_id = data.pop('yield', None)
 
-    # visited does not belong in our model
-    data.pop('visited', None)
+    # if not visited - we just toss these values
+    if visited:
+        # probably have to convert this to datetime object
+        date_arr = date_visited.split('-')
+        data['date_visited'] = datetime(int(date_arr[0]), int(date_arr[1]), int(date_arr[2]))
+        data['fruiting_status_id'] = int(fruiting_status_id)+1
+        data['quality_id'] = int(quality_id)+1
+        data['yield_id'] = int(yield_id)+1
 
     newProperty = Property(**data)
     db.session.add(newProperty)

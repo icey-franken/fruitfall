@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import AddLocationForm2 from "./AddLocationFormHook2";
 import AuthContext from "../../../auth";
 import SeasonFormComponent from "./Season";
 import PositionFormComponent from "./Position";
+import VisitedFormComponent from "./Visited";
 // import { LngLatContext } from "../LngLatContext";
 import { useForm } from "react-hook-form";
 import { MapContext } from "../../../MapContextProvider";
@@ -48,7 +48,7 @@ const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
       unverified: false,
       visited: false,
       date_visited: null, //the next four come from second form
-      "fruiting-status": 0,
+      "fruiting_status": 0,
       quality: 0,
       yield: 0,
     },
@@ -222,8 +222,7 @@ const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
             <div className="add-loc__sub-label">Go on.....</div>
           </div>
           {watchVisited === true ? (
-            <AddLocationForm2
-              register={register}
+            <VisitedFormComponent
               register={register}
               errors={errors}
               setError={setError}

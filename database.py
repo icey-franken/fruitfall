@@ -1,5 +1,5 @@
 from try_database import seed_features, seed_types
-from starter_app.models import User, Property, Type, Season, Access
+from starter_app.models import User, Property, Type, Season, Access, FruitingStatus, Quality, Yield
 from starter_app import app, db
 from dotenv import load_dotenv
 load_dotenv()
@@ -22,6 +22,32 @@ with app.app_context():
     db.session.add(soonmi)
     db.session.add(alissa)
 
+    db.session.commit()
+
+# add visited components - fruiting status, quality, and yield
+    value_arr = [
+        "Unsure",
+        "Poor",
+        "Fair",
+        "Good",
+        "Great",
+        "Excellent",
+    ]
+    for value in value_arr:
+        q = Quality(value=value)
+        y = Yield(value=value)
+        db.session.add(q)
+        db.session.add(y)
+
+    status_arr = ["Unsure/Other",
+                  "Flowers",
+                  "Unripe Fruit",
+                  "Ripe Fruit",
+                  ]
+
+    for status in status_arr:
+        s = FruitingStatus(value=status)
+        db.session.add(s)
     db.session.commit()
 
 # add months
@@ -53,6 +79,7 @@ with app.app_context():
         db.session.add(type_db)
     db.session.commit()
 
+# add features (Properties)
     properties = seed_features()
 
     for prop in properties:
