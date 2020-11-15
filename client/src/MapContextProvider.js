@@ -18,46 +18,36 @@ export default function MapContextProvider(props) {
 
   // load map data from db immediately
   useEffect(() => {
-    console.log("--------------------hits get map data use effect");
     async function getMapData() {
       const res = await fetch("/api/features/");
       const res_data = await res.json();
       setMapData(res_data);
-      console.log(
-        "--------------------get map data use effect data:",
-        res_data
-      );
     }
     getMapData();
   }, []);
 
-  // the intention of this is to be a trigger - reload map
-  const [mapDataUpdated, setMapDataUpdated] = useState(false);
-
-	// mapbox set in build map after initial render - mapbox requires an HTML element container to hook to
-	// we save it in context to reduce reload time
+  // mapbox set in build map after initial render - mapbox requires an HTML element container to hook to
+  // we save it in context to reduce reload time
   const [mapbox, setMapbox] = useState(null);
 
   // on form submission we add set new feature. This hook is triggered and map source data updated
   const [newFeature, setNewFeature] = useState(null);
+
   useEffect(() => {
     if (newFeature) {
       // update map data
       const newMapData = {
-        ...mapData,
+        type: "FeatureCollection",
         features: [...mapData.features, newFeature],
       };
+      mapbox.U.setData("fruitfall", newMapData);
       setMapData(() => newMapData);
-      mapbox.getSource("fruitfall").setData(newMapData);
-      setMapDataUpdated(true);
-      setNewFeature(null);
+      setNewFeature(() => null);
     }
   }, [newFeature]);
 
   const mapContextValue = {
     mapData,
-    mapDataUpdated,
-    setMapDataUpdated,
     mapbox,
     setMapbox,
     setNewFeature,

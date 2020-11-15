@@ -8,23 +8,26 @@ import { MapContext } from "../../MapContextProvider";
 export default function MapContainerContainer() {
   const { lngLat } = useContext(LngLatContext);
 
-  const { mapbox, setMapbox } = useContext(MapContext);
+  const { mapbox } = useContext(MapContext);
   // we pass relevant context value in here. This prevents entire mapcontainer component from rerendering because it's props (setLngLat) don't change!
   // if we have context directly in mapcontainer, then whenever lng or lat change the entire component (and all it's children) re-render as well. I also used React.memo on map container so that it checks for prop change, and if none - no re-render!
   return (
     <MapContainer
       setLngLat={lngLat.setLngLat}
       mapbox={mapbox}
-      setMapbox={setMapbox}
     />
   );
 }
 
-const MapContainer = React.memo(({ setLngLat, mapbox, setMapbox }) => {
+const MapContainer = React.memo(({ setLngLat, mapbox }) => {
   console.log("map container re-rendered");
 
   const [mapboxLoaded, setMapboxLoaded] = useState(false);
   const [showAddLocation, setShowAddLocation] = useState(false);
+
+  // useEffect(()=>{
+  // 	console.log('hits map container use effect - mapboxLoaded')
+  // }, [mapboxLoaded])
 
   // ---------------------------------------
   //canvas ref and the following effects/functions for changing cursor based on showAddLocation value. Crosshair functions used in mapClickFn
@@ -62,17 +65,6 @@ const MapContainer = React.memo(({ setLngLat, mapbox, setMapbox }) => {
 
   const handleAddLocationClick = () => setShowAddLocation(!showAddLocation);
 
-  const layers = ["clusters", "cluster-count", "unclustered-point"];
-  // turn layers off if user adding location.
-  // visible parameter should be 'visible' or 'none'
-  const toggleLayers = (visible) => {
-    layers.forEach((layerId) => {
-      // avoids error of layers not loaded.
-      mapbox.getLayer(layerId) &&
-        mapbox.setLayoutProperty(layerId, "visibility", visible);
-    });
-  };
-
   // toggle map layers and the map click effect based on show add location form state
   useEffect(() => {
     console.log(mapbox);
@@ -80,20 +72,29 @@ const MapContainer = React.memo(({ setLngLat, mapbox, setMapbox }) => {
       mapbox.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
       if (showAddLocation) {
         mapbox.on("click", mapClickFn.current);
-        toggleLayers("none");
+        mapbox.U.hideSource("fruitfall");
         canvasRef.current.classList.add("crosshair");
       } else {
         mapbox.off("click", mapClickFn.current);
-        toggleLayers("visible");
+        mapbox.U.showSource("fruitfall");
         canvasRef.current.classList.remove("crosshair");
-        if (markerInst.current) {
-          markerInst.current.remove();
-        }
+        markerInst.current && markerInst.current.remove();
       }
     }
   }, [showAddLocation]);
 
   const closeForm = useRef(() => setShowAddLocation(false));
+  useEffect(() => {
+    function checkLoad() {
+      if (mapbox && mapbox.loaded() && mapbox._loaded) {
+        setMapboxLoaded(true);
+      } else {
+        setTimeout(checkLoad, 1000);
+      }
+    }
+    checkLoad();
+  }, [mapbox]);
+	console.log(mapboxLoaded);
 
   return (
     <div className="content-cont">
@@ -124,9 +125,6 @@ const MapContainer = React.memo(({ setLngLat, mapbox, setMapbox }) => {
           Add Location
         </button>
         <BuildMap
-          // mapbox={mapbox}
-          // setMapbox={setMapbox}
-          setMapboxLoaded={setMapboxLoaded}
           setLngLat={setLngLat}
           markerInst={markerInst}
           canvasRef={canvasRef}

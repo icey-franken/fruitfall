@@ -8,6 +8,7 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 // import { SetLngLatContext } from "./LngLatContext";
 import { MapContext } from "../../MapContextProvider";
+import U from "mapbox-gl-utils";
 
 mapboxgl.accessToken = accessToken;
 const primary_color = "#11b4da"; //update
@@ -44,21 +45,23 @@ const circle_radius_scale = [
 ];
 
 export default function BuildMap({
-  // mapbox,
-  // setMapbox,
-  setMapboxLoaded,
   markerInst,
   setLngLat,
   canvasRef,
 }) {
   const {
     mapData,
-    mapbox,
     setMapbox,
-    mapDataUpdated,
-    setMapDataUpdated,
   } = useContext(MapContext);
-
+  const sourceGeo = {
+    type: "geojson",
+    data: mapData, //"./locations_MN.geojson", //change this to come from database
+    cluster: true,
+    clusterMaxZoom: 14, // Max zoom to cluster points on
+    clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+    // promoteId: 'id'//this moves id from properties into feature id - but it breaks clusters!
+    generateId: true, //will this work for clusters and unclustered-points??? YES!
+  };
   const clusterLayer = {
     id: "clusters",
     type: "circle",
@@ -127,10 +130,8 @@ export default function BuildMap({
   };
 
   const loadMap = (map) => {
-    console.log("hits loadMap");
-    console.log(map);
-    console.log(mapData);
 
+    // add geocoder box and link it to position fields in form
     const geocoder = new MapboxGeocoder({
       accessToken: accessToken,
       mapboxgl: mapboxgl,
@@ -159,15 +160,7 @@ export default function BuildMap({
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will
     // add the point_count property to your source data.
-    map.addSource("fruitfall", {
-      type: "geojson",
-      data: mapData, //"./locations_MN.geojson", //change this to come from database
-      cluster: true,
-      clusterMaxZoom: 14, // Max zoom to cluster points on
-      clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
-      // promoteId: 'id'//this moves id from properties into feature id - but it breaks clusters!
-      generateId: true, //will this work for clusters and unclustered-points??? YES!
-    });
+    map.addSource("fruitfall", sourceGeo);
 
     map.addLayer(clusterLayer);
 
@@ -289,31 +282,6 @@ export default function BuildMap({
       featureId = null;
     });
     // end unclustered point hover features----------------
-
-    // map.on("sourcedata", (e) => {
-    //   // console.log(e)
-    //   // should hit whenever source data is changed
-    //   if (e.isSourceLoaded) {
-    //     console.log("hits second load trigger - source loaded");
-    //     console.log(e);
-    //     if ((e.sourceDataType = "metadata")) {
-    //       // map.removeLayer("clusters");
-    //       // map.removeLayer("cluster-count");
-    //       // map.removeLayer("unclustered-point");
-    //       // map.addLayer(clusterLayer);
-    //       // map.addLayer(clusterCountLayer);
-    //       // map.addLayer(pointLayer);
-    //       // console.log("hits metadata - what triggers???");
-    //     }
-    //     // map.removeLayer('clusters')
-    //     // map.removeLayer('cluster-count')
-    //     // map.removeLayer('unclustered-point')
-    //     // map.addLayer(clusterLayer);
-    //     // map.addLayer(clusterCountLayer);
-    //     // map.addLayer(pointLayer);
-    //   }
-    //   // loadMap(mapbox);
-    // });
   };
 
   const addPopup = (map, coordinates, info) => {
@@ -327,7 +295,6 @@ export default function BuildMap({
   };
   const [count, setCount] = useState(0);
   useEffect(() => {
-    setMapboxLoaded(false);
     setCount(() => count + 1);
     // this ensures only one map created, and only after data loaded.
     if (mapData.features.length > 1 && count < 2) {
@@ -342,46 +309,11 @@ export default function BuildMap({
         touchZoomRotate: false,
       });
       setMapbox(map);
-      map.on("load", () => loadMap(map));
+      U.init(map, mapboxgl);
+      map.once("load", () => loadMap(map));
       canvasRef.current = map.getCanvas();
     }
-    setMapboxLoaded(true);
-    // }
   }, [mapData]);
-
-  useEffect(() => {
-    setMapboxLoaded(false);
-    // this use effect should update layers
-    if (mapbox && mapDataUpdated) {
-      // need to update layers on source change
-      // this triggers map.on sourcedata event in loadMap function
-			const source = mapbox.getSource("fruitfall");
-			// !!!NEED TO FIX
-      if (source) {
-        source.setData(Object.assign({}, mapData));
-        mapbox.once("sourcedata", (e) => {
-					console.log('first e', e)
-          mapbox.once("sourcedata", (e) => {
-						console.log('second e', e);
-						console.log(e.isSourceLoaded)
-            // if (e.isSourceLoaded) {
-            const source = mapbox.getSource("fruitfall");
-            mapbox.removeLayer("clusters");
-            mapbox.removeLayer("cluster-count");
-            mapbox.removeLayer("unclustered-points");
-
-            mapbox.addLayer({ ...clusterLayer, source: source });
-            mapbox.addLayer({ ...clusterCountLayer, source: source });
-            mapbox.addLayer({ ...pointLayer, source: source });
-            // }
-          });
-        });
-      }
-    }
-    setMapboxLoaded(true);
-    setMapDataUpdated(false);
-    // }
-  }, [mapData, mapDataUpdated]);
 
   return null;
 }
