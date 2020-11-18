@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import AuthContext from "../auth";
 
 export default function NavBar() {
+  const { currentUserId, logoutUser } = useContext(AuthContext);
+  console.log(currentUserId);
   return (
     <>
       <div className="navbar-cont">
@@ -17,7 +20,7 @@ export default function NavBar() {
               width="20px"
               height="20px"
               viewBox="0 0 20 20"
-              style={{ "enableBackground": "new 0 0 20 20" }}
+              style={{ enableBackground: "new 0 0 20 20" }}
               // xml:space="preserve"
             >
               <path
@@ -58,7 +61,27 @@ export default function NavBar() {
             activeclass="active"
           >
             About
-          </NavLink> */}
+					</NavLink>
+					*/}
+          {currentUserId ? (
+            <div
+              className="navbar-item"
+              // exact
+              // to="/logout"
+              onClick={logoutUser}
+            >
+              Logout
+            </div>
+          ) : (
+            <NavLink
+              className="navbar-item"
+              exact
+              to="/login"
+              activeclass="active"
+            >
+              Login
+            </NavLink>
+          )}
         </div>
       </div>
     </>
