@@ -1,52 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import React, { useContext } from "react";
+import { BrowserRouter, Switch } from "react-router-dom";
+import { AuthRoute, ProtectedRoute } from "./route_utils";
 
-// import UserList from "./components/UsersList";
-import UserForm from "./components/UserForm";
-import AuthContext from "./auth";
-import MapContextProvider from "./MapContextProvider";
+import Login from "./components/Auth/Login";
+import Signup from "./components/Auth/Signup";
+import { AuthContext } from "./auth";
 import NavBar from "./components/NavBar";
 import MapContainer from "./components/Map/MapContainer";
 import { LngLatContextProvider } from "./components/Map/LngLatContext";
 function App() {
-  const [fetchWithCSRF, setFetchWithCSRF] = useState(() => fetch);
-  const authContextValue = {
-    fetchWithCSRF,
-  };
-
-  useEffect(() => {
-    async function restoreCSRF() {
-      const response = await fetch("/api/csrf/restore", {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        const authData = await response.json();
-        setFetchWithCSRF(() => {
-          return (resource, init) => {
-            if (init.headers) {
-              init.headers["X-CSRFToken"] = authData.csrf_token;
-            } else {
-              init.headers = {
-                "X-CSRFToken": authData.csrf_token,
-              };
-            }
-            return fetch(resource, init);
-          };
-        });
-      }
-    }
-    restoreCSRF();
-  }, []);
+  const { currentUserId } = useContext(AuthContext);
 
   return (
-    <AuthContext.Provider value={authContextValue}>
-      <BrowserRouter>
-        <NavBar />
-        <MapContextProvider>
-          <LngLatContextProvider>
-            <Switch>
-              <Route exact path="/activity">
+    <BrowserRouter>
+      <NavBar />
+      <LngLatContextProvider>
+        <Switch>
+          {/* <Route exact path="/activity">
                 <div>activity page</div>
               </Route>
               <Route exact path="/data">
@@ -54,14 +24,28 @@ function App() {
               </Route>
               <Route exact path="/about">
                 <div>about this is</div>
-              </Route>
-              <Route exact path="/users/:id/edit" component={UserForm} />
-              <Route exact path="/" component={MapContainer} />
-            </Switch>
-          </LngLatContextProvider>
-        </MapContextProvider>
-      </BrowserRouter>
-    </AuthContext.Provider>
+              </Route> */}
+          <AuthRoute
+            exact
+            path="/login"
+            component={Login}
+            currentUserId={currentUserId}
+          />
+          <AuthRoute
+            exact
+            path="/signup"
+            component={Signup}
+            currentUserId={currentUserId}
+          />
+          <ProtectedRoute
+            exact
+            path="/"
+            component={MapContainer}
+            currentUserId={currentUserId}
+          />
+        </Switch>
+      </LngLatContextProvider>
+    </BrowserRouter>
   );
 }
 

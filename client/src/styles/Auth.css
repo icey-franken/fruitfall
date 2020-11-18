@@ -1,0 +1,44 @@
+.auth__cont {
+  width: 50%;
+  max-width: 300px;
+  text-align: center;
+  z-index: 3;
+  box-sizing: border-box;
+  background-color: white;
+  border: 2px solid grey;
+  box-sizing: border-box;
+  border-radius: 6px;
+  box-shadow: 2px 2px 20px 10px #281e4a;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  position: relative;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+#confirm-password {
+  margin-top: 8px;
+}
+
+.existing-user__cont {
+	margin-top: 16px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.existing-user__el{
+	margin-bottom:8px;
+}
+
+.existing-user__link {
+	margin-top:8px;
+	color: #403075;
+}
+
+.existing-user__link:hover {
+	color: #b49edc;
+	cursor: pointer;
+}

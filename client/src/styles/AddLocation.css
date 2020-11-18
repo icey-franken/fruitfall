@@ -6,7 +6,7 @@
   box-sizing: border-box;
   background-color: white;
   position: absolute;
-  left: 100px;
+  left: -505px;
   border: 2px solid grey;
   box-sizing: border-box;
   /* padding: 24px; */
@@ -54,11 +54,11 @@
 .fade-in {
   left: -505px;
   opacity: 0;
-  transition: all 0.75s ease !important;
+  transition: all 0.5s ease !important;
 }
 
 .fade-in.show {
-  transition: all 0.75s ease !important;
+  transition: all 1.5s ease !important;
   opacity: 1;
   left: -5px;
 }
