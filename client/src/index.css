@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: column;
   width: 100vw;
-  height: 100vh;
+	height: 100vh;
 }
 
 .content-cont {
@@ -21,7 +21,11 @@
 body {
   font-family: helvetica, arial, courier;
   font-size: 16px;
-  margin: 0 auto;
+	margin: 0 auto;
+	overflow-x:hidden;
+	overflow-y:auto;
+
+
   /* width: 100vw;
 	height: 100vh; */
   /* display: flex;

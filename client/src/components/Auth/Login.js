@@ -1,23 +1,13 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "../../auth";
 import { useForm } from "react-hook-form";
 
-export default function Login(props) {
+export default function Login() {
   const { fetchWithCSRF, setCurrentUserId } = useContext(AuthContext);
   let history = useHistory();
 
-  const {
-    register,
-    errors,
-    setError,
-    getValues,
-    setValue,
-    clearErrors,
-    control,
-    handleSubmit,
-    watch,
-  } = useForm({
+  const { register, errors, setError, clearErrors, handleSubmit } = useForm({
     defaultValues: {
       username: "",
       password: "",
@@ -43,53 +33,11 @@ export default function Login(props) {
     } else {
       // setOpen(false);
       setCurrentUserId(responseData.current_user_id);
-      // history.push('/')
+      history.push('/')
     }
   }
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   loginUser(email, password);
-  //   // return <Redirect to="/" />;
-  // }
-
-  const handleDemoUserSubmit = (e) => {
-    e.preventDefault();
-    loginUser({ email: "ian@aa.io", password: "password" });
-  };
-
   return (
-    // 		<div className="content-cont">
-    //       <div className="auth__cont">
-    //     <form onSubmit={handleSubmit(loginUser)}>
-    //       <label className="add-loc__label" htmlFor="email">
-    //         Email or Username
-    //       </label>
-    //       {errors.email && (
-    //         <div className="add-loc__err">Please enter your email or username</div>
-    //       )}
-    //       <input
-    //         ref={register({ required: true })}
-    //         name="email"
-    //         placeholder="Email/Username"
-    //       />
-    //       <label className="add-loc__label" htmlFor="email">
-    //         Password
-    //       </label>
-    //       {errors.password && (
-    //         <div className="add-loc__err">Please enter a password</div>
-    //       )}
-    //       <input
-    //         ref={register({ required: true })}
-    //         name="password"
-    //         placeholder="Password"
-    //         type="password"
-    //       />
-    //       <button>Login</button>
-    //       <button onClick={handleDemoUserSubmit}>Login as Demo User</button>
-    //     </form>
-    //   );
-    // }
     <div className="content-cont">
       <div className="auth__cont">
         <form onSubmit={handleSubmit(loginUser)}>
@@ -136,7 +84,7 @@ export default function Login(props) {
               />
             </div>
             <div className="add-loc__btn-cont">
-              <button className="btn add-loc__btn">Log in</button>
+              <button className="btn add-loc__btn">Login</button>
             </div>
             <div className="existing-user__cont">
               <div>Don't have an account?</div>
@@ -147,13 +95,15 @@ export default function Login(props) {
                 Sign Up!
               </div>
             </div>
-						<div className="existing-user__cont">
+            <div className="existing-user__cont">
               <div>Just want to look around?</div>
               <div
                 className="existing-user__link"
-                onClick={handleDemoUserSubmit}
+                onClick={() =>
+                  loginUser({ email: "ian@aa.io", password: "password" })
+                }
               >
-                Log in as Demo User!
+                Login as Demo User!
               </div>
             </div>
           </div>

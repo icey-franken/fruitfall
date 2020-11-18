@@ -69,15 +69,18 @@ a.active {
 } */
 .navbar-item-cont{
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
+	align-items: flex-end;
 	width: 80%;
+	margin-right: 16px;
 }
 
 .navbar-item{
 	box-sizing: border-box;
 	width: 60px;
 	text-align: center;
-	margin: 0 auto;
+	/* margin: 0 auto; */
+	margin: 0 14px;
 	padding-top: 4px;
 	padding-bottom: 4px;
 	transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;

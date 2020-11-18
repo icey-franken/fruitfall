@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "../../auth";
 import { useForm } from "react-hook-form";
 
-export default function Signup(props) {
+export default function Signup() {
   const { fetchWithCSRF, setCurrentUserId } = useContext(AuthContext);
   let history = useHistory();
 
@@ -12,11 +12,8 @@ export default function Signup(props) {
     errors,
     setError,
     getValues,
-    setValue,
     clearErrors,
-    control,
     handleSubmit,
-    watch,
   } = useForm({
     defaultValues: {
       username: "",
@@ -46,12 +43,6 @@ export default function Signup(props) {
       // history.push('/')
     }
   }
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   loginUser(email, password);
-  //   // return <Redirect to="/" />;
-  // }
 
   const validate_password = () => {
     const { password, confirm_password } = getValues([

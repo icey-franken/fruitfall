@@ -1,13 +1,9 @@
 import React, { useContext } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 import { AuthRoute, ProtectedRoute } from "./route_utils";
 
 import Login from "./components/Auth/Login";
-import Logout from "./components/Auth/Logout";
 import Signup from "./components/Auth/Signup";
-
-// import UserList from "./components/UsersList";
-import UserForm from "./components/UserForm";
 import { AuthContext } from "./auth";
 import NavBar from "./components/NavBar";
 import MapContainer from "./components/Map/MapContainer";
@@ -37,19 +33,16 @@ function App() {
           />
           <AuthRoute
             exact
-            path="/logout"
-            component={Logout}
-            currentUserId={currentUserId}
-          />
-          <AuthRoute
-            exact
             path="/signup"
             component={Signup}
             currentUserId={currentUserId}
           />
-
-          <Route exact path="/users/:id/edit" component={UserForm} />
-          <Route exact path="/" component={MapContainer} />
+          <ProtectedRoute
+            exact
+            path="/"
+            component={MapContainer}
+            currentUserId={currentUserId}
+          />
         </Switch>
       </LngLatContextProvider>
     </BrowserRouter>
