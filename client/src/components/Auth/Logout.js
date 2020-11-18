@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import AuthContext from "../../auth";
+import {AuthContext} from "../../auth";
 import { useForm } from "react-hook-form";
 
 export default function Login(props) {

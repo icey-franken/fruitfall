@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react';
-import AuthContext from '../auth'
+import {AuthContext} from '../auth'
 
 function UserForm(props) {
     const { id } =  props.location.state.user;

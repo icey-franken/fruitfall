@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import AuthContext from "../../../auth";
+import {AuthContext} from "../../../auth";
 import SeasonFormComponent from "./Season";
 import PositionFormComponent from "./Position";
 import VisitedFormComponent from "./Visited";
