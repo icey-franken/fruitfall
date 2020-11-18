@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import {AuthContext} from "../../auth";
+import { AuthContext } from "../../auth";
 import { useForm } from "react-hook-form";
 
 export default function Login(props) {
@@ -22,18 +22,18 @@ export default function Login(props) {
       email: "",
       password: "",
     },
-	});
+  });
 
-	async function loginUser(data) {
-		// console.log(email, password)
-		console.log(data)
-    const response = await fetchWithCSRF('/login', {
-      method: 'POST',
+  async function loginUser(data) {
+    // console.log(email, password)
+    console.log(data);
+    const response = await fetchWithCSRF("/login", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: 'include',
-      body: JSON.stringify(data)
+      credentials: "include",
+      body: JSON.stringify(data),
     });
 
     const responseData = await response.json();
@@ -41,10 +41,10 @@ export default function Login(props) {
       // setErrors(responseData.errors);
     } else {
       // setOpen(false);
-      setCurrentUserId(responseData.current_user_id)
-      history.push('/')
+      setCurrentUserId(responseData.current_user_id);
+      // history.push('/')
     }
-  };
+  }
 
   // const handleSubmit = (e) => {
   //   e.preventDefault();
@@ -54,14 +54,36 @@ export default function Login(props) {
 
   const handleDemoUserSubmit = (e) => {
     e.preventDefault();
-    loginUser("ian@aa.io", "password");
-  }
-return (
-	<form onSubmit={handleSubmit(loginUser)}>
-		<input ref={register({required: true})} name='email' placeholder='Email/Username'/>
-		<input ref={register({required: true})} name='password' placeholder='Password' type='password'/>
-		<button>Login</button>
-	</form>
-)
+    loginUser({ email: "ian@aa.io", password: "password" });
+  };
 
+  return (
+    <form onSubmit={handleSubmit(loginUser)}>
+      <label className="add-loc__label" htmlFor="email">
+        Email
+      </label>
+      {errors.email && (
+        <div className="add-loc__err">Please enter a valid email</div>
+      )}
+      <input
+        ref={register({ required: true })}
+        name="email"
+        placeholder="Email/Username"
+      />
+      <label className="add-loc__label" htmlFor="email">
+        Email
+      </label>
+      {errors.password && (
+        <div className="add-loc__err">Please enter a password</div>
+      )}
+      <input
+        ref={register({ required: true })}
+        name="password"
+        placeholder="Password"
+        type="password"
+      />
+      <button>Login</button>
+      <button onClick={handleDemoUserSubmit}>Login as Demo User</button>
+    </form>
+  );
 }
