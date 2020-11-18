@@ -26,9 +26,9 @@ export default function Signup(props) {
     },
   });
 
-  async function loginUser(data) {
+  async function signupUser(data) {
     console.log(data);
-    const response = await fetchWithCSRF("/login", {
+    const response = await fetchWithCSRF("/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +73,7 @@ export default function Signup(props) {
   return (
     <div className="content-cont">
       <div className="auth__cont">
-        <form onSubmit={handleSubmit(loginUser)}>
+        <form onSubmit={handleSubmit(signupUser)}>
           <div className="add-loc__cont-inner">
             <div className="add-loc__el add-loc__el-col">
               <label className="add-loc__label" htmlFor="username">
@@ -168,10 +168,20 @@ export default function Signup(props) {
                 name="confirm_password"
                 placeholder="Confirm Password"
                 type="password"
+                id="confirm-password"
               />
             </div>
             <div className="add-loc__btn-cont">
               <button className="btn add-loc__btn">Sign Up</button>
+            </div>
+            <div className="existing-user__cont">
+              <div>Already have an account?</div>
+              <div
+                className="existing-user__link"
+                onClick={() => history.push("/login")}
+              >
+                Log in!
+              </div>
             </div>
           </div>
         </form>

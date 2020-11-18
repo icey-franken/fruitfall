@@ -19,12 +19,13 @@ export default function Login(props) {
     watch,
   } = useForm({
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
 
   async function loginUser(data) {
+    // add invalid error to username if problem logging in
     // console.log(email, password)
     console.log(data);
     const response = await fetchWithCSRF("/login", {
@@ -58,32 +59,106 @@ export default function Login(props) {
   };
 
   return (
-    <form onSubmit={handleSubmit(loginUser)}>
-      <label className="add-loc__label" htmlFor="email">
-        Email or Username
-      </label>
-      {errors.email && (
-        <div className="add-loc__err">Please enter your email or username</div>
-      )}
-      <input
-        ref={register({ required: true })}
-        name="email"
-        placeholder="Email/Username"
-      />
-      <label className="add-loc__label" htmlFor="email">
-        Password
-      </label>
-      {errors.password && (
-        <div className="add-loc__err">Please enter a password</div>
-      )}
-      <input
-        ref={register({ required: true })}
-        name="password"
-        placeholder="Password"
-        type="password"
-      />
-      <button>Login</button>
-      <button onClick={handleDemoUserSubmit}>Login as Demo User</button>
-    </form>
+    // 		<div className="content-cont">
+    //       <div className="auth__cont">
+    //     <form onSubmit={handleSubmit(loginUser)}>
+    //       <label className="add-loc__label" htmlFor="email">
+    //         Email or Username
+    //       </label>
+    //       {errors.email && (
+    //         <div className="add-loc__err">Please enter your email or username</div>
+    //       )}
+    //       <input
+    //         ref={register({ required: true })}
+    //         name="email"
+    //         placeholder="Email/Username"
+    //       />
+    //       <label className="add-loc__label" htmlFor="email">
+    //         Password
+    //       </label>
+    //       {errors.password && (
+    //         <div className="add-loc__err">Please enter a password</div>
+    //       )}
+    //       <input
+    //         ref={register({ required: true })}
+    //         name="password"
+    //         placeholder="Password"
+    //         type="password"
+    //       />
+    //       <button>Login</button>
+    //       <button onClick={handleDemoUserSubmit}>Login as Demo User</button>
+    //     </form>
+    //   );
+    // }
+    <div className="content-cont">
+      <div className="auth__cont">
+        <form onSubmit={handleSubmit(loginUser)}>
+          <div className="add-loc__cont-inner">
+            <div className="add-loc__el add-loc__el-col">
+              <label className="add-loc__label" htmlFor="username">
+                Username or Email
+              </label>
+              {errors.username?.type === "required" && (
+                <div className="add-loc__err">
+                  Please enter your username or email
+                </div>
+              )}
+              {errors.username?.type === "invalid" && (
+                <div className="add-loc__err">
+                  Please enter a valid username or email
+                </div>
+              )}
+              <input
+                ref={register({ required: true })}
+                name="username"
+                placeholder="Username/Email"
+              />
+            </div>
+
+            <div className="add-loc__el add-loc__el-col">
+              <label className="add-loc__label" htmlFor="password">
+                Password
+              </label>
+              {errors.password?.type === "required" && (
+                <div className="add-loc__err">Please enter a password</div>
+              )}
+              {errors.password?.type === "invalid" && (
+                <div className="add-loc__err">Password is incorrect</div>
+              )}
+
+              <input
+                ref={register({
+                  required: true,
+                })}
+                name="password"
+                placeholder="Password"
+                type="password"
+              />
+            </div>
+            <div className="add-loc__btn-cont">
+              <button className="btn add-loc__btn">Log in</button>
+            </div>
+            <div className="existing-user__cont">
+              <div>Don't have an account?</div>
+              <div
+                className="existing-user__link"
+                onClick={() => history.push("/signup")}
+              >
+                Sign Up!
+              </div>
+            </div>
+						<div className="existing-user__cont">
+              <div>Just want to look around?</div>
+              <div
+                className="existing-user__link"
+                onClick={handleDemoUserSubmit}
+              >
+                Log in as Demo User!
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }

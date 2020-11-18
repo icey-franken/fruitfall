@@ -101,139 +101,133 @@ const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
   }
   return (
     <>
-      <div className="content-cont">
-        <div className="add-loc__cont">
-          <form onSubmit={handleSubmit(onSubmitHook)}>
-            <div className="add-loc__cont-inner">
-              <div className="add-loc__el add-loc__el-col">
-                <label className="add-loc__label" htmlFor="type">
-                  Type
-                </label>
-                <div className="add-loc__sub-label">
-                  Choose from the dropdown list, submitting new types only if
-                  appropriate choices do not already exist. SIKE, you can't add
-                  types.
-                </div>
-                {errors.type_ids && (
-                  <div className="add-loc__err">Please select a type</div>
-                )}
-                <select
-                  ref={register({ required: true })}
-                  name="type_ids"
-                  id="type_ids"
-                >
-                  <option className="invalid" value="" disabled hidden>
-                    Select a type
-                  </option>
-                  {typesRef.current.map(([typeId, typeName], idx) => (
-                    <option key={idx} value={typeId}>
-                      {typeName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <PositionFormComponent
-                register={register}
-                positionError={errors.position}
-                setError={setError}
-                getValues={getValues}
-                setValue={setValue}
-                clearErrors={clearErrors}
-              />
-              <div className="add-loc__el add-loc__el-col">
-                <label className="add-loc__label" htmlFor="description">
-                  Description
-                </label>
-                <div className="add-loc__sub-label">
-                  Location details, access issues, plant health, your mother's
-                  maiden name...
-                </div>
-                {errors.description && (
-                  <div className="add-loc__err">Please enter a description</div>
-                )}
-                <textarea
-                  ref={register({ required: true })}
-                  name="description"
-                  id="description"
+      <form onSubmit={handleSubmit(onSubmitHook)}>
+        <div className="add-loc__cont-inner">
+          <div className="add-loc__el add-loc__el-col">
+            <label className="add-loc__label" htmlFor="type">
+              Type
+            </label>
+            <div className="add-loc__sub-label">
+              Choose from the dropdown list, submitting new types only if
+              appropriate choices do not already exist. SIKE, you can't add
+              types.
+            </div>
+            {errors.type_ids && (
+              <div className="add-loc__err">Please select a type</div>
+            )}
+            <select
+              ref={register({ required: true })}
+              name="type_ids"
+              id="type_ids"
+            >
+              <option className="invalid" value="" disabled hidden>
+                Select a type
+              </option>
+              {typesRef.current.map(([typeId, typeName], idx) => (
+                <option key={idx} value={typeId}>
+                  {typeName}
+                </option>
+              ))}
+            </select>
+          </div>
+          <PositionFormComponent
+            register={register}
+            positionError={errors.position}
+            setError={setError}
+            getValues={getValues}
+            setValue={setValue}
+            clearErrors={clearErrors}
+          />
+          <div className="add-loc__el add-loc__el-col">
+            <label className="add-loc__label" htmlFor="description">
+              Description
+            </label>
+            <div className="add-loc__sub-label">
+              Location details, access issues, plant health, your mother's
+              maiden name...
+            </div>
+            {errors.description && (
+              <div className="add-loc__err">Please enter a description</div>
+            )}
+            <textarea
+              ref={register({ required: true })}
+              name="description"
+              id="description"
+            />
+          </div>
+          <SeasonFormComponent
+            register={register}
+            seasonError={errors.season}
+            setError={setError}
+            getValues={getValues}
+            clearErrors={clearErrors}
+            control={control}
+            monthsRef={monthsRef}
+          />
+          <div className="add-loc__el add-loc__el-col">
+            <label className="add-loc__label" htmlFor="access">
+              Access
+            </label>
+            <div className="add-loc__sub-label">
+              Access status of the source.
+            </div>
+            {errors.access && (
+              <div className="add-loc__err">Please select an access</div>
+            )}
+            <select
+              ref={register({ required: true })}
+              name="access"
+              id="access"
+            >
+              <option className="invalid" value="" disabled hidden>
+                Access status of source
+              </option>
+
+              {accessesRef.current.map(([accessId, accessName], idx) => (
+                <option key={idx} value={accessId}>
+                  {accessName}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="add-loc__el-col">
+            <div className="add-loc__el">
+              <div className="add-loc__label">
+                <input
+                  ref={register}
+                  type="checkbox"
+                  id="unverified"
+                  name="unverified"
                 />
+                <label htmlFor="unverified">Verified?</label>
               </div>
-              <SeasonFormComponent
-                register={register}
-                seasonError={errors.season}
-                setError={setError}
-                getValues={getValues}
-                clearErrors={clearErrors}
-                control={control}
-                monthsRef={monthsRef}
-              />
-              <div className="add-loc__el add-loc__el-col">
-                <label className="add-loc__label" htmlFor="access">
-                  Access
-                </label>
-                <div className="add-loc__sub-label">
-                  Access status of the source.
-                </div>
-                {errors.access && (
-                  <div className="add-loc__err">Please select an access</div>
-                )}
-                <select
-                  ref={register({ required: true })}
-                  name="access"
-                  id="access"
-                >
-                  <option className="invalid" value="" disabled hidden>
-                    Access status of source
-                  </option>
-
-                  {accessesRef.current.map(([accessId, accessName], idx) => (
-                    <option key={idx} value={accessId}>
-                      {accessName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="add-loc__el-col">
-                <div className="add-loc__el">
-                  <div className="add-loc__label">
-                    <input
-                      ref={register}
-                      type="checkbox"
-                      id="unverified"
-                      name="unverified"
-                    />
-                    <label htmlFor="unverified">Verified?</label>
-                  </div>
-                  <div className="add-loc__sub-label">
-                    If you doubt the existence, location, or identity of this
-                    source.
-                  </div>
-                </div>
-              </div>
-
-              <div className="add-loc__el">
-                <div className="add-loc__label">
-                  <input
-                    ref={register}
-                    type="checkbox"
-                    id="visited"
-                    name="visited"
-                  />
-                  <label htmlFor="visited">
-                    Have you visted this location?
-                  </label>
-                </div>
-                <div className="add-loc__sub-label">Go on.....</div>
-              </div>
-              {watchVisited === true ? (
-                <VisitedFormComponent register={register} errors={errors} />
-              ) : null}
-              <div className="add-loc__btn-cont">
-                <button className="btn add-loc__btn">Add Location</button>
+              <div className="add-loc__sub-label">
+                If you doubt the existence, location, or identity of this
+                source.
               </div>
             </div>
-          </form>
+          </div>
+
+          <div className="add-loc__el">
+            <div className="add-loc__label">
+              <input
+                ref={register}
+                type="checkbox"
+                id="visited"
+                name="visited"
+              />
+              <label htmlFor="visited">Have you visted this location?</label>
+            </div>
+            <div className="add-loc__sub-label">Go on.....</div>
+          </div>
+          {watchVisited === true ? (
+            <VisitedFormComponent register={register} errors={errors} />
+          ) : null}
+          <div className="add-loc__btn-cont">
+            <button className="btn add-loc__btn">Add Location</button>
+          </div>
         </div>
-      </div>
+      </form>
     </>
   );
 };
