@@ -60,10 +60,10 @@ export default function Login(props) {
   return (
     <form onSubmit={handleSubmit(loginUser)}>
       <label className="add-loc__label" htmlFor="email">
-        Email
+        Email or Username
       </label>
       {errors.email && (
-        <div className="add-loc__err">Please enter a valid email</div>
+        <div className="add-loc__err">Please enter your email or username</div>
       )}
       <input
         ref={register({ required: true })}
@@ -71,7 +71,7 @@ export default function Login(props) {
         placeholder="Email/Username"
       />
       <label className="add-loc__label" htmlFor="email">
-        Email
+        Password
       </label>
       {errors.password && (
         <div className="add-loc__err">Please enter a password</div>
