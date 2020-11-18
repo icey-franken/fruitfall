@@ -32,7 +32,7 @@ export default function NavBar() {
           <div className="navbar-logo__text">FruitFall</div>
         </div>
         <div className="navbar-item-cont">
-          <NavLink className="navbar-item" exact to="/" activeclass="active">
+          {/* <NavLink className="navbar-item" exact to="/" activeclass="active">
             Map
           </NavLink>
           <NavLink
@@ -58,7 +58,7 @@ export default function NavBar() {
             activeclass="active"
           >
             About
-          </NavLink>
+          </NavLink> */}
         </div>
       </div>
     </>
