@@ -59,8 +59,8 @@ export default function Signup() {
       clearErrors(["password", "confirm_password"]);
       return true;
     }
-  };
-  console.log(errors);
+	};
+
   return (
     <div className="content-cont">
       <div className="auth__cont">

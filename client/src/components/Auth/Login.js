@@ -29,11 +29,23 @@ export default function Login() {
 
     const responseData = await response.json();
     if (!response.ok) {
-      // setErrors(responseData.errors);
+      const err = responseData.errors;
+      console.log(responseData);
+      if (err.username) {
+        setError("username", {
+          type: "invalid",
+          message: err.username
+        });
+      } else {
+        setError("password", {
+          type: "invalid",
+          message: err.password,
+        });
+      }
     } else {
       // setOpen(false);
       setCurrentUserId(responseData.current_user_id);
-      history.push('/')
+      history.push("/");
     }
   }
 
@@ -52,9 +64,7 @@ export default function Login() {
                 </div>
               )}
               {errors.username?.type === "invalid" && (
-                <div className="add-loc__err">
-                  Please enter a valid username or email
-                </div>
+                <div className="add-loc__err">{errors.username.message}</div>
               )}
               <input
                 ref={register({ required: true })}
@@ -71,7 +81,7 @@ export default function Login() {
                 <div className="add-loc__err">Please enter a password</div>
               )}
               {errors.password?.type === "invalid" && (
-                <div className="add-loc__err">Password is incorrect</div>
+                <div className="add-loc__err">{errors.password.message}</div>
               )}
 
               <input
@@ -100,7 +110,7 @@ export default function Login() {
               <div
                 className="existing-user__link"
                 onClick={() =>
-                  loginUser({ email: "ian@aa.io", password: "password" })
+                  loginUser({ username: "Demo_User", password: "password" })
                 }
               >
                 Login as Demo User!
