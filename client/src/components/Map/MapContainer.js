@@ -92,7 +92,8 @@ const MapContainer = React.memo(({ setLngLat, mapbox }) => {
         setTimeout(checkLoad, 1000);
       }
     }
-    checkLoad();
+		checkLoad();
+		return setMapboxLoaded(false) //button hidden on logout-login
   }, [mapbox]);
 	console.log(mapboxLoaded);
 
@@ -114,13 +115,13 @@ const MapContainer = React.memo(({ setLngLat, mapbox }) => {
         <button
           id="add-location-button"
           className={`btn add-location__btn ${
-            showAddLocation ? "add-location__btn--hide" : ""
+            (showAddLocation|| !mapboxLoaded) ? "add-location__btn--hide" : ""
           }`}
           disabled={showAddLocation}
           name={showAddLocation.toString()}
           onClick={handleAddLocationClick}
           // hide button until layers loaded
-          style={{ display: `${mapboxLoaded ? "" : "none"}` }}
+          // style={{ display: `${mapboxLoaded ? "" : "none"}` }}
         >
           Add Location
         </button>

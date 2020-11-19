@@ -78,19 +78,23 @@ def login():
         # return jsonify({"msg": "Missing JSON in request"}), 400
         return {"msg": "Missing JSON in request"}, 400
 
-    email = request.json.get('email', None)
+    username = request.json.get('username', None)
     password = request.json.get('password', None)
 
-    if not email or not password:
-        return {'errors': ['Missing email or password']}, 400
+    if not username or not password:
+        return {'errors': ['Missing username/email or password']}, 400
 
-    authenticated, user = User.authenticate(email, password)
+    authenticated, user = User.authenticate_email(
+        username, password) if '@' in username else User.authenticate_username(username, password)
 
     if authenticated:
         login_user(user)
         return {'current_user_id': current_user.id}
     else:
-        return {'errors': ['Invalid email or password']}, 401
+        if user is None:
+            return {'errors': {'username': 'Invalid username/email'}}, 401
+        else:
+            return {'errors': {'password': 'Invalid password'}}, 401
 
 
 @app.route('/logout', methods=['POST'])

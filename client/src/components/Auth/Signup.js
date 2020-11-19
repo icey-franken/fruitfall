@@ -59,7 +59,7 @@ export default function Signup() {
       clearErrors(["password", "confirm_password"]);
       return true;
     }
-  };
+	};
 
   return (
     <div className="content-cont">
@@ -83,8 +83,19 @@ export default function Signup() {
                   Username must be no more than 50 characters
                 </div>
               )}
+              {errors.username?.type === "pattern" && (
+                <div className="add-loc__err">
+                  Username can only contain letters, numbers, and underscores
+                </div>
+              )}
               <input
-                ref={register({ required: true, minLength: 4, maxLength: 50 })}
+                ref={register({
+                  required: true,
+                  minLength: 4,
+									maxLength: 50,
+									pattern: /^[a-zA-Z0-9_]+$/,
+								})}
+								// pattern="[A-Za-z0-9_]+"
                 name="username"
                 placeholder="Username"
               />
@@ -131,9 +142,12 @@ export default function Signup() {
                   Password must be no more than 50 characters
                 </div>
               )}
-              {errors.confirm_password?.type === "required" && (
-                <div className="add-loc__err">Please confirm your password</div>
-              )}
+              {errors.confirm_password?.type === "required" &&
+                !errors.password?.type === "required" && (
+                  <div className="add-loc__err">
+                    Please confirm your password
+                  </div>
+                )}
               {(errors.confirm_password?.type === "validate" ||
                 errors.password?.type === "validate") && (
                 <div className="add-loc__err">Passwords must match</div>

@@ -29,9 +29,17 @@ class User(db.Model, UserMixin):
         self.password_digest = generate_password_hash(password)
 
     @classmethod
-    def authenticate(cls, email, password):
+    def authenticate_email(cls, email, password):
         # scalar method:
         user = cls.query.filter(User.email == email).scalar()
+        if user is None:
+            return False, user
+        return check_password_hash(user.password_digest, password), user
+
+    @classmethod
+    def authenticate_username(cls, username, password):
+        # scalar method:
+        user = cls.query.filter(User.username == username).scalar()
         if user is None:
             return False, user
         return check_password_hash(user.password_digest, password), user
