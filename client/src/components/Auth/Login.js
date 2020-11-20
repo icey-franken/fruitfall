@@ -18,7 +18,7 @@ export default function Login() {
     // add invalid error to username if problem logging in
     // console.log(email, password)
     console.log(data);
-    const response = await fetchWithCSRF("/login", {
+    const response = await fetchWithCSRF("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,7 +45,7 @@ export default function Login() {
     } else {
       // setOpen(false);
       setCurrentUserId(responseData.current_user_id);
-      history.push("/");
+      history.replace("/");
     }
   }
 

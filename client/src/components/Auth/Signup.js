@@ -25,7 +25,7 @@ export default function Signup() {
 
   async function signupUser(data) {
     console.log(data);
-    const response = await fetchWithCSRF("/signup", {
+    const response = await fetchWithCSRF("/api/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,7 +40,7 @@ export default function Signup() {
     } else {
       // setOpen(false);
       setCurrentUserId(responseData.current_user_id);
-      // history.push('/')
+      history.replace('/')
     }
   }
 

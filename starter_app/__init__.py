@@ -72,7 +72,7 @@ def restore_csrf():
 # should only be post request?
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/api/login', methods=['GET', 'POST'])
 def login():
     # if not request.is_json:
     #     # return jsonify({"msg": "Missing JSON in request"}), 400
@@ -97,14 +97,14 @@ def login():
             return {'errors': {'password': 'Invalid password'}}, 401
 
 
-@app.route('/logout', methods=['POST'])
+@app.route('/api/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()
     return {'msg': 'Successfully logged out'}, 200
 
 
-@app.route('/signup', methods=['POST'])
+@app.route('/api/signup', methods=['POST'])
 def signup():
     email = request.json.get('email', None)
     username = request.json.get('username', None)

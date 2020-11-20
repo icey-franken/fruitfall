@@ -8,7 +8,7 @@ export default function AuthContextProvider(props) {
   const [loading, setLoading] = useState(true);
 
 	async function logoutUser() {
-    await fetchWithCSRF("/logout", {
+    await fetchWithCSRF("/api/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
