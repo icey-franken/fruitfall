@@ -74,9 +74,9 @@ def restore_csrf():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if not request.is_json:
-        # return jsonify({"msg": "Missing JSON in request"}), 400
-        return {"msg": "Missing JSON in request"}, 400
+    # if not request.is_json:
+    #     # return jsonify({"msg": "Missing JSON in request"}), 400
+    #     return {"msg": "Missing JSON in request"}, 400
 
     username = request.json.get('username', None)
     password = request.json.get('password', None)
