@@ -24,7 +24,6 @@ export default function Signup() {
   });
 
   async function signupUser(data) {
-    console.log(data);
     const response = await fetchWithCSRF("/api/signup", {
       method: "POST",
       headers: {

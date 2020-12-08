@@ -17,7 +17,6 @@ export default function Login() {
   async function loginUser(data) {
     // add invalid error to username if problem logging in
     // console.log(email, password)
-    console.log(data);
     const response = await fetchWithCSRF("/api/login", {
       method: "POST",
       headers: {
@@ -30,7 +29,6 @@ export default function Login() {
     const responseData = await response.json();
     if (!response.ok) {
       const err = responseData.errors;
-      console.log(responseData);
       if (err.username) {
         setError("username", {
           type: "invalid",
