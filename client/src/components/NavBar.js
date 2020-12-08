@@ -4,7 +4,6 @@ import { AuthContext } from "../auth";
 
 export default function NavBar() {
   const { currentUserId, logoutUser } = useContext(AuthContext);
-  console.log(currentUserId);
   return (
     <>
       <div className="navbar-cont">

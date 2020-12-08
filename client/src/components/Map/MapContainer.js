@@ -20,7 +20,7 @@ export default function MapContainerContainer() {
 }
 
 const MapContainer = React.memo(({ setLngLat, mapbox }) => {
-  console.log("map container re-rendered");
+  // console.log("map container re-rendered");
 
   const [mapboxLoaded, setMapboxLoaded] = useState(false);
   const [showAddLocation, setShowAddLocation] = useState(false);
@@ -67,7 +67,6 @@ const MapContainer = React.memo(({ setLngLat, mapbox }) => {
 
   // toggle map layers and the map click effect based on show add location form state
   useEffect(() => {
-    console.log(mapbox);
     if (mapboxLoaded && canvasRef.current) {
       mapbox.flyTo({ center: [-94.6859, 46.5], zoom: 5 });
       if (showAddLocation) {
@@ -95,7 +94,6 @@ const MapContainer = React.memo(({ setLngLat, mapbox }) => {
 		checkLoad();
 		return setMapboxLoaded(false) //button hidden on logout-login
   }, [mapbox]);
-	console.log(mapboxLoaded);
 
   return (
     <div className="content-cont">

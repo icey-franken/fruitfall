@@ -11,7 +11,7 @@ export default function Visited({
     ["quality", "Quality"],
     ["yield", "Yield"],
   ];
-console.log(errors)
+// console.log(errors)
   return (
     <>
       <div className="add-loc__el add-loc__el-col">

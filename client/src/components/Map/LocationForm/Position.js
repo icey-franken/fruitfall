@@ -20,7 +20,7 @@ const PositionFormComponent = ({
 
   const validatePosition = () => {
     const { lat, lng } = getValues(["lat", "lng"]);
-    console.log(positionError);
+    // console.log(positionError);
     if (isNaN(lat) || isNaN(lng)) {
       setError("position", {
         type: "required",
@@ -36,7 +36,7 @@ const PositionFormComponent = ({
     }
   };
 
-  console.log("re-renders position component");
+  // console.log("re-renders position component");
   return (
     <div className="add-loc__el add-loc__el-col">
       <div className="add-loc__label" htmlFor="position">

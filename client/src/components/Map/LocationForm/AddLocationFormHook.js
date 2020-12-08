@@ -17,12 +17,12 @@ export default function AddLocationFormHookContainer({ closeForm }) {
 
 const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
   // const {updateMapData} = useContext(MapContext)
-  useEffect(() => {
-    console.log("setNewFeature causing rerender");
-  }, [setNewFeature]);
-  useEffect(() => {
-    console.log("closeForm causing rerender");
-  }, [closeForm]);
+  // useEffect(() => {
+  //   console.log("setNewFeature causing rerender");
+  // }, [setNewFeature]);
+  // useEffect(() => {
+  //   console.log("closeForm causing rerender");
+  // }, [closeForm]);
   const {
     register,
     errors,
@@ -64,7 +64,7 @@ const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
     // invoke this if no validation errors
     closeForm();
     // also clear form!
-    console.log(data);
+    // console.log(data);
     const res = await fetchWithCSRF("/api/features/add-location-form", {
       method: "POST",
       body: JSON.stringify(data),
@@ -81,7 +81,7 @@ const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
   const accessesRef = useRef();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    console.log("--------------------hits get form fields use effect");
+    // console.log("--------------------hits get form fields use effect");
     async function get_form_fields() {
       const res = await fetch("/api/features/add-location-form");
       const fields = await res.json();
@@ -89,12 +89,12 @@ const AddLocationFormHook = ({ closeForm, setNewFeature }) => {
       monthsRef.current = fields.months;
       accessesRef.current = fields.accesses;
       setLoading(false);
-      console.log("--------------------get form fields data:", fields);
+      // console.log("--------------------get form fields data:", fields);
     }
     get_form_fields();
   }, []);
 
-  console.log("re-renders add location form");
+  // console.log("re-renders add location form");
 
   if (loading) {
     return null;

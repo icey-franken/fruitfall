@@ -47,7 +47,7 @@ const SeasonFormComponent = ({
       }
     }
   };
-  console.log("re-renders season component");
+  // console.log("re-renders season component");
   return (
     <div className="add-loc__el add-loc__el-col">
       <div className="add-loc__el-row">

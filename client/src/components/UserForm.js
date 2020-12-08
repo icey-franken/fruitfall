@@ -3,7 +3,6 @@ import {AuthContext} from '../auth'
 
 function UserForm(props) {
     const { id } =  props.location.state.user;
-    console.log(id)
     const [username, setUsername] = useState(props.location.state.user.username);
     const [email, setEmail] = useState(props.location.state.user.email);
 
