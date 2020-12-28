@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-8FL6F2RHTS"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-8FL6F2RHTS");
+    </script>
     <meta charset="utf-8" />
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css"
@@ -12,17 +26,15 @@
       content="minimum-scale=1, initial-scale=1, width=device-width"
     />
 
-
-		<meta property="og:title" content="FruitFall" />
+    <meta property="og:title" content="FruitFall" />
     <meta
       property="og:image"
       content="//live.staticflickr.com/65535/50703261612_a4fab4323c_n.jpg"
     />
     <meta property="og:description" content="FruitFall App" />
-		<meta property="og:url" content="//fruitfall.herokuapp.com" />
+    <meta property="og:url" content="//fruitfall.herokuapp.com" />
 
-
-<!--
+    <!--
 
     <meta property="og:title" content="FruitFall" />
     <meta
@@ -32,7 +44,7 @@
     <meta property="og:description" content="FruitFall App" />
     <meta property="og:url" content="//fruitfall.herokuapp.com/" /> -->
 
-		<title>FruitFall</title>
+    <title>FruitFall</title>
   </head>
   <body>
     <div id="root"></div>
